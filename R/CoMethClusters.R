@@ -1,6 +1,6 @@
 
 # Input
-# list_regions - list of predefined regions, e.g. cpg island
+# list_regions - list of predefined regions of cpgs, e.g. cpg island
 # location.file - a dataframe with cpg name (cpg), chromosome (CHR) and location (MAPINFO), row.names = cpg
 # maxGap - an integer, genomic locations within maxGap from each other are placed into the same cluster
 # min.cpgs - an integer, minimum nubmer of cpgs for resulting regions
@@ -13,13 +13,12 @@
 
 
 CoMethClusters <- function (list_regions, location.file, maxGap, min.cpgs, betaMatrix, min.region.size, threshold.r){
-  colnames(location.file)[1] <- "cpg"
+
+
   closeCpGs.regions<-lapply(list_regions,closeCpGs.regions,location.file,maxGap=maxGap,min.cpgs=min.cpgs)
   closeCpGs.regions.final<-unlist(closeCpGs.regions,recursive=F)
   names(closeCpGs.regions.final)<-lapply(closeCpGs.regions.final,region.name,location.file)
 
-  #rownames(betaMatrix)<-betaMatrix[,1]
-  #betaMatrix<-betaMatrix[,-1]
   matrix.cgi<-lapply(closeCpGs.regions.final, function (item) betaMatrix[which(rownames(betaMatrix)%in%item),])
 
   contiguous.regions.out<-lapply(matrix.cgi,contiguous.regions, min.region.size=min.region.size, location.file=location.file, threshold.r=threshold.r)
