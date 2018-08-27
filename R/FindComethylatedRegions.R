@@ -1,19 +1,25 @@
 
-library(psych)
-library(bumphunter)
 
-#' Title
+
+#' Find contiguous comethylated regions
 #'
-#' @param betaCluster_mtx
-#' @param minCpGs_int
-#' @param CpGlocations_df
-#' @param threshold_r_num
+#' @param betaCluster_mtx matrix of beta values
+#' @param minCpGs_int n integer, minimum nubmer of cpgs for resulting regions
+#' @param CpGlocations_df a dataframe with cpg name (cpg), chromosome (CHR) and location (MAPINFO), row.names = cpg
+#' @param threshold_r_num min correlation between a cpg in the region with the rest of the CpGs
+#'
+#' @importFrom bumphunter clusterMaker
 #'
 #' @return
 #' @export
 #'
 #' @examples
 #'
+
+
+# library(psych)
+# library(bumphunter)
+
 FindComethylatedRegions <- function (betaCluster_mtx,
                                   minCpGs_int=3,
                                   CpGlocations_df,
