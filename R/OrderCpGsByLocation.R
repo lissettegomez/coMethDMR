@@ -6,7 +6,7 @@
 #' chromosome number as integer (CHR) and genomic location as integer (MAPINFO), row.names = cpg
 #' @param vector Output: vector of CpGs or dataframe with CpGs, CHR, MAPINFO
 #'
-#' @return of ordered CpGs or dataframe of ordered CpGs, CHR, MAPINFO
+#' @return vector of ordered CpGs or dataframe with ordered CpGs, CHR, MAPINFO
 #' @export
 #'
 #' @examples

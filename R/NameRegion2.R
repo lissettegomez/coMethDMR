@@ -1,5 +1,5 @@
 
-#' Title Name a CpG region based on its genomic location
+#' Name a CpG region based on its genomic location
 #'
 #' @param CpGsOrdered_df dataframe with cpg name as character (cpg),
 #' chromosome number as integer (CHR) and genomic location as integer (MAPINFO), row.names = cpg
