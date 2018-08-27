@@ -1,0 +1,63 @@
+
+library(psych)
+library(bumphunter)
+
+FindComethylatedRegions <- function (betaCluster_mtx,
+                                  minCpGs_int=3,
+                                  CpGlocations_df,
+                                  threshold_r_num=0.5) {
+
+  ### Calculate alpha ###
+  clusterAlpha_df <- alpha(betaCluster_mtx, warnings = FALSE)
+
+  ### Drop CpGs with r.drop < threshold_r_num ###
+  dropCpGs_char <- row.names(subset(clusterAlpha_df$item.stats,
+                              clusterAlpha_df$item.stats$r.drop < threshold_r_num))  ###drop these cpgs
+
+  CpGs_df <- as.data.frame(rownames(clusterAlpha_df$alpha.drop))
+
+  colnames(CpGs_df) <- "cpg"
+
+  CpGs_df$alpha <- ifelse(
+    row.names(clusterAlpha_df$alpha.drop) %in% dropCpGs_char, 0, 1)   ##(drop=0, keep=1)
+
+  CpGs_df$ind <- 1:dim(betaCluster_mtx)[2]
+
+  ### Get contiguous regions of CpGs ###
+  contiguousRegions <- getSegments(CpGs_df$alpha, cutoff = 1)
+
+
+  contiguous_idx <- data.frame(matrix(ncol = 1, nrow = 0))
+
+  if (length(contiguousRegions$upIndex) > 0){
+
+    for (j in 1:length(contiguousRegions$upIndex))
+
+    {contiguous_idx <- rbind(contiguous_idx,
+                             length(contiguousRegions$upIndex[[j]]))}
+
+    contiguosMinCpGs_idx <- as.numeric(
+      rownames(subset(contiguous_idx, contiguous_idx[,1] >= minCpGs_int)))
+
+    if (length(contiguosMinCpGs_idx) > 0){
+
+      contiguousRegionsCpGs<-data.frame(matrix(ncol=2,nrow=0))
+
+      for (u in 1:length(contiguosMinCpGs_idx))
+
+      {contiguousRegionsCpGs <- rbind(
+        contiguousRegionsCpGs,
+        cbind(as.data.frame(
+          subset(CpGs_df,ind %in% contiguousRegions$upIndex[[contiguosMinCpGs_idx[u]]], select="cpg")),
+              rep(u, length(contiguousRegions$upIndex[[contiguosMinCpGs_idx[u]]]))))}
+
+    } else {contiguousRegionsCpGs<-cbind(as.data.frame(CpGs_df$cpg),rep(0,length(CpGs_df$cpg)))}
+
+  } else {contiguousRegionsCpGs<-cbind(as.data.frame(CpGs_df$cpg),rep(0,length(CpGs_df$cpg)))}
+
+  colnames(contiguousRegionsCpGs)<-c("ProbeID","subisland")
+
+
+
+
+}
