@@ -2,6 +2,18 @@
 library(psych)
 library(bumphunter)
 
+#' Title
+#'
+#' @param betaCluster_mtx
+#' @param minCpGs_int
+#' @param CpGlocations_df
+#' @param threshold_r_num
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#'
 FindComethylatedRegions <- function (betaCluster_mtx,
                                   minCpGs_int=3,
                                   CpGlocations_df,
@@ -47,13 +59,18 @@ FindComethylatedRegions <- function (betaCluster_mtx,
 
       {contiguousRegionsCpGs <- rbind(
         contiguousRegionsCpGs,
-        cbind(as.data.frame(
+        cbind(
+          as.data.frame(
           subset(CpGs_df,ind %in% contiguousRegions$upIndex[[contiguosMinCpGs_idx[u]]], select="cpg")),
               rep(u, length(contiguousRegions$upIndex[[contiguosMinCpGs_idx[u]]]))))}
 
-    } else {contiguousRegionsCpGs<-cbind(as.data.frame(CpGs_df$cpg),rep(0,length(CpGs_df$cpg)))}
+    } else {
+      contiguousRegionsCpGs<-cbind(as.data.frame(CpGs_df$cpg),
+                                   rep(0,length(CpGs_df$cpg)))}
 
-  } else {contiguousRegionsCpGs<-cbind(as.data.frame(CpGs_df$cpg),rep(0,length(CpGs_df$cpg)))}
+  } else {
+    contiguousRegionsCpGs<-cbind(as.data.frame(CpGs_df$cpg),
+                                 rep(0,length(CpGs_df$cpg)))}
 
   colnames(contiguousRegionsCpGs)<-c("ProbeID","subisland")
 

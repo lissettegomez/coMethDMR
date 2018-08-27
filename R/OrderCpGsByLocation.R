@@ -1,4 +1,15 @@
 
+#' Title
+#'
+#' @param CpGs_char
+#' @param CpGlocations_df
+#' @param Output
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#'
 OrderCpGsByLocation <- function(CpGs_char, CpGlocations_df, Output = c("CpGs", "CpGsLocation_df")){
 
   ### Subset the location Data Frame  ###
