@@ -8,7 +8,8 @@
 #' @export
 #'
 #' @examples
-NameRegion2 <- function(CpGsOrdered_df){
+#'
+NameRegion <- function(CpGsOrdered_df){
 
   ### Return region name based on genomic location ###
     paste0(

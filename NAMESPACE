@@ -2,6 +2,7 @@
 
 export(FindComethylatedRegions)
 export(NameRegion)
-export(NameRegion2)
 export(OrderCpGsByLocation)
+import(IlluminaHumanMethylation450kanno.ilmn12.hg19)
+import(IlluminaHumanMethylationEPICanno.ilm10b2.hg19)
 importFrom(bumphunter,clusterMaker)

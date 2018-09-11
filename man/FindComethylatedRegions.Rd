@@ -4,8 +4,8 @@
 \alias{FindComethylatedRegions}
 \title{Find contiguous comethylated regions}
 \usage{
-FindComethylatedRegions(betaCluster_mtx, minCpGs_int = 3, CpGlocations_df,
-  threshold_r_num = 0.5)
+FindComethylatedRegions(betaCluster_mtx, minCpGs_int = 3,
+  CpGlocations_df, threshold_r_num = 0.5)
 }
 \arguments{
 \item{betaCluster_mtx}{matrix of beta values}
