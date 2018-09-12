@@ -3,10 +3,10 @@
 
 #' Find contiguous comethylated regions
 #'
-#' @param betaCluster_mtx matrix of beta values
+#' @param betaCluster_mat matrix of beta values
 #' @param minCpGs_int n integer, minimum nubmer of cpgs for resulting regions
 #' @param CpGlocations_df a dataframe with cpg name (cpg), chromosome (CHR) and location (MAPINFO), row.names = cpg
-#' @param threshold_r_num min correlation between a cpg in the region with the rest of the CpGs
+#' @param rDropThresh_num min correlation between a cpg in the region with the rest of the CpGs
 #'
 #' @importFrom bumphunter clusterMaker
 #'
@@ -20,26 +20,26 @@
 # library(psych)
 # library(bumphunter)
 
-FindComethylatedRegions <- function (betaCluster_mtx,
+FindComethylatedRegions <- function (betaCluster_mat,
                                   minCpGs_int=3,
                                   CpGlocations_df,
-                                  threshold_r_num=0.5) {
+                                  rDropThresh_num=0.5) {
 
   ### Calculate alpha ###
-  clusterAlpha_df <- alpha(betaCluster_mtx, warnings = FALSE)
+  clusterAlpha_ls <- alpha(betaCluster_mat, warnings = FALSE)
 
   ### Drop CpGs with r.drop < threshold_r_num ###
-  dropCpGs_char <- row.names(subset(clusterAlpha_df$item.stats,
-                              clusterAlpha_df$item.stats$r.drop < threshold_r_num))  ###drop these cpgs
+  dropCpGs_char <- row.names(subset(clusterAlpha_ls$item.stats,
+                              clusterAlpha_ls$item.stats$r.drop < rDropThresh_num))  ###drop these cpgs
 
-  CpGs_df <- as.data.frame(rownames(clusterAlpha_df$alpha.drop))
+  CpGs_df <- as.data.frame(rownames(clusterAlpha_ls$alpha.drop))
 
   colnames(CpGs_df) <- "cpg"
 
   CpGs_df$alpha <- ifelse(
-    row.names(clusterAlpha_df$alpha.drop) %in% dropCpGs_char, 0, 1)   ##(drop=0, keep=1)
+    row.names(clusterAlpha_ls$alpha.drop) %in% dropCpGs_char, 0, 1)   ##(drop=0, keep=1)
 
-  CpGs_df$ind <- 1:dim(betaCluster_mtx)[2]
+  CpGs_df$ind <- 1:ncol(betaCluster_mat)
 
   ### Get contiguous regions of CpGs ###
   contiguousRegions <- getSegments(CpGs_df$alpha, cutoff = 1)
