@@ -10,10 +10,9 @@ OrderCpGsByLocation(CpGs_char, arrayType = c("450k", "EPIC"),
 \arguments{
 \item{CpGs_char}{vector of CpGs}
 
-\item{CpGlocations_df}{dataframe with cpg name as character (cpg),
-chromosome number as integer (CHR) and genomic location as integer (MAPINFO), row.names = cpg}
+\item{arrayType}{Type of array, 450k or EPIC}
 
-\item{vector}{Output: vector of CpGs or dataframe with CpGs, CHR, MAPINFO}
+\item{Output}{vector of CpGs or dataframe with CpGs, CHR, MAPINFO}
 }
 \value{
 vector of ordered CpGs or dataframe with ordered CpGs, CHR, MAPINFO

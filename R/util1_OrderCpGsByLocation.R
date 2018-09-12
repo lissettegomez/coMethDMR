@@ -17,17 +17,17 @@
 #'
 OrderCpGsByLocation <- function(CpGs_char, arrayType=c("450k","EPIC"), output = c("vector", "dataframe")){
 
-  arrayType<-match.arg(arrayType)
+  arrayType <- match.arg(arrayType)
 
   switch(arrayType,
-         "450k"=data(IlluminaHumanMethylation450kanno.ilmn12.hg19),
-         "EPIC"=data(IlluminaHumanMethylationEPICanno.ilm10b2.hg19))
+         "450k" = data(IlluminaHumanMethylation450kanno.ilmn12.hg19),
+         "EPIC" = data(IlluminaHumanMethylationEPICanno.ilm10b2.hg19))
 
   ### Subset the location Data Frame  ###
   #data(Locations)
   CpGlocations_df <- Locations
-  CpGlocations_df$cpg <- row.names( CpGlocations_df)
-  row.names( CpGlocations_df) <- NULL
+  CpGlocations_df$cpg <- row.names(CpGlocations_df)
+  row.names(CpGlocations_df) <- NULL
   CpGs_df <- CpGlocations_df[which(CpGlocations_df$cpg%in%CpGs_char),]
 
   ###  Re-order this Subset  ###
@@ -37,9 +37,9 @@ OrderCpGsByLocation <- function(CpGs_char, arrayType=c("450k","EPIC"), output = 
   ### Select and return output ###
   if (output == "dataframe") {
     CpGsOrdered_df
-    } else {
-      as.character(CpGsOrdered_df$cpg)
-      }
+  } else {
+    as.character(CpGsOrdered_df$cpg)
+  }
 
 
 }
