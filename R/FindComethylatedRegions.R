@@ -11,9 +11,9 @@
 #' @examples
 #' attach("tests/betaCluster_mat_example1.RData")
 #' CpGs_df <- MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex1)
-#' FindComethylatedRegions2(CpGs_df)
+#' FindComethylatedRegions(CpGs_df)
 #'
-FindComethylatedRegions2 <- function(CpGs_df, minCpGs_int=3){
+FindComethylatedRegions <- function(CpGs_df, minCpGs_int=3){
 
   ### Get contiguous regions of CpGs ###
 
