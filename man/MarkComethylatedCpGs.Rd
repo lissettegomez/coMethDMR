@@ -21,4 +21,8 @@ Find contiguous comethylated regions
 \examples{
 attach("tests/betaCluster_mat_example1.RData")
 MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex1)
+attach("tests/betaCluster_mat_example2.RData")
+MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex2)
+attach("tests/betaCluster_mat_example3.RData")
+MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex3)
 }
