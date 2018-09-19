@@ -3,9 +3,10 @@
 
 #' Find contiguous comethylated regions
 #'
-#' @param betaCluster_mat matrix of beta values, with rownames = sample ids, column names = CpG ids
-#' and ordered by genomic position
-#' @param rDropThresh_num min correlation between a cpg in the region with the rest of the CpGs
+#' @param betaCluster_mat matrix of beta values, with rownames = sample ids,
+#'    column names = CpG ids, and ordered by genomic position
+#' @param rDropThresh_num min correlation between a cpg in the region with the
+#'    rest of the CpGs
 #'
 #' @importFrom psych alpha
 #'
@@ -13,15 +14,15 @@
 #' @export
 #'
 #' @examples
-#' attach("tests/betaCluster_mat_example1.RData")
+#' load("tests/betaCluster_mat_example1.RData")
 #' MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex1)
-#' attach("tests/betaCluster_mat_example2.RData")
+#' load("tests/betaCluster_mat_example2.RData")
 #' MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex2)
-#' attach("tests/betaCluster_mat_example3.RData")
+#' load("tests/betaCluster_mat_example3.RData")
 #' MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex3)
 
 
-MarkComethylatedCpGs <- function (betaCluster_mat, rDropThresh_num=0.5) {
+MarkComethylatedCpGs <- function (betaCluster_mat, rDropThresh_num = 0.5) {
 
 
   ### Calculate alpha and Store CpGs ###
@@ -38,8 +39,9 @@ MarkComethylatedCpGs <- function (betaCluster_mat, rDropThresh_num=0.5) {
   ###  Create Output Data Frame  ###
   CpGs_df <- data.frame(
     CpG = CpGs_char,
-    alpha = ifelse(CpGs_char %in% dropCpGs_char, 0, 1), ##(drop=0, keep=1)
-    ind = 1:ncol(betaCluster_mat)
+    keep = ifelse(CpGs_char %in% dropCpGs_char, 0, 1), ##(drop=0, keep=1)
+    ind = 1:ncol(betaCluster_mat),
+    stringsAsFactors = FALSE
   )
 
   CpGs_df
