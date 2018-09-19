@@ -20,12 +20,15 @@ OrderCpGsByLocation <- function(CpGs_char, arrayType=c("450k","EPIC"), output = 
   arrayType <- match.arg(arrayType)
 
   switch(arrayType,
-         "450k" = data(IlluminaHumanMethylation450kanno.ilmn12.hg19),
-         "EPIC" = data(IlluminaHumanMethylationEPICanno.ilm10b2.hg19))
+         "450k" = {
+           CpGlocations_df = IlluminaHumanMethylation450kanno.ilmn12.hg19::Locations
+         },
+         "EPIC" = {
+           CpGlocations_df = IlluminaHumanMethylationEPICanno.ilm10b2.hg19::Locations
+         }
+         )
 
   ### Subset the location Data Frame  ###
-  #data(Locations)
-  CpGlocations_df <- Locations
   CpGlocations_df$cpg <- row.names(CpGlocations_df)
   row.names(CpGlocations_df) <- NULL
   CpGs_df <- CpGlocations_df[which(CpGlocations_df$cpg%in%CpGs_char),]
