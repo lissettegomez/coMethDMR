@@ -12,7 +12,7 @@ OrderCpGsByLocation(CpGs_char, arrayType = c("450k", "EPIC"),
 
 \item{arrayType}{Type of array, 450k or EPIC}
 
-\item{Output}{vector of CpGs or dataframe with CpGs, CHR, MAPINFO}
+\item{output}{vector of CpGs or dataframe with CpGs, CHR, MAPINFO}
 }
 \value{
 vector of ordered CpGs or dataframe with ordered CpGs, CHR, MAPINFO

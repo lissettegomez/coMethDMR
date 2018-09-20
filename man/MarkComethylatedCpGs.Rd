@@ -7,10 +7,11 @@
 MarkComethylatedCpGs(betaCluster_mat, rDropThresh_num = 0.5)
 }
 \arguments{
-\item{betaCluster_mat}{matrix of beta values, with rownames = sample ids, column names = CpG ids
-and ordered by genomic position}
+\item{betaCluster_mat}{matrix of beta values, with rownames = sample ids,
+column names = CpG ids, and ordered by genomic position}
 
-\item{rDropThresh_num}{min correlation between a cpg in the region with the rest of the CpGs}
+\item{rDropThresh_num}{min correlation between a cpg in the region with the
+rest of the CpGs}
 }
 \value{
 dataframe of CpGs to keep or drop
@@ -19,10 +20,10 @@ dataframe of CpGs to keep or drop
 Find contiguous comethylated regions
 }
 \examples{
-attach("tests/betaCluster_mat_example1.RData")
-MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex1)
-attach("tests/betaCluster_mat_example2.RData")
-MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex2)
-attach("tests/betaCluster_mat_example3.RData")
-MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex3)
+   load("tests/betaCluster_mat_example1.RData")
+   MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex1)
+   load("tests/betaCluster_mat_example2.RData")
+   MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex2)
+   load("tests/betaCluster_mat_example3.RData")
+   MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex3)
 }

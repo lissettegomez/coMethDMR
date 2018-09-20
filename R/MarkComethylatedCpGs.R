@@ -14,12 +14,12 @@
 #' @export
 #'
 #' @examples
-#' load("tests/betaCluster_mat_example1.RData")
-#' MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex1)
-#' load("tests/betaCluster_mat_example2.RData")
-#' MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex2)
-#' load("tests/betaCluster_mat_example3.RData")
-#' MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex3)
+#'    load("tests/betaCluster_mat_example1.RData")
+#'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex1)
+#'    load("tests/betaCluster_mat_example2.RData")
+#'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex2)
+#'    load("tests/betaCluster_mat_example3.RData")
+#'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex3)
 
 
 MarkComethylatedCpGs <- function (betaCluster_mat, rDropThresh_num = 0.5) {

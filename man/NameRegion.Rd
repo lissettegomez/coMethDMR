@@ -8,7 +8,8 @@ NameRegion(CpGsOrdered_df)
 }
 \arguments{
 \item{CpGsOrdered_df}{dataframe with cpg name as character (cpg),
-chromosome number as integer (CHR) and genomic location as integer (MAPINFO), row.names = cpg}
+chromosome number as integer (CHR)
+and genomic location as integer (MAPINFO), row.names = cpg}
 }
 \value{
 genome location of the CpGs region

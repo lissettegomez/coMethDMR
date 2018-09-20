@@ -7,7 +7,8 @@
 FindComethylatedRegions(CpGs_df, minCpGs_int = 3)
 }
 \arguments{
-\item{CpGs_df}{a dataframe with cpg name (CpG), keep=1/drop=0 (alpha), ind=1:number of CpGs in the region}
+\item{CpGs_df}{a dataframe with cpg name (CpG), keep=1/drop=0 (alpha),
+ind=1:number of CpGs in the region}
 
 \item{minCpGs_int}{n integer, minimum nubmer of cpgs for resulting regions}
 }
@@ -18,8 +19,8 @@ data frame with CpG and subregion number
 Find contiguous comethylated regions
 }
 \examples{
-attach("tests/betaCluster_mat_example1.RData")
-CpGs_df <- MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex1)
-FindComethylatedRegions(CpGs_df)
+   load("tests/betaCluster_mat_example4.RData")
+   CpGs_df <- MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex4)
+   FindComethylatedRegions(CpGs_df)
 
 }

@@ -3,7 +3,7 @@
 #'
 #' @param CpGs_char vector of CpGs
 #' @param arrayType Type of array, 450k or EPIC
-#' @param Output vector of CpGs or dataframe with CpGs, CHR, MAPINFO
+#' @param output vector of CpGs or dataframe with CpGs, CHR, MAPINFO
 #'
 #' @return vector of ordered CpGs or dataframe with ordered CpGs, CHR, MAPINFO
 #' @export
