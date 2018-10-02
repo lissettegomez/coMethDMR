@@ -11,8 +11,7 @@
 #'
 #' @importFrom bumphunter getSegments
 #'
-#' @examples
-#'    load("tests/betaCluster_mat_example4.RData")
+#' @examples data(betaCluster_mat_example4)
 #'    CpGs_df <- MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex4)
 #'    FindComethylatedRegions(CpGs_df)
 #'

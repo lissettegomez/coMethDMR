@@ -11,9 +11,8 @@
 #' @import IlluminaHumanMethylation450kanno.ilmn12.hg19
 #' @import IlluminaHumanMethylationEPICanno.ilm10b2.hg19
 #'
-#' @examples
-#' CpGs_char <- c("cg04677227", "cg07146435", "cg11632906", "cg20214853")
-#' OrderCpGsByLocation(CpGs_char, arrayType=c("EPIC"), output = "dataframe")
+#' @examples CpGs_char <- c("cg04677227", "cg07146435", "cg11632906", "cg20214853")
+#'    OrderCpGsByLocation(CpGs_char, arrayType=c("EPIC"), output = "dataframe")
 #'
 OrderCpGsByLocation <- function(CpGs_char, arrayType=c("450k","EPIC"), output = c("vector", "dataframe")){
 

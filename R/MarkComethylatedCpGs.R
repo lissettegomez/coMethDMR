@@ -13,12 +13,11 @@
 #' @return dataframe of CpGs to keep or drop
 #' @export
 #'
-#' @examples
-#'    load("tests/betaCluster_mat_example1.RData")
+#' @examples data(betaCluster_mat_example1)
 #'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex1)
-#'    load("tests/betaCluster_mat_example2.RData")
+#'    data(betaCluster_mat_example2)
 #'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex2)
-#'    load("tests/betaCluster_mat_example3.RData")
+#'    data(betaCluster_mat_example3)
 #'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex3)
 
 
