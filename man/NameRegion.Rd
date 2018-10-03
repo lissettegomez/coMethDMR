@@ -17,7 +17,7 @@ genome location of the CpGs region
 Name a CpG region based on its genomic location
 }
 \examples{
-load("data/CpGsOrdered_df_ex.Rdata")
-   NameRegion(CpGsOrdered_df)
+  data(CpGsOrdered_df)
+  NameRegion(CpGsOrdered_df)
 
 }

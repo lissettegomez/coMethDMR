@@ -7,8 +7,9 @@
 #' @return genome location of the CpGs region
 #' @export
 #'
-#' @examples load("data/CpGsOrdered_df_ex.Rdata")
-#'    NameRegion(CpGsOrdered_df)
+#' @examples
+#'   data(CpGsOrdered_df)
+#'   NameRegion(CpGsOrdered_df)
 #'
 NameRegion <- function(CpGsOrdered_df){
 
