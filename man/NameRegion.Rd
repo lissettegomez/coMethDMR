@@ -8,8 +8,7 @@ NameRegion(CpGsOrdered_df)
 }
 \arguments{
 \item{CpGsOrdered_df}{dataframe with cpg name as character (cpg),
-chromosome number as integer (CHR)
-and genomic location as integer (MAPINFO), row.names = cpg}
+chromosome number as integer (CHR) and genomic location as integer (MAPINFO)}
 }
 \value{
 genome location of the CpGs region
@@ -18,8 +17,7 @@ genome location of the CpGs region
 Name a CpG region based on its genomic location
 }
 \examples{
-CpGs_char <- c("cg04677227", "cg07146435", "cg11632906", "cg20214853")
-   CpGsOrdered_df <- OrderCpGsByLocation(CpGs_char, arrayType=c("EPIC"), output = "dataframe")
+load("data/CpGsOrdered_df_ex.Rdata")
    NameRegion(CpGsOrdered_df)
 
 }
