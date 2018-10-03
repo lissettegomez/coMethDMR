@@ -10,6 +10,7 @@
 #' @export
 #'
 #' @importFrom bumphunter getSegments
+#' @importFrom utils globalVariables
 #'
 #' @examples data(betaCluster_mat_example4)
 #'    CpGs_df <- MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex4)
@@ -18,19 +19,19 @@
 FindComethylatedRegions <- function(CpGs_df, minCpGs_int = 3){
 
   ### Get contiguous regions of CpGs ###
-
   contiguousRegion_ls <- getSegments(CpGs_df$keep, cutoff = 1)
   nSegs_int <- length(contiguousRegion_ls$upIndex)
 
   if (nSegs_int > 0){
 
     ### Select segments with number of CpGs >= minCpGs ###
-
     contiguous_int <- lengths(contiguousRegion_ls$upIndex)
     contiguousMinCpGs_idx <- which(contiguous_int >= minCpGs_int)
     nSegsMinCpGs_int <- length(contiguousMinCpGs_idx)
 
     ### Create output dataframe with CpGs and contiguous comethylated subregion number ###
+    #globalVariables("ind")
+    ind<-NULL
 
        if (nSegsMinCpGs_int > 0){
 
