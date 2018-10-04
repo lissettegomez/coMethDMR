@@ -52,27 +52,21 @@ FindComethylatedRegions <- function(CpGs_df, minCpGs_int = 3){
 
          contiguousRegionsCpGs <- do.call(rbind, inner_ls)
 
-    # if (nSegsMinCpGs_int > 0){
-    #
-    #      contiguousRegionsCpGs<-data.frame(matrix(ncol=2,nrow=0))
-    #
-    #      for (u in 1:nSegsMinCpGs_int)
-    #
-    #        {contiguousRegionsCpGs <- rbind(
-    #          contiguousRegionsCpGs,
-    #          cbind(
-    #            as.data.frame(
-    #              subset(CpGs_df,ind %in% contiguousRegion_ls$upIndex[[contiguousMinCpGs_idx[u]]], select="CpG")),
-    #            rep(u, length(contiguousRegion_ls$upIndex[[contiguousMinCpGs_idx[u]]]))))}
-
 
        } else {
-        contiguousRegionsCpGs <- cbind(as.data.frame(CpGs_df$CpG),
-                                     rep(0,length(CpGs_df$CpG)))}
+             contiguousRegionsCpGs <- cbind(
+               as.data.frame(CpGs_df$CpG),
+               rep(0,length(CpGs_df$CpG))
+             )
+         }
+
 
   } else {
-    contiguousRegionsCpGs <- cbind(as.data.frame(CpGs_df$CpG),
-                                 rep(0,length(CpGs_df$CpG)))}
+      contiguousRegionsCpGs <- cbind(
+        as.data.frame(CpGs_df$CpG),
+        rep(0,length(CpGs_df$CpG))
+      )
+    }
 
   colnames(contiguousRegionsCpGs) <- c("ProbeID","Subregion")
 
