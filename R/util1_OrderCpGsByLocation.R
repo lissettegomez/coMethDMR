@@ -11,7 +11,8 @@
 #' @import IlluminaHumanMethylation450kanno.ilmn12.hg19
 #' @import IlluminaHumanMethylationEPICanno.ilm10b2.hg19
 #'
-#' @examples CpGs_char <- c("cg04677227", "cg07146435", "cg11632906", "cg20214853")
+#' @examples
+#'    CpGs_char <- c("cg04677227", "cg07146435", "cg11632906", "cg20214853")
 #'    OrderCpGsByLocation(CpGs_char, arrayType=c("EPIC"), output = "dataframe")
 #'
 OrderCpGsByLocation <- function(CpGs_char, arrayType=c("450k","EPIC"), output = c("vector", "dataframe")){
@@ -28,6 +29,8 @@ OrderCpGsByLocation <- function(CpGs_char, arrayType=c("450k","EPIC"), output = 
          )
 
   ### Subset the location Data Frame  ###
+  # Remove S4 class DataFrame
+  CpGlocations_df <- as.data.frame(CpGlocations_df)
   CpGlocations_df$cpg <- row.names(CpGlocations_df)
   row.names(CpGlocations_df) <- NULL
   CpGs_df <- CpGlocations_df[which(CpGlocations_df$cpg%in%CpGs_char),]

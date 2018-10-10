@@ -1,6 +1,3 @@
-
-
-
 #' Find contiguous comethylated regions
 #'
 #' @param betaCluster_mat matrix of beta values, with rownames = sample ids,
@@ -13,7 +10,8 @@
 #' @return dataframe of CpGs to keep or drop
 #' @export
 #'
-#' @examples data(betaCluster_mat_example1)
+#' @examples
+#'    data(betaCluster_mat_example1)
 #'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex1)
 #'    data(betaCluster_mat_example2)
 #'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex2)
