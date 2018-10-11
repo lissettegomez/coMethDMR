@@ -15,7 +15,7 @@ NameRegion <- function(CpGsOrdered_df){
 
   ### Return region name based on genomic location ###
     paste0(
-    "Chr", CpGsOrdered_df$chr[1], ":",
+    CpGsOrdered_df$chr[1], ":",
     CpGsOrdered_df$pos[1], "-", CpGsOrdered_df$pos[nrow(CpGsOrdered_df)]
   )
 
