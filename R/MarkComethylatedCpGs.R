@@ -1,4 +1,4 @@
-#' Find contiguous comethylated regions
+#' Mark comethylated CpGs
 #'
 #' @param betaCluster_mat matrix of beta values, with rownames = sample ids,
 #'    column names = CpG ids, and ordered by genomic position
@@ -38,6 +38,7 @@ MarkComethylatedCpGs <- function (betaCluster_mat, rDropThresh_num = 0.5) {
     CpG = CpGs_char,
     keep = ifelse(CpGs_char %in% dropCpGs_char, 0, 1), ##(drop=0, keep=1)
     ind = 1:ncol(betaCluster_mat),
+    r_drop = clusterAlpha_ls$item.stats$r.drop,
     stringsAsFactors = FALSE
   )
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/MarkComethylatedCpGs.R
 \name{MarkComethylatedCpGs}
 \alias{MarkComethylatedCpGs}
-\title{Find contiguous comethylated regions}
+\title{Mark comethylated CpGs}
 \usage{
 MarkComethylatedCpGs(betaCluster_mat, rDropThresh_num = 0.5)
 }
@@ -17,10 +17,10 @@ rest of the CpGs}
 dataframe of CpGs to keep or drop
 }
 \description{
-Find contiguous comethylated regions
+Mark comethylated CpGs
 }
 \examples{
-data(betaCluster_mat_example1)
+   data(betaCluster_mat_example1)
    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex1)
    data(betaCluster_mat_example2)
    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex2)
