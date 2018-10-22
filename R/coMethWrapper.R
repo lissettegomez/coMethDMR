@@ -16,7 +16,9 @@
 #'
 #' @examples
 #'    data(betaMatrixChr22_df)
-#'    data(CpGsChr22_char)
+#'    CpGsChr22_char<-c("cg02953382", "cg12419862", "cg24565820", "cg04234412",
+#'       "cg04824771", "cg09033563", "cg10150615", "cg18538332", "cg20007245",
+#'       "cg23131131", "cg25703541")
 #'    coMethWrapper(CpGsChr22_char, betaMatrixChr22_df)
 coMethWrapper <- function(CpGs_char, betaMatrix){
 
