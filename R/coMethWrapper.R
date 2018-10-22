@@ -15,12 +15,9 @@
 #' @export
 #'
 #' @examples
-#'    beta <- read.csv("C:/Users/lxg255/Box Sync/Rpackage-coMethDMR/PFCbetas_BMIQnormalized.csv")
-#'    row.names(beta) <- beta[,1]
-#'    betaMatrix <- beta[,-1]
-#'    data(betaCluster_mat_example4)
-#'    CpGs_char <- colnames(betaMatrix_ex4)
-#'    coMethWrapper(CpGs_char, betaMatrix)
+#'    data(betaMatrixChr22_df)
+#'    data(CpGsChr22_char)
+#'    coMethWrapper(CpGsChr22_char, betaMatrixChr22_df)
 coMethWrapper <- function(CpGs_char, betaMatrix){
 
   ### Order CpGs by genomic location ###
