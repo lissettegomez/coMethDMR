@@ -7,13 +7,14 @@
 #' @param arrayType Type of array, 450k or EPIC
 #'
 #' @return list of two items:
-#'   1. Contiguous_Regions - a data frame with CpG = CpG name,
+#'    1. Contiguous_Regions - a data frame with CpG = CpG name,
 #'    Chr = chromosome number,
 #'    MAPINFO = genomic position,
 #'    r_drop = correlation between the CpG with rest of the CpGs,
 #'    keep = indicator for co-methylated CpG,
 #'    keep_contiguous = cotiguous comethylated subregion number
-#'    2. CpGs_subregions - lists of CpGs in each contiguous co-methylated subregion
+#'    2. CpGs_subregions - lists of CpGs in each contiguous co-methylated
+#'       subregion
 #' @export
 #'
 #' @examples
