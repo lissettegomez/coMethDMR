@@ -1,17 +1,19 @@
-
-
 #
 #' Wrapper Function to find comethyalted regions
 #'
 #' @param CpGs_char vector of CpGs
-#' @param betaMatrix matrix of beta values, with rownames = CpG ids,
+#' @param betaMatrix matrix of beta values, with row names = CpG ids,
 #'    column names = sample ids
+#' @param arrayType Type of array, 450k or EPIC
 #'
 #' @return list of two items:
-#'   1. Contiguous_Regions - a data frame of CpG location (CpG, Chr, MAPINFO),
-#    r_drop (correlation between the CpG with rest of the CpGs),
-#    indicator for contiguous co-methylated CpGs (keep, keep.contiguous)
-#    2. CpGs_subregions - lists of CpGs in each contiguous co-methylated region
+#'   1. Contiguous_Regions - a data frame with CpG = CpG name,
+#'    Chr = chromosome number,
+#'    MAPINFO = genomic position,
+#'    r_drop = correlation between the CpG with rest of the CpGs,
+#'    keep = indicator for co-methylated CpG,
+#'    keep_contiguous = cotiguous comethylated subregion number
+#'    2. CpGs_subregions - lists of CpGs in each contiguous co-methylated subregion
 #' @export
 #'
 #' @examples
@@ -20,11 +22,14 @@
 #'       "cg04824771", "cg09033563", "cg10150615", "cg18538332", "cg20007245",
 #'       "cg23131131", "cg25703541")
 #'    coMethWrapper(CpGsChr22_char, betaMatrixChr22_df)
-coMethWrapper <- function(CpGs_char, betaMatrix){
+CoMethSingleRegion <- function(CpGs_char, betaMatrix, arrayType=c("450k","EPIC"), ...){
+
+  arrayType <- match.arg(arrayType)
 
   ### Order CpGs by genomic location ###
   CpGsOrdered_df <- OrderCpGsByLocation(
-    CpGs_char, arrayType=c("450k"), output = "dataframe")
+    CpGs_char, arrayType, output = "dataframe"
+    )
 
   ### Extract beta matrix for the input CpGs ###
   betaCluster_mat <- betaMatrix[CpGsOrdered_df$cpg,]
@@ -39,23 +44,12 @@ coMethWrapper <- function(CpGs_char, betaMatrix){
   keepContiguousCpGs_df <- FindComethylatedRegions(CpGs_df = keepCpGs_df)
 
   ### Split CpG dataframe by Subregion ###
-  keepContiguousCpGs_ls <- SplitCpGDFbyRegion(keepContiguousCpGs_df, "450k")
+  keepContiguousCpGs_ls <- SplitCpGDFbyRegion(keepContiguousCpGs_df, arrayType)
 
   ### Create Output Data Frame  ###
-  output_df <- merge(
-    keepCpGs_df, keepContiguousCpGs_df, by.x = "CpG", by.y = "ProbeID", all.x = T)
-  output2_df <- merge(
-    CpGsOrdered_df, output_df, by.x = "cpg", by.y = "CpG")
-  order_idx <- order(output2_df$chr, output2_df$pos)
-  output3_df <- output2_df[order_idx,]
-  output3_df [is.na(output3_df)] <- 0
-  coMethCpGs_df <- data.frame(
-    CpG = output3_df$cpg,
-    Chr = output3_df$chr,
-    MAPINFO = output3_df$pos,
-    r_drop = output3_df$r_drop,
-    keep = output3_df$keep,
-    keep_contiguous = output3_df$Subregion)
+  coMethCpGs_df <- CreateOutputDF(
+    keepCpGs_df, keepContiguousCpGs_df, CpGsOrdered_df
+    )
 
   ### Create output list of data frame and CpGs by subregion ###
   coMethCpGs_ls <- list(coMethCpGs_df, keepContiguousCpGs_ls)
