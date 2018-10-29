@@ -22,7 +22,7 @@
 #'    CpGsChr22_char<-c("cg02953382", "cg12419862", "cg24565820", "cg04234412",
 #'       "cg04824771", "cg09033563", "cg10150615", "cg18538332", "cg20007245",
 #'       "cg23131131", "cg25703541")
-#'    coMethWrapper(CpGsChr22_char, betaMatrixChr22_df)
+#'    CoMethSingleRegion(CpGsChr22_char, betaMatrixChr22_df)
 CoMethSingleRegion <- function(CpGs_char, betaMatrix, arrayType=c("450k","EPIC"), ...){
 
   arrayType <- match.arg(arrayType)

@@ -17,13 +17,14 @@ column names = sample ids}
 }
 \value{
 list of two items:
-  1. Contiguous_Regions - a data frame with CpG = CpG name,
+   1. Contiguous_Regions - a data frame with CpG = CpG name,
    Chr = chromosome number,
    MAPINFO = genomic position,
    r_drop = correlation between the CpG with rest of the CpGs,
    keep = indicator for co-methylated CpG,
    keep_contiguous = cotiguous comethylated subregion number
-   2. CpGs_subregions - lists of CpGs in each contiguous co-methylated subregion
+   2. CpGs_subregions - lists of CpGs in each contiguous co-methylated
+      subregion
 }
 \description{
 Wrapper Function to find comethyalted regions
@@ -33,5 +34,5 @@ Wrapper Function to find comethyalted regions
    CpGsChr22_char<-c("cg02953382", "cg12419862", "cg24565820", "cg04234412",
       "cg04824771", "cg09033563", "cg10150615", "cg18538332", "cg20007245",
       "cg23131131", "cg25703541")
-   coMethWrapper(CpGsChr22_char, betaMatrixChr22_df)
+   CoMethSingleRegion(CpGsChr22_char, betaMatrixChr22_df)
 }
