@@ -30,7 +30,7 @@ CoMethSingleRegion <- function(CpGs_char, betaMatrix, arrayType=c("450k","EPIC")
   ### Order CpGs by genomic location ###
   CpGsOrdered_df <- OrderCpGsByLocation(
     CpGs_char, arrayType, output = "dataframe"
-    )
+  )
 
   ### Extract beta matrix for the input CpGs ###
   betaCluster_mat <- betaMatrix[CpGsOrdered_df$cpg,]
@@ -50,7 +50,7 @@ CoMethSingleRegion <- function(CpGs_char, betaMatrix, arrayType=c("450k","EPIC")
   ### Create Output Data Frame  ###
   coMethCpGs_df <- CreateOutputDF(
     keepCpGs_df, keepContiguousCpGs_df, CpGsOrdered_df
-    )
+  )
 
   ### Create output list of data frame and CpGs by subregion ###
   coMethCpGs_ls <- list(coMethCpGs_df, keepContiguousCpGs_ls)
