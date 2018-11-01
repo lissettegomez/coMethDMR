@@ -15,11 +15,17 @@
 #' @export
 #'
 #' @examples
+#'    CloseByAllRegions(
+#'      genomicRegionType = "ISLANDInd", arrayType = "450k", maxGap = 50,
+#'      minCpGs = 3, fileType = "gmt", dataDir = "inst/extdata"
+#'    )
 #'
 CloseByAllRegions <- function(
-  genomicRegionType = c("TSS1500Ind", "TSS200Ind", "UTR5Ind", "EXON1Ind", "GENEBODYInd", "UTR3Ind", "ISLANDInd", "NSHOREInd", "SSHOREInd", "NSHELFInd", "SSHELFInd"),
-  arrayType = c("450k","EPIC"), maxGap, minCpGs, fileType = c("gmt","RDS"), dataDir, ...
+  genomicRegionType = c("ISLANDInd", "TSS1500Ind", "TSS200Ind", "UTR5Ind", "EXON1Ind", "GENEBODYInd", "UTR3Ind", "NSHOREInd", "SSHOREInd", "NSHELFInd", "SSHELFInd"),
+  arrayType = c("450k","EPIC"), maxGap = 200, minCpGs = 3, fileType = c("gmt","RDS"), dataDir, ...
   ){
+
+  arrayType <- match.arg(arrayType)
 
   ### Read gmtFile ###
   gmtFile <- read_gmt(paste("inst/extdata/", genomicRegionType, ".gmt", sep = ""))
@@ -29,29 +35,25 @@ CloseByAllRegions <- function(
 
   ### Find close by clusters in all the regions ###
   closeByRegions_ls <- lapply(
-    gmtFile3CpGs_ls, CloseBySingleRegion, arrayType = arrayType, maxGap, minCpGs
+    gmtFile3CpGs_ls, CloseBySingleRegion, arrayType, maxGap, minCpGs
   )
 
   ### Remove 'NULL' elements of the list ###
   closeByRegionsNoNull_ls <- unlist(closeByRegions_ls, recursive = F)
 
-  ### Order CpGs in each cluster by location ###
-  closeByRegionsOrdered_ls <- lapply(
-    closeByRegionsNoNull_ls, OrderCpGsByLocation, arrayType = arrayType, output = "vector"
-  )
-
   ### Order CpGs in each cluster by location to name the cluster ###
   closeByRegionsOrderedDF_ls <- lapply(
-    closeByRegionsNoNull_ls, OrderCpGsByLocation, arrayType = arrayType, output = "dataframe"
+    closeByRegionsNoNull_ls, OrderCpGsByLocation, arrayType, output = "dataframe"
   )
 
   ### Name each cluster with genomic region ###
   closeByRegionsNames_ls <- lapply(closeByRegionsOrderedDF_ls, NameRegion)
 
-  #names(closeByRegionsOrdered_ls) <- closeByRegionsNames_ls
+  ### Order CpGs in each cluster by location ###
+  closeByRegionsOrdered_ls <- lapply(closeByRegionsOrderedDF_ls, function(x) x[,"cpg"])
 
   ### Create gmt file ###
-  out_CloseByRegions <- create_pathwaySet(
+  out_CloseByRegions <- CreatePathwayCollection(
     pathways = closeByRegionsOrdered_ls, TERMS = unlist(closeByRegionsNames_ls)
   )
 
