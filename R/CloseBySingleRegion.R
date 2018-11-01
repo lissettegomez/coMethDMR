@@ -19,7 +19,7 @@
 #'        "cg19890033", "cg20566587", "cg27505880")
 #'    CloseBySingleRegion(CpGs_char, arrayType="450k", maxGap=100, minCpGs=3)
 #'
-CloseBySingleRegion <- function(CpGs_char, arrayType=c("450k","EPIC"), maxGap, minCpGs){
+CloseBySingleRegion <- function(CpGs_char, arrayType=c("450k","EPIC"), maxGap = 200, minCpGs = 3){
 
   CpGsOrdered_df <- OrderCpGsByLocation(CpGs_char, arrayType, output = "dataframe")
 
@@ -29,24 +29,15 @@ CloseBySingleRegion <- function(CpGs_char, arrayType=c("450k","EPIC"), maxGap, m
   CpGsOrdered_df$cluster <- clusterMaker(chr, pos, maxGap = maxGap)
 
   ### Create list of vectors of CpGs in each cluster ###
-  clusterNum <- unique(CpGsOrdered_df$cluster)
-  CpGsRegion_ls <- list()
-
-  cluster <- NULL
-  for (i in clusterNum [1:length(clusterNum)]){
-
-    region <- subset(CpGsOrdered_df, cluster== i)
-    CpGsRegion_ls[[i]] <- region$cpg
-
-  }
+  CpGsRegion_ls <- split(CpGsOrdered_df$cpg, CpGsOrdered_df$cluster)
 
   ### Filter for clusters with number of CpGs >= minCpGs ###
-  CpGsRegionMinCpGs_ls <- CpGsRegion_ls[lapply(CpGsRegion_ls, length) >= minCpGs]
+  CpGsRegionMinCpGs_ls <- CpGsRegion_ls[lengths(CpGsRegion_ls) >= minCpGs]
 
   if (length(CpGsRegionMinCpGs_ls) > 0 ){
-
     CpGsRegionMinCpGs_ls
-
+  } else {
+    NULL
   }
 
 }
