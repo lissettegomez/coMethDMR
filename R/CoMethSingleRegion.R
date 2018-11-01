@@ -42,10 +42,14 @@ CoMethSingleRegion <- function(CpGs_char, betaMatrix, arrayType=c("450k","EPIC")
   keepCpGs_df <- MarkComethylatedCpGs(betaCluster_mat = betaClusterTransp_mat)
 
   ### Find contiguous comethylated regions ###
-  keepContiguousCpGs_df <- FindComethylatedRegions(CpGs_df = keepCpGs_df)
+  keepContiguousCpGs_df <- FindComethylatedRegions(
+    CpGs_df = keepCpGs_df
+  )
 
   ### Split CpG dataframe by Subregion ###
-  keepContiguousCpGs_ls <- SplitCpGDFbyRegion(keepContiguousCpGs_df, arrayType)
+  keepContiguousCpGs_ls <- SplitCpGDFbyRegion(
+    keepContiguousCpGs_df, arrayType
+  )
 
   ### Create Output Data Frame  ###
   coMethCpGs_df <- CreateOutputDF(
@@ -53,8 +57,11 @@ CoMethSingleRegion <- function(CpGs_char, betaMatrix, arrayType=c("450k","EPIC")
   )
 
   ### Create output list of data frame and CpGs by subregion ###
-  coMethCpGs_ls <- list(coMethCpGs_df, keepContiguousCpGs_ls)
-  names(coMethCpGs_ls) <- c("Contiguous_Regions", "CpGs_subregions" )
+  coMethCpGs_ls <- list(
+    contiguousRegions = coMethCpGs_df,
+    CpGsSubregions = keepContiguousCpGs_ls
+  )
+
 
   coMethCpGs_ls
 

@@ -39,8 +39,8 @@ CreateOutputDF <- function(keepCpGs_df, keepContiguousCpGs_df, CpGsOrdered_df){
   output2_df <- merge(
     CpGsOrdered_df, output_df, by.x = "cpg", by.y = "CpG"
   )
-  order_idx <- order(output2_df$chr, output2_df$pos)
-  output3_df <- output2_df[order_idx,]
+
+  output3_df <- output2_df[order(output2_df$chr, output2_df$pos), ]
   output3_df [is.na(output3_df)] <- 0
 
   coMethCpGs_df <- data.frame(
