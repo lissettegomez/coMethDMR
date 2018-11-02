@@ -4,13 +4,14 @@
 \alias{CloseByAllRegions}
 \title{Extract clusters of close by CpGs from all genomic regions}
 \usage{
-CloseByAllRegions(genomicRegionType = c("TSS1500Ind", "TSS200Ind",
-  "UTR5Ind", "EXON1Ind", "GENEBODYInd", "UTR3Ind", "ISLANDInd",
-  "NSHOREInd", "SSHOREInd", "NSHELFInd", "SSHELFInd"),
-  arrayType = c("450k", "EPIC"), maxGap, minCpGs, output = c("RDS",
-  "GMT"), outputPath, ...)
+CloseByAllRegions(genomicRegionType = c("ISLAND", "TSS1500", "TSS200",
+  "UTR5", "EXON1", "GENEBODY", "UTR3", "NSHORE", "SSHORE", "NSHELF",
+  "SSHELF"), arrayType = c("450k", "EPIC"), maxGap = 200,
+  minCpGs = 3, fileType = c("gmt", "RDS"), dataDir, ...)
 }
 \arguments{
+\item{genomicRegionType}{Type of region}
+
 \item{arrayType}{Type of array, 450k or EPIC}
 
 \item{maxGap}{an integer, genomic locations within maxGap from each other
@@ -18,9 +19,11 @@ are placed into the same cluster}
 
 \item{minCpGs}{an integer, minimum number of CpGs for resulting regions}
 
-\item{output}{the output files can be saved as .gmt or .RDS}
+\item{fileType}{the output files can be saved as .gmt or .RDS,
+.gmt files can be open as flat text file, .RDS files are 50% the size of
+.gmt files, but cannot be open}
 
-\item{outputPath}{link to the folder where the filtered files will be saved}
+\item{dataDir}{link to the directory where the filtered files will be saved}
 
 \item{...}{}
 }
@@ -29,4 +32,11 @@ a file with the close by regions
 }
 \description{
 Extract clusters of close by CpGs from all genomic regions
+}
+\examples{
+   CloseByAllRegions(
+     genomicRegionType = "ISLAND", arrayType = "450k", maxGap = 50,
+     minCpGs = 3, fileType = "gmt", dataDir = "inst"
+   )
+
 }

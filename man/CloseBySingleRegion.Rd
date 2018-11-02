@@ -4,8 +4,8 @@
 \alias{CloseBySingleRegion}
 \title{Extract clusters of close by CpGs from a genomic region}
 \usage{
-CloseBySingleRegion(CpGs_char, arrayType = c("450k", "EPIC"), maxGap,
-  minCpGs)
+CloseBySingleRegion(CpGs_char, arrayType = c("450k", "EPIC"),
+  maxGap = 200, minCpGs = 3)
 }
 \arguments{
 \item{CpGs_char}{a list of CpG ids}
