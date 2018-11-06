@@ -4,12 +4,17 @@
 \alias{SplitCpGDFbyRegion}
 \title{Split CpG dataframe by Subregion}
 \usage{
-SplitCpGDFbyRegion(CpGsSubregions_df, arrayType = c("450k", "EPIC"))
+SplitCpGDFbyRegion(CpGsSubregions_df, arrayType = c("450k", "EPIC"),
+  returnAllCpGs = TRUE)
 }
 \arguments{
 \item{CpGsSubregions_df}{data frame with CpG and subregion number}
 
 \item{arrayType}{Type of array, 450k or EPIC}
+
+\item{returnAllCpGs}{indicates if outputting all the CpGs in the region
+when there is not a contiguous comethylated region or
+only the CpGs in the contiguous comethylated regions}
 }
 \value{
 a list of comethylated subregions CpGs for a pre-defined region

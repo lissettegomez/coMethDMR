@@ -5,7 +5,7 @@
 \title{Wrapper Function to find comethyalted regions}
 \usage{
 CoMethSingleRegion(CpGs_char, betaMatrix, arrayType = c("450k", "EPIC"),
-  ...)
+  returnAllCpGs = TRUE, ...)
 }
 \arguments{
 \item{CpGs_char}{vector of CpGs}
@@ -14,6 +14,10 @@ CoMethSingleRegion(CpGs_char, betaMatrix, arrayType = c("450k", "EPIC"),
 column names = sample ids}
 
 \item{arrayType}{Type of array, 450k or EPIC}
+
+\item{returnAllCpGs}{indicates if outputting all the CpGs in the region
+when there is not a contiguous comethylated region or
+only the CpGs in the contiguous comethylated regions}
 }
 \value{
 list of two items:

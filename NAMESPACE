@@ -2,6 +2,7 @@
 
 export(CloseByAllRegions)
 export(CloseBySingleRegion)
+export(CoMethAllRegions)
 export(CoMethSingleRegion)
 export(CreateOutputDF)
 export(FindComethylatedRegions)

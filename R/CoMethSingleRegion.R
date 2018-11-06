@@ -5,7 +5,9 @@
 #' @param betaMatrix matrix of beta values, with row names = CpG ids,
 #'    column names = sample ids
 #' @param arrayType Type of array, 450k or EPIC
-#'
+#' @param returnAllCpGs indicates if outputting all the CpGs in the region
+#'    when there is not a contiguous comethylated region or
+#'    only the CpGs in the contiguous comethylated regions
 #' @return list of two items:
 #'    1. Contiguous_Regions - a data frame with CpG = CpG name,
 #'    Chr = chromosome number,
@@ -23,7 +25,7 @@
 #'       "cg04824771", "cg09033563", "cg10150615", "cg18538332", "cg20007245",
 #'       "cg23131131", "cg25703541")
 #'    CoMethSingleRegion(CpGsChr22_char, betaMatrixChr22_df)
-CoMethSingleRegion <- function(CpGs_char, betaMatrix, arrayType=c("450k","EPIC"), ...){
+CoMethSingleRegion <- function(CpGs_char, betaMatrix, arrayType = c("450k","EPIC"), returnAllCpGs = TRUE){
 
   arrayType <- match.arg(arrayType)
 
