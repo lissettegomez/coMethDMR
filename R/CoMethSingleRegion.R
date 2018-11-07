@@ -25,7 +25,9 @@
 #'       "cg04824771", "cg09033563", "cg10150615", "cg18538332", "cg20007245",
 #'       "cg23131131", "cg25703541")
 #'    CoMethSingleRegion(CpGsChr22_char, betaMatrixChr22_df)
-CoMethSingleRegion <- function(CpGs_char, betaMatrix, arrayType = c("450k","EPIC"), returnAllCpGs = TRUE){
+CoMethSingleRegion <- function(CpGs_char, betaMatrix,
+                               arrayType = c("450k","EPIC"),
+                               returnAllCpGs = TRUE){
 
   arrayType <- match.arg(arrayType)
 
@@ -50,7 +52,7 @@ CoMethSingleRegion <- function(CpGs_char, betaMatrix, arrayType = c("450k","EPIC
 
   ### Split CpG dataframe by Subregion ###
   keepContiguousCpGs_ls <- SplitCpGDFbyRegion(
-    keepContiguousCpGs_df, arrayType
+    keepContiguousCpGs_df, arrayType, returnAllCpGs
   )
 
   ### Create Output Data Frame  ###

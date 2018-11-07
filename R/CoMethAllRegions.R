@@ -26,8 +26,13 @@
 #'    a file with the contiguous comethylated CpG regions
 #' @export
 #'
-#' @examples
-CoMethAllRegions <- function(closeByGenomicRegionFile, betaMatrix, arrayType = c("450k","EPIC"), returnAllCpGs = TRUE, fileType = c("gmt","RDS"), dataDir, ...){
+#' @example
+#'
+CoMethAllRegions <- function(betaMatrix,
+                             file, fileType = c("gmt","RDS"),
+                             arrayType = c("450k","EPIC"),
+                             returnAllCpGs = FALSE,
+                             ...){
 
   arrayType <- match.arg(arrayType)
   fileType <- match.arg(fileType)
@@ -41,27 +46,27 @@ CoMethAllRegions <- function(closeByGenomicRegionFile, betaMatrix, arrayType = c
 
   ### Extract contiguous comethylated region(s) from each close by region ###
   coMethCpGsAllREgions_ls <- lapply(
-    unname(closeByGenomicRegion_ls$pathways), CoMethSingleRegion, betaMatrix, arrayType
+    unname(closeByGenomicRegion_ls$pathways),
+    FUN = CoMethSingleRegion,
+    betaMatrix, arrayType, returnAllCpGs
   )
-
 
 
   ### Return list of cotiguous comethylated CpGs by Regions ###
+  out_ContigRegions <- unlist(
+    lapply(coMethCpGsAllREgions_ls, `[[`, 1),
+    recursive = FALSE
+  )
   out_coMethCpGsAll <- unlist(
-    lapply(coMethCpGsAllREgions_ls, function(x) x[[2]]), recursive = F
+    lapply(coMethCpGsAllREgions_ls, `[[`, 2),
+    recursive = FALSE
   )
 
-  ### Select and return output ###
-  path_char <- paste(dataDir, "coMethAllRegions", sep = "/")
-  fileName <- paste(path_char, fileType, sep = ".")
-  if (fileType == "RDS") {
-    saveRDS(out_coMethCpGsAll, file = fileName)
-  } else {
-    write_gmt(out_coMethCpGsAll, file = fileName)
-  }
 
-
-  out_coMethCpGsAll
-
+  ### return output ###
+  list(
+    CpGsSubregions    = out_coMethCpGsAll,
+    contiguousRegions = out_ContigRegions
+  )
 
 }
