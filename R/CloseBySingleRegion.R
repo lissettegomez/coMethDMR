@@ -19,7 +19,7 @@
 #'        "cg19890033", "cg20566587", "cg27505880")
 #'    CloseBySingleRegion(CpGs_char, arrayType="450k", maxGap=100, minCpGs=3)
 #'
-CloseBySingleRegion <- function(CpGs_char, arrayType=c("450k","EPIC"), maxGap = 200, minCpGs = 3){
+CloseBySingleRegion <- function(CpGs_char, arrayType = c("450k","EPIC"), maxGap = 200, minCpGs = 3){
 
   CpGsOrdered_df <- OrderCpGsByLocation(CpGs_char, arrayType, output = "dataframe")
 

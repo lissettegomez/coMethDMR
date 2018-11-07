@@ -5,7 +5,7 @@
 \title{Wrapper Function to find comethyalted regions}
 \usage{
 CoMethSingleRegion(CpGs_char, betaMatrix, arrayType = c("450k", "EPIC"),
-  returnAllCpGs = TRUE, ...)
+  returnAllCpGs = TRUE)
 }
 \arguments{
 \item{CpGs_char}{vector of CpGs}

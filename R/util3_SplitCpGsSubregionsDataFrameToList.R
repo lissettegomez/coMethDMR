@@ -21,18 +21,26 @@
 #'    CpGsSubregions_df <- FindComethylatedRegions(CpGs_df)
 #'    SplitCpGDFbyRegion(CpGsSubregions_df, "450k")
 #'
-SplitCpGDFbyRegion <- function(CpGsSubregions_df, arrayType = c("450k", "EPIC"), returnAllCpGs = TRUE){
+SplitCpGDFbyRegion <- function(CpGsSubregions_df,
+                               arrayType = c("450k", "EPIC"),
+                               returnAllCpGs = TRUE){
 
   arrayType <- match.arg(arrayType)
 
-  if (returnAllCpGs == FALSE & all(CpGsSubregions_df$Subregion==0)){
+  ### Output 'NULL' if thre is not a contiguous comethylated region ###
+  # Function 'all' checks all the elements of the vector
+  if (returnAllCpGs == FALSE & all(CpGsSubregions_df$Subregion == 0)){
 
     NULL
 
   } else {
 
+    ### If returnAllCpGs == TRUE, output all the CpGs in the region ###
+
     ### Split CpGs-Subregions dataframe to list ###
-    subRegion_ls <- split(CpGsSubregions_df$ProbeID, CpGsSubregions_df$Subregion)
+    subRegion_ls <- split(
+      CpGsSubregions_df$ProbeID, CpGsSubregions_df$Subregion
+    )
 
     ### Output dataframes with annotation for each subregions ###
     subRegionAnnotationDF_ls <- lapply(

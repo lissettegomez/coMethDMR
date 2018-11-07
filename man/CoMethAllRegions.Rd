@@ -4,15 +4,18 @@
 \alias{CoMethAllRegions}
 \title{Extract contiguous comethylated CpG regions}
 \usage{
-CoMethAllRegions(closeByGenomicRegionFile, betaMatrix,
-  arrayType = c("450k", "EPIC"), returnAllCpGs = TRUE,
-  fileType = c("gmt", "RDS"), dataDir, ...)
+CoMethAllRegions(betaMatrix, file, fileType = c("gmt", "RDS"),
+  arrayType = c("450k", "EPIC"), returnAllCpGs = FALSE, ...)
 }
 \arguments{
-\item{closeByGenomicRegionFile}{a file with the close by regions}
-
 \item{betaMatrix}{matrix of beta values, with row names = CpG ids,
 column names = sample ids}
+
+\item{file}{name of the file with the close by regions}
+
+\item{fileType}{the output files can be saved as .gmt or .RDS,
+.gmt files can be open as flat text file, .RDS files are 50% the size of
+.gmt files, but cannot be open}
 
 \item{arrayType}{Type of array, 450k or EPIC}
 
@@ -20,26 +23,24 @@ column names = sample ids}
 when there is not a contiguous comethylated region or
 only the CpGs in the contiguous comethylated regions}
 
-\item{fileType}{the output files can be saved as .gmt or .RDS,
-.gmt files can be open as flat text file, .RDS files are 50% the size of
-.gmt files, but cannot be open}
-
-\item{dataDir}{link to the directory where the filtered files will be saved}
-
 \item{...}{}
 }
 \value{
-a text file with a list of two items for each region:
-   1. Contiguous_Regions - a data frame with CpG = CpG name,
+a list of two items:
+   1. Contiguous_Regions - a data frame with
+   CpG = CpG name,
    Chr = chromosome number,
    MAPINFO = genomic position,
    r_drop = correlation between the CpG with rest of the CpGs,
    keep = indicator for co-methylated CpG,
    keep_contiguous = cotiguous comethylated subregion number
+   for all the regions
    2. CpGs_subregions - lists of CpGs in each contiguous co-methylated
-   subregion
-   a file with the contiguous comethylated CpG regions
+   subregion from all the regions
 }
 \description{
 Extract contiguous comethylated CpG regions
+}
+\examples{
+
 }

@@ -1,32 +1,32 @@
 
 #' Extract contiguous comethylated CpG regions
 #'
-#' @param closeByGenomicRegionFile a file with the close by regions
 #' @param betaMatrix matrix of beta values, with row names = CpG ids,
 #'    column names = sample ids
-#' @param arrayType Type of array, 450k or EPIC
+#' @param file name of the file with the close by regions
 #' @param fileType the output files can be saved as .gmt or .RDS,
 #'    .gmt files can be open as flat text file, .RDS files are 50% the size of
 #'    .gmt files, but cannot be open
-#' @param dataDir link to the directory where the filtered files will be saved
+#' @param arrayType Type of array, 450k or EPIC
 #' @param returnAllCpGs indicates if outputting all the CpGs in the region
 #'    when there is not a contiguous comethylated region or
 #'    only the CpGs in the contiguous comethylated regions
 #' @param ...
 #'
-#' @return a text file with a list of two items for each region:
-#'    1. Contiguous_Regions - a data frame with CpG = CpG name,
+#' @return a list of two items:
+#'    1. Contiguous_Regions - a data frame with
+#'    CpG = CpG name,
 #'    Chr = chromosome number,
 #'    MAPINFO = genomic position,
 #'    r_drop = correlation between the CpG with rest of the CpGs,
 #'    keep = indicator for co-methylated CpG,
 #'    keep_contiguous = cotiguous comethylated subregion number
+#'    for all the regions
 #'    2. CpGs_subregions - lists of CpGs in each contiguous co-methylated
-#'    subregion
-#'    a file with the contiguous comethylated CpG regions
+#'    subregion from all the regions
 #' @export
 #'
-#' @example
+#' @examples
 #'
 CoMethAllRegions <- function(betaMatrix,
                              file, fileType = c("gmt","RDS"),
@@ -38,13 +38,14 @@ CoMethAllRegions <- function(betaMatrix,
   fileType <- match.arg(fileType)
 
   ### Read file of close by CpGs ###
-  if (fileType == "RDS") {
-    closeByGenomicRegion_ls <- readRDS(closeByGenomicRegionFile)
-  } else {
-    closeByGenomicRegion_ls <- read_gmt(closeByGenomicRegionFile)
-  }
+  switch(fileType,
+         "RDS" = {closeByGenomicRegion_ls <- readRDS(file)},
+         "gmt" = {closeByGenomicRegion_ls <- read_gmt(file)}
+  )
+
 
   ### Extract contiguous comethylated region(s) from each close by region ###
+  # A pathway is a set of CpGs in a region
   coMethCpGsAllREgions_ls <- lapply(
     unname(closeByGenomicRegion_ls$pathways),
     FUN = CoMethSingleRegion,
@@ -53,10 +54,7 @@ CoMethAllRegions <- function(betaMatrix,
 
 
   ### Return list of cotiguous comethylated CpGs by Regions ###
-  out_ContigRegions <- unlist(
-    lapply(coMethCpGsAllREgions_ls, `[[`, 1),
-    recursive = FALSE
-  )
+  out_ContigRegions <- (lapply(coMethCpGsAllREgions_ls, `[[`, 1))
   out_coMethCpGsAll <- unlist(
     lapply(coMethCpGsAllREgions_ls, `[[`, 2),
     recursive = FALSE
