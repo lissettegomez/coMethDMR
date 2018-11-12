@@ -7,7 +7,7 @@
 CloseByAllRegions(genomicRegionType = c("ISLAND", "TSS1500", "TSS200",
   "UTR5", "EXON1", "GENEBODY", "UTR3", "NSHORE", "SSHORE", "NSHELF",
   "SSHELF"), arrayType = c("450k", "EPIC"), maxGap = 200,
-  minCpGs = 3, fileType = c("gmt", "RDS"), dataDir, ...)
+  minCpGs = 3, fileType = c("gmt", "RDS"), file, ...)
 }
 \arguments{
 \item{genomicRegionType}{Type of region}
@@ -23,7 +23,7 @@ are placed into the same cluster}
 .gmt files can be open as flat text file, .RDS files are 50% the size of
 .gmt files, but cannot be open}
 
-\item{dataDir}{link to the directory where the filtered files will be saved}
+\item{file}{file where the close by regions will be saved}
 
 \item{...}{}
 }
@@ -36,7 +36,7 @@ Extract clusters of close by CpGs from all genomic regions
 \examples{
    CloseByAllRegions(
      genomicRegionType = "ISLAND", arrayType = "450k", maxGap = 50,
-     minCpGs = 3, fileType = "gmt", dataDir = "inst"
+     minCpGs = 3, fileType = "gmt", file = "closeByRegions"
    )
 
 }
