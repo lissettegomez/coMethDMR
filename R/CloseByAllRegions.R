@@ -15,15 +15,20 @@
 #'
 #' @return a file with the close by regions
 #'
+#' @details For \code{maxGap} = 200 and \code{minCpGs} = 3, we have calculated
+#'    the close-by regions output files already. They are in ...
+#'
 #' @importFrom pathwayPCA read_gmt write_gmt CreatePathwayCollection
 #'
 #' @export
 #'
 #' @examples
-#'    CloseByAllRegions(
+#' \dontrun{
+#'   CloseByAllRegions(
 #'      genomicRegionType = "ISLAND", arrayType = "450k", maxGap = 50,
 #'      minCpGs = 3, fileType = "gmt", file = "closeByRegions"
-#'    )
+#'   )
+#' }
 #'
 CloseByAllRegions <- function(
   genomicRegionType = c("ISLAND", "TSS1500", "TSS200", "UTR5", "EXON1",
@@ -36,9 +41,11 @@ CloseByAllRegions <- function(
   ){
 
   if(maxGap == 200 & minCpGs == 3){
-    print(
-      paste("A file of close by CpGs for this region already exists: /inst/extdata/", genomicRegionType,"3_200.rda",sep=""), quote = F
-    )
+    # use warning() instead
+    # print(
+    #   paste("A file of close by CpGs for this region already exists: /inst/extdata/",
+    #         genomicRegionType, "3_200.rda", sep = ""), quote = F
+    # )
   } else {
 
     genomicRegionType <- match.arg(genomicRegionType)
@@ -79,7 +86,8 @@ CloseByAllRegions <- function(
 
     ### Order CpGs in each cluster by location ###
     closeByRegionsOrdered_ls <- lapply(
-      closeByRegionsOrderedDF_ls, function(x) x[,"cpg"])
+      closeByRegionsOrderedDF_ls, `[`, "cpg"    # function(x) x[,"cpg"]
+    )
 
     ### Create gmt file ###
     out_CloseByRegions <- CreatePathwayCollection(
@@ -90,11 +98,16 @@ CloseByAllRegions <- function(
     ### Select and return output ###
     fileType <- match.arg(fileType)
     fileName <- paste(file, fileType, sep = ".")
+    message(
+      paste("Writing to file", fileName)
+    )
     if (fileType == "RDS") {
       saveRDS(out_CloseByRegions, file = fileName)
     } else {
       write_gmt(out_CloseByRegions, file = fileName)
     }
+
+    # END if else
   }
 
 }

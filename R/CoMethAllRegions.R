@@ -50,9 +50,14 @@ CoMethAllRegions <- function(betaMatrix,
   fileType <- match.arg(fileType)
 
   ### Read file of close by CpGs ###
-  switch(fileType,
-         "RDS" = {closeByGenomicRegion_ls <- readRDS(file)},
-         "gmt" = {closeByGenomicRegion_ls <- read_gmt(file)}
+  switch(
+    fileType,
+    "RDS" = {
+      closeByGenomicRegion_ls <- readRDS(file)
+    },
+    "gmt" = {
+      closeByGenomicRegion_ls <- read_gmt(file)
+    }
   )
 
 
