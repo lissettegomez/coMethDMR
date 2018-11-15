@@ -9,14 +9,19 @@
 #' @param minCpGs an integer, minimum number of CpGs for resulting regions
 #' @param fileType the output files can be saved as .gmt or .RDS,
 #'    .gmt files can be open as flat text file, .RDS files are 50% the size of
-#'    .gmt files, but cannot be open
+#'    .gmt files, but they only can be read in R enviroment.
 #' @param file file where the close by regions will be saved
 #' @param ...
 #'
 #' @return a file with the close by regions
 #'
 #' @details For \code{maxGap} = 200 and \code{minCpGs} = 3, we have calculated
-#'    the close-by regions output files already. They are in ...
+#'    the close-by regions output files already. They are in /inst/extdata/
+#'    File extension should not be supplied.
+#'    We add it automatically through the fileType argument.
+#'    Creating and writing this file will take around 25 minutes for
+#'    genomicRegionType = "ISLAND"
+#'
 #'
 #' @importFrom pathwayPCA read_gmt write_gmt CreatePathwayCollection
 #'
@@ -30,22 +35,25 @@
 #'   )
 #' }
 #'
-CloseByAllRegions <- function(
+WriteCloseByAllRegions <- function(
+  file,
   genomicRegionType = c("ISLAND", "TSS1500", "TSS200", "UTR5", "EXON1",
                         "GENEBODY", "UTR3", "NSHORE", "SSHORE", "NSHELF", "SSHELF"),
   arrayType = c("450k","EPIC"),
   maxGap = 200,
   minCpGs = 3,
   fileType = c("gmt","RDS"),
-  file, ...
+  ...
   ){
 
   if(maxGap == 200 & minCpGs == 3){
-    # use warning() instead
-    # print(
-    #   paste("A file of close by CpGs for this region already exists: /inst/extdata/",
-    #         genomicRegionType, "3_200.rda", sep = ""), quote = F
-    # )
+
+    warning(
+      paste("A file of close by CpGs for maxGap = 200 and minCpGs = 3
+            already exist at /inst/extdata/",
+            genomicRegionType, "3_200.rda", sep = "")
+      )
+
   } else {
 
     genomicRegionType <- match.arg(genomicRegionType)
@@ -86,7 +94,7 @@ CloseByAllRegions <- function(
 
     ### Order CpGs in each cluster by location ###
     closeByRegionsOrdered_ls <- lapply(
-      closeByRegionsOrderedDF_ls, `[`, "cpg"    # function(x) x[,"cpg"]
+      closeByRegionsOrderedDF_ls, function(x) x[,"cpg"]
     )
 
     ### Create gmt file ###
