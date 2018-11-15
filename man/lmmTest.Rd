@@ -4,16 +4,21 @@
 \alias{lmmTest}
 \title{Fit Mixed Model}
 \usage{
-lmmTest(betaMatrix, pheno, method = c("randomCoefficientMixedModel",
-  "mixedModelWithInterceptOnly"))
+lmmTest(betaMatrix, pheno_df, contPheno_char, covariates_char,
+  modelType = c("randCoeffMixed", "mixed"))
 }
 \arguments{
 \item{betaMatrix}{matrix of beta values for one contiguous comethylated region,
 with row names = CpG ids, column names = sample ids}
 
-\item{pheno}{a data frame with phenotype and covariates}
+\item{pheno_df}{a data frame with phenotype and covariates
+(sample ID column = "Sample")}
 
-\item{model}{model used to fit mixed model}
+\item{contPheno_char}{character string of the phenotype name}
+
+\item{covariates_char}{character vector of covariate names}
+
+\item{modelType}{model used to fit mixed model}
 }
 \value{
 list of pvalue and median correlation
@@ -21,4 +26,15 @@ list of pvalue and median correlation
 }
 \description{
 Fit Mixed Model
+}
+\examples{
+  data(betaMatrixChr22_df)
+  CpGsChr22_char<-c("cg02953382", "cg12419862", "cg24565820", "cg04234412",
+      "cg04824771", "cg09033563", "cg10150615", "cg18538332", "cg20007245",
+      "cg23131131", "cg25703541")
+  coMethCpGs <- CoMethSingleRegion(CpGsChr22_char, betaMatrixChr22_df)
+  coMethBetaMatrix <- betaMatrixChr22_df[coMethCpGs$CpGsSubregions[[1]], ]
+  data(pheno_df)
+  lmmTest(betaMatrix = coMethBetaMatrix, pheno_df, contPheno_char = "stage",
+      covariates_char = c("age.brain", "sex"), modelType = "randCoeffMixed")
 }
