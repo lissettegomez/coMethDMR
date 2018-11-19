@@ -3,10 +3,8 @@
 #'
 #' @param betaMatrix matrix of beta values, with row names = CpG ids,
 #'    column names = sample ids
-#' @param file name of the file with the close by regions
-#' @param fileType the output files can be saved as .gmt or .RDS,
-#'    .gmt files can be open as flat text file, .RDS files are 50% the size of
-#'    .gmt files, but cannot be open
+#' @param file name of input file with close by regions
+#' @param fileType extension of input file: "gmt" or "RDS"
 #' @param arrayType Type of array, 450k or EPIC
 #' @param returnAllCpGs indicates if outputting all the CpGs in the region
 #'    when there is not a contiguous comethylated region or

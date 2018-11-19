@@ -9,7 +9,7 @@
 #' @param minCpGs an integer, minimum number of CpGs for resulting regions
 #' @param fileType the output files can be saved as .gmt or .RDS,
 #'    .gmt files can be open as flat text file, .RDS files are 50% the size of
-#'    .gmt files, but they only can be read in R enviroment.
+#'    .gmt files, but they can only be read in R enviroment.
 #' @param file file where the close by regions will be saved
 #' @param ...
 #'
@@ -17,8 +17,8 @@
 #'
 #' @details For \code{maxGap} = 200 and \code{minCpGs} = 3, we have calculated
 #'    the close-by regions output files already. They are in /inst/extdata/
-#'    File extension should not be supplied.
-#'    We add it automatically through the fileType argument.
+#'    File extension should not be supplied. We add it automatically through
+#'    the fileType argument.
 #'    Creating and writing this file will take around 25 minutes for
 #'    genomicRegionType = "ISLAND"
 #'

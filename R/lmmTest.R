@@ -1,5 +1,5 @@
 
-#' Fit Mixed Model
+#' Fit mixed model for one region
 #'
 #' @param betaMatrix matrix of beta values for one contiguous comethylated region,
 #'    with row names = CpG ids, column names = sample ids

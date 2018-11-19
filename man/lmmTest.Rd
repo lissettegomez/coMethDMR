@@ -2,7 +2,7 @@
 % Please edit documentation in R/lmmTest.R
 \name{lmmTest}
 \alias{lmmTest}
-\title{Fit Mixed Model}
+\title{Fit mixed model for one region}
 \usage{
 lmmTest(betaMatrix, pheno_df, contPheno_char, covariates_char,
   modelType = c("randCoeffMixed", "mixed"))
@@ -25,7 +25,7 @@ list of pvalue and median correlation
    for the contiguous comethylated region being tested
 }
 \description{
-Fit Mixed Model
+Fit mixed model for one region
 }
 \examples{
   data(betaMatrixChr22_df)

@@ -23,7 +23,7 @@ are placed into the same cluster}
 
 \item{fileType}{the output files can be saved as .gmt or .RDS,
 .gmt files can be open as flat text file, .RDS files are 50% the size of
-.gmt files, but they only can be read in R enviroment.}
+.gmt files, but they can only be read in R enviroment.}
 
 \item{...}{}
 }
@@ -36,8 +36,8 @@ Extract clusters of close by CpGs from all genomic regions
 \details{
 For \code{maxGap} = 200 and \code{minCpGs} = 3, we have calculated
    the close-by regions output files already. They are in /inst/extdata/
-   File extension should not be supplied.
-   We add it automatically through the fileType argument.
+   File extension should not be supplied. We add it automatically through
+   the fileType argument.
    Creating and writing this file will take around 25 minutes for
    genomicRegionType = "ISLAND"
 }

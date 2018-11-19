@@ -11,11 +11,9 @@ CoMethAllRegions(betaMatrix, file, fileType = c("gmt", "RDS"),
 \item{betaMatrix}{matrix of beta values, with row names = CpG ids,
 column names = sample ids}
 
-\item{file}{name of the file with the close by regions}
+\item{file}{name of input file with close by regions}
 
-\item{fileType}{the output files can be saved as .gmt or .RDS,
-.gmt files can be open as flat text file, .RDS files are 50% the size of
-.gmt files, but cannot be open}
+\item{fileType}{extension of input file: "gmt" or "RDS"}
 
 \item{arrayType}{Type of array, 450k or EPIC}
 
