@@ -16,7 +16,7 @@
 #' @param modelType model used to fit mixed model
 #' @param outFile output csv file with the results for the mixed model analysis
 #'
-#' @return csv file with RegionID, p-value and median correlation value for
+#' @return text file with RegionID, p-value and median correlation value for
 #'    each contiguous comethylated region tested.
 #' @export
 #'

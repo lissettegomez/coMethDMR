@@ -35,7 +35,7 @@ only the CpGs in the contiguous comethylated regions}
 \item{outFile}{output csv file with the results for the mixed model analysis}
 }
 \value{
-csv file with RegionID, p-value and median correlation value for
+text file with RegionID, p-value and median correlation value for
    each contiguous comethylated region tested.
 }
 \description{
