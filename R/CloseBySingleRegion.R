@@ -1,14 +1,13 @@
 
-#' Extract clusters of close by CpGs from a genomic region
+#' Extract clusters of CpGs located closely in a genomic region
 #'
-#' @param CpGs_char a list of CpG ids
+#' @param CpGs_char a list of CpG IDs
 #' @param arrayType Type of array, 450k or EPIC
 #' @param maxGap an integer, genomic locations within maxGap from each other
 #'    are placed into the same cluster
-#' @param minCpGs an integer, minimum number of CpGs for resulting regions
+#' @param minCpGs an integer, minimum number of CpGs for the resulting CpG cluster
 #'
-#' @return a list, each item is a list of CpG ids in the contiguous region
-#'    (i.e. same cluster)
+#' @return a list, each item is a character vector of CpG IDs located closely (i.e. in the same cluster)
 #'
 #' @importFrom bumphunter clusterMaker
 #'
@@ -17,7 +16,7 @@
 #' @examples
 #'    CpGs_char <- c("cg02505293", "cg03618257", "cg04421269", "cg17885402",
 #'        "cg19890033", "cg20566587", "cg27505880")
-#'    CloseBySingleRegion(CpGs_char, arrayType="450k", maxGap=100, minCpGs=3)
+#'    cluster_ls <- CloseBySingleRegion(CpGs_char, arrayType="450k", maxGap=100, minCpGs=3)
 #'
 CloseBySingleRegion <- function(CpGs_char, arrayType = c("450k","EPIC"), maxGap = 200, minCpGs = 3){
 
