@@ -13,8 +13,12 @@
 
     ifelse(
       is.null(covariates_char),
-      rcMod_char <- paste(baseMod_char, randomCoef_char, contPheno_char, sep = " + "),
-      rcMod_char <- paste(baseMod_char, randomCoef_char, contPheno_char, cov_char, sep = " + ")
+      rcMod_char <- paste(
+        baseMod_char, randomCoef_char, contPheno_char, sep = " + "
+      ),
+      rcMod_char <- paste(
+        baseMod_char, randomCoef_char, contPheno_char, cov_char, sep = " + "
+      )
     )
 
 
