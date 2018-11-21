@@ -1,11 +1,10 @@
 #'  Alzheimer's Prefrontal Cortex (PFC) Methylation Data
 #'
-#' @description Subset of an Alzheimer's methylation data set,
+#' @description Subset of an Alzheimer's Disease methylation data set,
 #'   with beta values for CpGs.
 #'
-#' @format A subset of a data frame containing beta values for 52 CpGs in
-#'   one CpG island in 110 subjects.
-#'
+#' @format A data frame containing beta values for 52 CpGs in one CpG islands for 110 subjects. Each column is a sample,
+#' each row is a CpG.
 #'
 #' @source GEO accession: GSE59685
 "betaMatrix_ex4"
