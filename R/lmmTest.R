@@ -36,11 +36,12 @@ lmmTest <- function(betaMatrix, pheno_df, contPheno_char, covariates_char,
     v.names = "beta",
     direction = "long",
     time = colnames(betaMatrix[-ncol(betaMatrix)]),
-    timevar = "Sample")
+    timevar = "Sample"
+  )
 
   ### Calculate M values ###
   betaMatrixTransp_df$Mvalue <- log2(
-    betaMatrixTransp_df$beta/(1-betaMatrixTransp_df$beta)
+    betaMatrixTransp_df$beta / (1 - betaMatrixTransp_df$beta)
   )
 
   ### Merge transposed beta matrix with phenotype ###
@@ -52,15 +53,20 @@ lmmTest <- function(betaMatrix, pheno_df, contPheno_char, covariates_char,
   modelFormula_char <- .MakeLmmFormula(contPheno_char, covariates_char, modelType)
   tryCatch({
     f <- lmer(as.formula(modelFormula_char), betaMatrixPheno_df)
-    ps <- coef(summary(f))[2,5]
-  }, error=function(e){})
+  }, error = function(e){ NULL })
 
+  if(is.null(f)){
+    ps <- 1
+  } else {
+    ps <- coef(summary(f))[2, 5]
+  }
 
   ### Return results ###
   medianCorr <- median(cor(t(betaMatrix[-ncol(betaMatrix)])))
-  results <- list(ps,medianCorr)
-  names(results) <- c("Pval_Mixed_Model","Median_Corr")
-  results
 
+  list(
+    Pval_Mixed_Model = ps,
+    Median_Corr = medianCorr
+  )
 
 }
