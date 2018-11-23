@@ -1,26 +1,37 @@
 
 
-#' Extract clusters of close by CpGs from all genomic regions
+#' Extract clusters of close by CpGs from a list of pre-defined genomic regions
 #'
-#' @param genomicRegionType Type of region
-#' @param arrayType Type of array, 450k or EPIC
+#' @param file file where the resulting genomic regions will be saved
+#'
+#' @param genomicRegionType Type of inputing genomic region (e.g. "ISLAND" for CpG island)
+#'
+#' @param arrayType Type of array, can be "450k" or "EPIC"
+#'
 #' @param maxGap an integer, genomic locations within maxGap from each other
 #'    are placed into the same cluster
-#' @param minCpGs an integer, minimum number of CpGs for resulting regions
-#' @param fileType the output files can be saved as .gmt or .RDS,
-#'    .gmt files can be open as flat text file, .RDS files are 50% the size of
-#'    .gmt files, but they can only be read in R enviroment.
-#' @param file file where the close by regions will be saved
+#'
+#' @param minCpGs an integer, minimum number of CpGs for each resulting region
+#'
+#' @param fileType the output files can be saved as .gmt or .RDS.
+#'
+#'
 #' @param ...
 #'
-#' @return a file with the close by regions
+#' @return a file with the genomic regions containing CpGs located closely within each
+#'  inputing pre-defined genomic region
 #'
 #' @details For \code{maxGap} = 200 and \code{minCpGs} = 3, we have calculated
-#'    the close-by regions output files already. They are in /inst/extdata/
-#'    File extension should not be supplied. We add it automatically through
-#'    the fileType argument.
-#'    Creating and writing this file will take around 25 minutes for
-#'    genomicRegionType = "ISLAND"
+#'    the close-by regions output files already. They are in /inst/extdata/ folder.
+#'
+#'    File extension should not be supplied, it is automatically added via
+#'    the \code{fileType} argument in this function.
+#'
+#'    Note that .gmt files can be opened as flat text file. .RDS files are half the size of
+#'     .gmt files, but they can only be read in the R enviroment.
+#'
+#'    Creating and writing this file took about 25 minutes for
+#'    \code{genomicRegionType = "ISLAND"}
 #'
 #'
 #' @importFrom pathwayPCA read_gmt write_gmt CreatePathwayCollection
