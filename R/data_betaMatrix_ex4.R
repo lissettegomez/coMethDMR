@@ -7,4 +7,4 @@
 #' each row is a CpG.
 #'
 #' @source GEO accession: GSE59685
-"betaMatrix_ex4"
+"betaCluster_mat_example4"
