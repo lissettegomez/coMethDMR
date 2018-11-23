@@ -1,5 +1,5 @@
 
-#' Extract clusters of CpGs located closely in a genomic region
+#' Extract clusters of CpGs located closely in a genomic region.
 #'
 #' @param CpGs_char a list of CpG IDs
 #' @param arrayType Type of array, 450k or EPIC
@@ -7,7 +7,12 @@
 #'    are placed into the same cluster
 #' @param minCpGs an integer, minimum number of CpGs for the resulting CpG cluster
 #'
-#' @return a list, each item is a character vector of CpG IDs located closely (i.e. in the same cluster)
+#' @return a list, each item in the list is a character vector of CpG IDs located closely (i.e. in the same cluster)
+#'
+#' @details Note that this function depends only on CpG locations, and not on any methylation data. The algorithm is
+#'  based on the \code{clusterMaker} function in \code{bumphunter} R package. Each cluster is essentially a group of
+#'  CpG locations such that two consecutive locations in the clsuter are separated by less than
+#'  \code{maxGap}.
 #'
 #' @importFrom bumphunter clusterMaker
 #'
