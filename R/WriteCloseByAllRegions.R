@@ -2,9 +2,12 @@
 
 #' Extract clusters of close by CpGs from a list of pre-defined genomic regions
 #'
-#' @param file file where the resulting genomic regions will be saved
+#' @param file file where the output genomic regions will be saved. File extension should not
+#' be supplied, it is automatically added via the \code{fileType} argument.
 #'
-#' @param genomicRegionType Type of inputing genomic region (e.g. "ISLAND" for CpG island)
+#' @param fileType the output files can be saved as .gmt or .RDS.
+#'
+#' @param genomicRegionType Type of input genomic regions (e.g. "ISLAND" for CpG island)
 #'
 #' @param arrayType Type of array, can be "450k" or "EPIC"
 #'
@@ -13,26 +16,20 @@
 #'
 #' @param minCpGs an integer, minimum number of CpGs for each resulting region
 #'
-#' @param fileType the output files can be saved as .gmt or .RDS.
-#'
 #'
 #' @param ...
 #'
 #' @return a file with the genomic regions containing CpGs located closely within each
 #'  inputing pre-defined genomic region
 #'
-#' @details For \code{maxGap} = 200 and \code{minCpGs} = 3, we have calculated
-#'    the close-by regions output files already. They are in /inst/extdata/ folder.
+#' @details For \code{maxGap} = 200 and \code{minCpGs} = 3, we already calculated
+#'    the clusters of CpGs. They are saved in folder \code{/inst/extdata/}.
 #'
-#'    File extension should not be supplied, it is automatically added via
-#'    the \code{fileType} argument in this function.
+#'  Note that for output files, .gmt files can be opened as flat text file. .RDS files are half
+#'  the size of .gmt files, but they can only be read in the R enviroment.
 #'
-#'    Note that .gmt files can be opened as flat text file. .RDS files are half the size of
-#'     .gmt files, but they can only be read in the R enviroment.
-#'
-#'    Creating and writing this file took about 25 minutes for
-#'    \code{genomicRegionType = "ISLAND"}
-#'
+#'  Creating and writing the file for one type of genomic region (\code{genomicRegionType = "ISLAND"}
+#'  ) took about 25 minutes.
 #'
 #' @importFrom pathwayPCA read_gmt write_gmt CreatePathwayCollection
 #'
