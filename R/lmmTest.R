@@ -24,9 +24,11 @@
 #'   coMethBetaMatrix <- betaMatrixChr22_df[coMethCpGs$CpGsSubregions[[1]], ]
 #'   data(pheno_df)
 #'   lmmTest(betaMatrix = coMethBetaMatrix, pheno_df, contPheno_char = "stage",
-#'       covariates_char = c("age.brain", "sex"), modelType = "randCoeffMixed")
+#'       covariates_char = c("age.brain", "sex"), modelType = "randCoeffMixed",
+#'       arrayType = "450k")
 lmmTest <- function(betaMatrix, pheno_df, contPheno_char, covariates_char,
-                    modelType = c("randCoeffMixed", "mixed"))  {
+                    modelType = c("randCoeffMixed", "mixed"),
+                    arrayType = c("450k","EPIC"))  {
 
   ### Transpose betaMatrix from wide to long ###
   betaMatrix$ProbeID <- row.names(betaMatrix)
@@ -58,15 +60,26 @@ lmmTest <- function(betaMatrix, pheno_df, contPheno_char, covariates_char,
   if(is.null(f)){
     ps <- 1
   } else {
-    ps <- coef(summary(f))[2, 5]
+    ps <- coef(summary(f))[contPheno_char, ]
   }
 
-  ### Return results ###
-  medianCorr <- median(cor(t(betaMatrix[-ncol(betaMatrix)])))
+  regionName <- NameRegion(
+    OrderCpGsByLocation(
+      betaMatrix$ProbeID, arrayType, output = "dataframe"
+    )
+  )
 
+  ### Return results ###
   list(
-    Pval_Mixed_Model = ps,
-    Median_Corr = medianCorr
+    model = cbind("Region_Name" = regionName, data.frame(as.list(ps))),
+    CpGs = betaMatrix$ProbeID
   )
 
 }
+
+
+#$`model`
+#              regionName  Estimate Std..Error       df  t.value  Pr...t..
+#1 chr22:24372913-24372926 0.1061544 0.08215363 15.16173 1.292145 0.2156552
+
+

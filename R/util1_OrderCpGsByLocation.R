@@ -15,7 +15,7 @@
 #'    CpGs_char <- c("cg04677227", "cg07146435", "cg11632906", "cg20214853")
 #'    OrderCpGsByLocation(CpGs_char, arrayType=c("EPIC"), output = "dataframe")
 #'
-OrderCpGsByLocation <- function(CpGs_char, arrayType=c("450k","EPIC"), output = c("vector", "dataframe")){
+OrderCpGsByLocation <- function(CpGs_char, arrayType = c("450k","EPIC"), output = c("vector", "dataframe")){
 
   arrayType <- match.arg(arrayType)
 
