@@ -1,19 +1,25 @@
 
 
-#' Find contiguous comethylated regions
+#' Find contiguous comethylated regions based on output file from function \code{MarkComethylatedCpGs}
 #'
-#' @param CpGs_df a dataframe with cpg name (CpG), keep=1/drop=0 (alpha),
-#'    ind=1:number of CpGs in the region
-#' @param minCpGs_int n integer, minimum nubmer of cpgs for resulting regions
+#' @param CpGs_df an output dataframe from function \code{MarkComethylatedCpGs}, with variables
+#'  \code{CpG, keep, ind, r_drop}. See details in documentation for \code{MarkComethylatedCpGs}.
 #'
-#' @return data frame with CpG and subregion number
+#' @param minCpGs_int an integer, indicates minimum nubmer of CpGs for output genomic regions
+#'
+#' @return A data frame with variables \code{ProbeID} and \code{Subregion} (index for each output
+#' contiguous comethylated regions)
+#'
 #' @export
 #'
 #' @importFrom bumphunter getSegments
 #' @importFrom utils globalVariables
 #'
-#' @examples data(betaCluster_mat_example4)
+#' @examples
+#'    data(betaCluster_mat_example4)
+#'
 #'    CpGs_df <- MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex4)
+#'
 #'    FindComethylatedRegions(CpGs_df)
 #'
 FindComethylatedRegions <- function(CpGs_df, minCpGs_int = 3){
