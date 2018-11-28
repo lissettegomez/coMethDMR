@@ -3,9 +3,9 @@
 \docType{data}
 \name{betaMatrixChr22_df}
 \alias{betaMatrixChr22_df}
-\title{Alzheimer's Prefrontal Cortex (PFC) Methylation Data}
-\format{A subset of a data frame containing beta values for 8552 CpGs in
-  Chr22 in 20 subjects.}
+\title{Prefrontal Cortex (PFC) Methylation Data from Alzheimer's Disease subjects}
+\format{A data frame containing beta values for 8552 CpGs in
+  Chr22 for a subset of 20 subjects.}
 \source{
 GEO accession: GSE59685
 }
@@ -13,7 +13,6 @@ GEO accession: GSE59685
 betaMatrixChr22_df
 }
 \description{
-Subset of an Alzheimer's methylation dataset,
-  with beta values for CpGs.
+Subset of an Alzheimer's methylation dataset, with beta values for CpGs.
 }
 \keyword{datasets}

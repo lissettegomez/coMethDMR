@@ -21,7 +21,8 @@
 #' @export
 #'
 #' @examples
-#'    data(betaMatrixChr22_df)
+#' \dontrun{
+#'   data(betaMatrixChr22_df)
 #'    data(pheno_df)
 #'    inFile <- system.file(
 #'      "extdata", "CpGislandsChr22_ex.RDS",
@@ -40,6 +41,7 @@
 #'      returnAllCpGs = FALSE,
 #'      modelType = "randCoeffMixed"
 #'    )
+#' }
 #'
 lmmTestAllRegions <- function(betaMatrixAllRegions, pheno_df,
                               contPheno_char, covariates_char,

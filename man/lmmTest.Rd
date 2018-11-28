@@ -5,7 +5,8 @@
 \title{Fit mixed model for one region}
 \usage{
 lmmTest(betaMatrix, pheno_df, contPheno_char, covariates_char,
-  modelType = c("randCoeffMixed", "mixed"))
+  modelType = c("randCoeffMixed", "mixed"), arrayType = c("450k",
+  "EPIC"))
 }
 \arguments{
 \item{betaMatrix}{matrix of beta values for one contiguous comethylated region,
@@ -36,5 +37,6 @@ Fit mixed model for one region
   coMethBetaMatrix <- betaMatrixChr22_df[coMethCpGs$CpGsSubregions[[1]], ]
   data(pheno_df)
   lmmTest(betaMatrix = coMethBetaMatrix, pheno_df, contPheno_char = "stage",
-      covariates_char = c("age.brain", "sex"), modelType = "randCoeffMixed")
+      covariates_char = c("age.brain", "sex"), modelType = "randCoeffMixed",
+      arrayType = "450k")
 }

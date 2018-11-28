@@ -80,7 +80,9 @@ CoMethAllRegions <- function(betaMatrix,
   coMethCpGsAllREgions_ls <- lapply(
     unname(closeByGenomicRegion_ls$pathways),
     FUN = CoMethSingleRegion,
-    betaMatrix, arrayType, returnAllCpGs
+    betaMatrix = betaMatrix,
+    arrayType = arrayType,
+    returnAllCpGs = returnAllCpGs
   )
 
 

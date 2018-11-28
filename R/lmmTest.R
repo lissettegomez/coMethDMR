@@ -58,9 +58,19 @@ lmmTest <- function(betaMatrix, pheno_df, contPheno_char, covariates_char,
   }, error = function(e){ NULL })
 
   if(is.null(f)){
-    ps <- 1
+
+    ps_df <- data.frame(
+      Estimate = NA_real_,
+      StdErr = NA_real_,
+      pValue = 1
+    )
+
   } else {
-    ps <- coef(summary(f))[contPheno_char, ]
+
+    ps_mat <- coef(summary(f))[contPheno_char, c(1, 2, 5), drop = FALSE]
+    ps_df <- as.data.frame(ps_mat)
+    colnames(ps_df) <- c("Estimate", "StdErr", "pValue")
+
   }
 
   regionName <- NameRegion(
@@ -71,7 +81,7 @@ lmmTest <- function(betaMatrix, pheno_df, contPheno_char, covariates_char,
 
   ### Return results ###
   list(
-    model = cbind("Region_Name" = regionName, data.frame(as.list(ps))),
+    model = cbind("Region_Name" = regionName, ps_df),
     CpGs = betaMatrix$ProbeID
   )
 
