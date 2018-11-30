@@ -6,7 +6,7 @@
 pre-defined genomic region}
 \usage{
 CoMethSingleRegion(CpGs_char, betaMatrix, rDropThresh_num = 0.5,
-  arrayType = c("450k", "EPIC"), returnAllCpGs = TRUE)
+  arrayType = c("450k", "EPIC"), returnAllCpGs = FALSE)
 }
 \arguments{
 \item{CpGs_char}{vector of CpGs in the inputting pre-defined genomic region.}
@@ -40,11 +40,17 @@ pre-defined genomic region
 }
 \examples{
    data(betaMatrixChr22_df)
-
    CpGsChr22_char <- c("cg02953382", "cg12419862", "cg24565820", "cg04234412",
       "cg04824771", "cg09033563", "cg10150615", "cg18538332", "cg20007245",
       "cg23131131", "cg25703541")
+   CoMethSingleRegion (CpGs_char = CpGsChr22_char,
+      betaMatrix = betaMatrixChr22_df)
 
-   CoMethSingleRegion (CpGsChr22_char, betaMatrixChr22_df)
+   data(betaCluster_mat_example3)
+   betaMatrix_ex3 <- t(betaMatrix_ex3)
+   CpGsEx3_char <- c("cg14221598", "cg02433884", "cg07372974", "cg13419809",
+      "cg26856676", "cg25246745")
+   CoMethSingleRegion (CpGs_char = CpGsEx3_char, betaMatrix = betaMatrix_ex3,
+      returnAllCpGs = TRUE)
 
 }

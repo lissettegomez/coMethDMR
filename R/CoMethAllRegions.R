@@ -36,7 +36,6 @@
 #'
 #' @examples
 #'
-#' \dontrun{
 #'    data(betaMatrixChr22_df)
 #'
 #'    CoMethAllRegions(
@@ -53,8 +52,7 @@
 #'       returnAllCpGs = FALSE
 #'
 #'       )
-#'}
-CoMethAllRegions <- function(betaMatrix,
+CoMethAllRegions <- function(betaMatrix, rDropThresh_num = 0.5,
                              file, fileType = c("gmt","RDS"),
                              arrayType = c("450k","EPIC"),
                              returnAllCpGs = FALSE,
@@ -81,13 +79,17 @@ CoMethAllRegions <- function(betaMatrix,
     unname(closeByGenomicRegion_ls$pathways),
     FUN = CoMethSingleRegion,
     betaMatrix = betaMatrix,
+    rDropThresh_num = rDropThresh_num,
     arrayType = arrayType,
     returnAllCpGs = returnAllCpGs
   )
 
 
   ### Return list of cotiguous comethylated CpGs by Regions ###
-  out_ContigRegions <- (lapply(coMethCpGsAllREgions_ls, `[[`, 1))
+  out_ContigRegions <- lapply(coMethCpGsAllREgions_ls, `[[`, 1)
+  out_ContigRegions[sapply(out_ContigRegions, is.null)] <- NULL
+  names(out_ContigRegions) <- unlist(lapply(out_ContigRegions, `[[`, 1,1))
+
   out_coMethCpGsAll <- unlist(
     lapply(coMethCpGsAllREgions_ls, `[[`, 2),
     recursive = FALSE

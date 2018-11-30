@@ -30,6 +30,8 @@ lmmTest <- function(betaMatrix, pheno_df, contPheno_char, covariates_char,
                     modelType = c("randCoeffMixed", "mixed"),
                     arrayType = c("450k","EPIC"))  {
 
+  modelType <- match.arg(modelType)
+
   ### Transpose betaMatrix from wide to long ###
   betaMatrix$ProbeID <- row.names(betaMatrix)
   betaMatrixTransp_df <- reshape(
@@ -87,9 +89,5 @@ lmmTest <- function(betaMatrix, pheno_df, contPheno_char, covariates_char,
 
 }
 
-
-#$`model`
-#              regionName  Estimate Std..Error       df  t.value  Pr...t..
-#1 chr22:24372913-24372926 0.1061544 0.08215363 15.16173 1.292145 0.2156552
 
 

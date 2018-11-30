@@ -4,7 +4,8 @@
 \alias{CreateOutputDF}
 \title{Create Output Dataframe}
 \usage{
-CreateOutputDF(keepCpGs_df, keepContiguousCpGs_df, CpGsOrdered_df)
+CreateOutputDF(keepCpGs_df, keepContiguousCpGs_df, CpGsOrdered_df,
+  returnAllCpGs = FALSE)
 }
 \arguments{
 \item{keepCpGs_df}{a data frame with CpG = CpG name,
@@ -34,7 +35,7 @@ Create Output Dataframe
       "cg04824771", "cg09033563", "cg10150615", "cg18538332", "cg20007245",
       "cg23131131", "cg25703541")
    CpGsOrdered_df <- OrderCpGsByLocation(
-   CpGsChr22_char, arrayType="450k", output = "dataframe"
+      CpGsChr22_char, arrayType="450k", output = "dataframe"
    )
    betaCluster_mat <- betaMatrixChr22_df[CpGsOrdered_df$cpg,]
    betaClusterTransp_mat <- t(betaCluster_mat)

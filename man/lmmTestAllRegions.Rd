@@ -7,7 +7,7 @@
 lmmTestAllRegions(betaMatrixAllRegions, pheno_df, contPheno_char,
   covariates_char, inFile, outFile, inFileType = c("gmt", "RDS"),
   arrayType = c("450k", "EPIC"), returnAllCpGs = FALSE,
-  modelType = c("randCoeffMixed", "mixed"))
+  modelType = c("randCoeffMixed", "mixed"), rDropThresh_num = 0.5)
 }
 \arguments{
 \item{betaMatrixAllRegions}{matrix of beta values for all contiguous
@@ -42,7 +42,8 @@ text file with RegionID, p-value and median correlation value for
 Fit mixed model for all regions
 }
 \examples{
-   data(betaMatrixChr22_df)
+\dontrun{
+  data(betaMatrixChr22_df)
    data(pheno_df)
    inFile <- system.file(
      "extdata", "CpGislandsChr22_ex.RDS",
@@ -55,11 +56,13 @@ Fit mixed model for all regions
      contPheno_char = "stage",
      covariates_char = c("age.brain", "sex"),
      inFile,
-     outFile = "outEx.txt",
+     outFile = "outEx.csv",
      inFileType = "RDS",
      arrayType = "450k",
      returnAllCpGs = FALSE,
-     modelType = "randCoeffMixed"
+     modelType = "randCoeffMixed",
+     rDropThresh_num = 0.5
    )
+}
 
 }

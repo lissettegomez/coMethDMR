@@ -5,8 +5,9 @@
 \title{Extract contiguous co-methylated genomic regions from a list of
 pre-defined genomic regions}
 \usage{
-CoMethAllRegions(betaMatrix, file, fileType = c("gmt", "RDS"),
-  arrayType = c("450k", "EPIC"), returnAllCpGs = FALSE, ...)
+CoMethAllRegions(betaMatrix, rDropThresh_num = 0.5, file,
+  fileType = c("gmt", "RDS"), arrayType = c("450k", "EPIC"),
+  returnAllCpGs = FALSE, ...)
 }
 \arguments{
 \item{betaMatrix}{matrix of beta values, with row names = CpG IDs,
@@ -32,7 +33,6 @@ pre-defined genomic regions
 }
 \examples{
 
-\dontrun{
    data(betaMatrixChr22_df)
 
    CoMethAllRegions(
@@ -49,5 +49,4 @@ pre-defined genomic regions
       returnAllCpGs = FALSE
 
       )
-}
 }
