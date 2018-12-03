@@ -1,3 +1,9 @@
+# Test CoMethAllRegions()
+# Gabriel Odom
+# 2018-10-31
 
-#CpGs_vc<-c("cg04677227", "cg07146435", "cg11632906", "cg20214853")
-#NameRegion(CpGs_char)
+library(coMethDMR)
+
+data(CpGsOrdered_df)
+out_char <- NameRegion(CpGsOrdered_df)
+stopifnot(out_char == "chr10:100028236-100028499")
