@@ -15,6 +15,8 @@
 #'    when there is not a contiguous comethylated region or
 #'    only the CpGs in the contiguous comethylated regions
 #' @param modelType model used to fit mixed model
+#' @param rDropThresh_num thershold for min correlation between a cpg with sum of the
+#'    rest of the CpGs
 #'
 #' @return text file with RegionID, p-value and median correlation value for
 #'    each contiguous comethylated region tested.
@@ -26,7 +28,6 @@
 #' @importFrom utils write.csv
 #'
 #' @examples
-#' \dontrun{
 #'   data(betaMatrixChr22_df)
 #'    data(pheno_df)
 #'    inFile <- system.file(
@@ -40,18 +41,16 @@
 #'      contPheno_char = "stage",
 #'      covariates_char = c("age.brain", "sex"),
 #'      inFile,
-#'      outFile = "outEx.csv",
 #'      inFileType = "RDS",
 #'      arrayType = "450k",
 #'      returnAllCpGs = FALSE,
 #'      modelType = "randCoeffMixed",
 #'      rDropThresh_num = 0.5
 #'    )
-#' }
 #'
 lmmTestAllRegions <- function(betaMatrixAllRegions, pheno_df,
                               contPheno_char, covariates_char,
-                              inFile, outFile,
+                              inFile, outFile = NULL,
                               inFileType = c("gmt","RDS"),
                               arrayType = c("450k","EPIC"),
                               returnAllCpGs = FALSE,
@@ -93,6 +92,15 @@ lmmTestAllRegions <- function(betaMatrixAllRegions, pheno_df,
     outDF <- rbind(outDF,out[[i]])
   }
 
-  write.csv(outDF, outFile, quote = FALSE, row.names = FALSE)
+  if (is.null(outFile)){
+
+    outDF
+
+  } else {
+
+    message(paste0("writing results to ", outFile))
+    write.csv(outDF, outFile, quote = FALSE, row.names = FALSE)
+
+  }
 
 }

@@ -20,7 +20,7 @@ contiguous comethylated regions)
 Find contiguous comethylated regions based on output file from function \code{MarkComethylatedCpGs}
 }
 \examples{
-   data(betaCluster_mat_example4)
+   data(betaMatrix_ex4)
 
    CpGs_df <- MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex4)
 

@@ -8,6 +8,7 @@
 #' @param contPheno_char character string of the phenotype name
 #' @param covariates_char character vector of covariate names
 #' @param modelType model used to fit mixed model
+#' @param arrayType Type of array, 450k or EPIC
 #'
 #' @return list of pvalue and median correlation
 #'    for the contiguous comethylated region being tested
@@ -39,7 +40,7 @@ lmmTest <- function(betaMatrix, pheno_df, contPheno_char, covariates_char,
     varying = colnames(betaMatrix[-ncol(betaMatrix)]),
     v.names = "beta",
     direction = "long",
-    time = colnames(betaMatrix[-ncol(betaMatrix)]),
+    times = colnames(betaMatrix[-ncol(betaMatrix)]),
     timevar = "Sample"
   )
 

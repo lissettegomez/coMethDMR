@@ -15,6 +15,9 @@ CoMethSingleRegion(CpGs_char, betaMatrix, rDropThresh_num = 0.5,
 column names = sample ids. This should include the CpGs in \code{CpGs_char}, as well as
 additional CpGs.}
 
+\item{rDropThresh_num}{thershold for min correlation between a cpg with sum of the
+rest of the CpGs}
+
 \item{arrayType}{Type of array, can be "450k" or "EPIC"}
 
 \item{returnAllCpGs}{When there is not a contiguous comethylated region in the inputing
