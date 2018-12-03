@@ -9,6 +9,9 @@
 #'    Subregion = cotiguous comethylated subregion number
 #' @param CpGsOrdered_df a data frame of CpG location with
 #'    chr = chromosome number, pos = genomic position, cpg = CpG name
+#' @param returnAllCpGs indicates if outputting all the CpGs in the region
+#'    when there is not a contiguous comethylated region or
+#'    only the CpGs in the contiguous comethylated regions
 #'
 #' @return a data frame with CpG = CpG name,
 #'    Chr = chromosome number,

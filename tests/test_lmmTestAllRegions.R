@@ -2,6 +2,7 @@
 # Gabriel Odom
 # 2018-11-28
 
+library(coMethDMR)
 data(betaMatrixChr22_df)
 data(pheno_df)
 
@@ -16,9 +17,9 @@ lmmTestAllRegions(
   contPheno_char = "stage",
   covariates_char = c("age.brain", "sex"),
   inFile,
-  outFile = "outEx.txt",
   inFileType = "RDS",
   arrayType = "450k",
   returnAllCpGs = FALSE,
-  modelType = "randCoeffMixed"
+  modelType = "randCoeffMixed",
+  rDropThresh_num = 0.5
 )

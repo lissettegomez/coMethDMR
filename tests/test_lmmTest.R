@@ -2,6 +2,7 @@
 # Gabriel Odom
 # 2018-11-28
 
+library(coMethDMR)
 data(betaMatrixChr22_df)
 data(pheno_df)
 CpGsChr22_char <- c(

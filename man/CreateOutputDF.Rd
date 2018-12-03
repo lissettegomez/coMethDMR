@@ -17,6 +17,10 @@ Subregion = cotiguous comethylated subregion number}
 
 \item{CpGsOrdered_df}{a data frame of CpG location with
 chr = chromosome number, pos = genomic position, cpg = CpG name}
+
+\item{returnAllCpGs}{indicates if outputting all the CpGs in the region
+when there is not a contiguous comethylated region or
+only the CpGs in the contiguous comethylated regions}
 }
 \value{
 a data frame with CpG = CpG name,

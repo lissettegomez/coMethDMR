@@ -1,3 +1,5 @@
+
+library(coMethDMR)
 system.file(
   "extdata",
   "CpGislandsChr22_ex.RDS",

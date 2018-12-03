@@ -20,6 +20,8 @@ with row names = CpG ids, column names = sample ids}
 \item{covariates_char}{character vector of covariate names}
 
 \item{modelType}{model used to fit mixed model}
+
+\item{arrayType}{Type of array, 450k or EPIC}
 }
 \value{
 list of pvalue and median correlation
