@@ -39,6 +39,6 @@ Fit mixed model for one region
   coMethBetaMatrix <- betaMatrixChr22_df[coMethCpGs$CpGsSubregions[[1]], ]
   data(pheno_df)
   lmmTest(betaMatrix = coMethBetaMatrix, pheno_df, contPheno_char = "stage",
-      covariates_char = c("age.brain", "sex"), modelType = "randCoeffMixed")
-
+      covariates_char = c("age.brain", "sex"), modelType = "randCoeffMixed",
+      arrayType = "450k")
 }
