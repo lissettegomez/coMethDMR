@@ -90,7 +90,7 @@ CoMethAllRegions <- function(betaMatrix, rDropThresh_num = 0.5,
   )
 
 
-  ### Return list of cotiguous comethylated CpGs by Regions ###
+  ### Return list of contiguous comethylated CpGs by Regions ###
   out_ContigRegions <- lapply(coMethCpGsAllREgions_ls, `[[`, 1)
   out_ContigRegions[sapply(out_ContigRegions, is.null)] <- NULL
   names(out_ContigRegions) <- unlist(lapply(out_ContigRegions, `[[`, 1,1))

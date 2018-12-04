@@ -1,4 +1,5 @@
 
+
 #' Fit mixed model to methylation values in one genomic region
 #'
 #' @param betaMatrix matrix of beta values for one genomic region,
