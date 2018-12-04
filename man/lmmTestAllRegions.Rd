@@ -4,24 +4,14 @@
 \alias{lmmTestAllRegions}
 \title{Fit mixed model for all regions}
 \usage{
-lmmTestAllRegions(betaMatrixAllRegions, inFile, fileType = c("gmt",
-  "RDS"), arrayType = c("450k", "EPIC"), returnAllCpGs = FALSE,
-  pheno_df, contPheno_char, covariates_char,
-  modelType = c("randCoeffMixed", "mixed"), outFile)
+lmmTestAllRegions(betaMatrixAllRegions, pheno_df, contPheno_char,
+  covariates_char, inFile, outFile, inFileType = c("gmt", "RDS"),
+  arrayType = c("450k", "EPIC"), returnAllCpGs = FALSE,
+  modelType = c("randCoeffMixed", "mixed"))
 }
 \arguments{
 \item{betaMatrixAllRegions}{matrix of beta values for all contiguous
 comethylated regions, with row names = CpG ids, column names = sample ids}
-
-\item{inFile}{name of input file with close by regions}
-
-\item{fileType}{extension of input file: "gmt" or "RDS"}
-
-\item{arrayType}{Type of array, 450k or EPIC}
-
-\item{returnAllCpGs}{indicates if outputting all the CpGs in the region
-when there is not a contiguous comethylated region or
-only the CpGs in the contiguous comethylated regions}
 
 \item{pheno_df}{a data frame with phenotype and covariates
 (sample ID column = "Sample")}
@@ -30,9 +20,19 @@ only the CpGs in the contiguous comethylated regions}
 
 \item{covariates_char}{character vector of covariate names}
 
-\item{modelType}{model used to fit mixed model}
+\item{inFile}{name of input file with close by regions}
 
 \item{outFile}{output csv file with the results for the mixed model analysis}
+
+\item{inFileType}{extension of input file: "gmt" or "RDS"}
+
+\item{arrayType}{Type of array, 450k or EPIC}
+
+\item{returnAllCpGs}{indicates if outputting all the CpGs in the region
+when there is not a contiguous comethylated region or
+only the CpGs in the contiguous comethylated regions}
+
+\item{modelType}{model used to fit mixed model}
 }
 \value{
 text file with RegionID, p-value and median correlation value for
@@ -44,10 +44,22 @@ Fit mixed model for all regions
 \examples{
    data(betaMatrixChr22_df)
    data(pheno_df)
-   inFile = system.file("extdata", "CpGislandsChr22_ex.RDS",
-      package = 'coMethDMR', mustWork = TRUE)
-   lmmTestAllRegions(betaMatrixAllRegions = betaMatrixChr22_df, inFile,
-      fileType = "RDS", arrayType = "450k", returnAllCpGs = FALSE, pheno_df,
-      contPheno_char = "stage", covariates_char = c("age.brain", "sex"),
-      modelType = "randCoeffMixed", outFile = "outEx.txt")
+   inFile <- system.file(
+     "extdata", "CpGislandsChr22_ex.RDS",
+      package = 'coMethDMR', mustWork = TRUE
+   )
+
+   lmmTestAllRegions(
+     betaMatrixAllRegions = betaMatrixChr22_df,
+     inFile,
+     inFileType = "RDS",
+     arrayType = "450k",
+     returnAllCpGs = FALSE,
+     pheno_df,
+     contPheno_char = "stage",
+     covariates_char = c("age.brain", "sex"),
+     modelType = "randCoeffMixed",
+     outFile = "outEx.txt"
+   )
+
 }

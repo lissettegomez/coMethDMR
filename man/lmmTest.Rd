@@ -37,4 +37,5 @@ Fit mixed model for one region
   data(pheno_df)
   lmmTest(betaMatrix = coMethBetaMatrix, pheno_df, contPheno_char = "stage",
       covariates_char = c("age.brain", "sex"), modelType = "randCoeffMixed")
+
 }

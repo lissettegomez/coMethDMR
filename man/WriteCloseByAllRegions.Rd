@@ -2,7 +2,7 @@
 % Please edit documentation in R/WriteCloseByAllRegions.R
 \name{WriteCloseByAllRegions}
 \alias{WriteCloseByAllRegions}
-\title{Extract clusters of close by CpGs from all genomic regions}
+\title{Extract clusters of close by CpGs from a list of pre-defined genomic regions}
 \usage{
 WriteCloseByAllRegions(file, genomicRegionType = c("ISLAND", "TSS1500",
   "TSS200", "UTR5", "EXON1", "GENEBODY", "UTR3", "NSHORE", "SSHORE",
@@ -10,36 +10,38 @@ WriteCloseByAllRegions(file, genomicRegionType = c("ISLAND", "TSS1500",
   minCpGs = 3, fileType = c("gmt", "RDS"), ...)
 }
 \arguments{
-\item{file}{file where the close by regions will be saved}
+\item{file}{file where the output genomic regions will be saved. File extension should not
+be supplied, it is automatically added via the \code{fileType} argument.}
 
-\item{genomicRegionType}{Type of region}
+\item{genomicRegionType}{Type of input genomic regions (e.g. "ISLAND" for CpG island)}
 
-\item{arrayType}{Type of array, 450k or EPIC}
+\item{arrayType}{Type of array, can be "450k" or "EPIC"}
 
 \item{maxGap}{an integer, genomic locations within maxGap from each other
 are placed into the same cluster}
 
-\item{minCpGs}{an integer, minimum number of CpGs for resulting regions}
+\item{minCpGs}{an integer, minimum number of CpGs for each resulting region}
 
-\item{fileType}{the output files can be saved as .gmt or .RDS,
-.gmt files can be open as flat text file, .RDS files are 50% the size of
-.gmt files, but they can only be read in R enviroment.}
+\item{fileType}{the output files can be saved as .gmt or .RDS.}
 
 \item{...}{}
 }
 \value{
-a file with the close by regions
+a file with the genomic regions containing CpGs located closely within each
+ inputing pre-defined genomic region
 }
 \description{
-Extract clusters of close by CpGs from all genomic regions
+Extract clusters of close by CpGs from a list of pre-defined genomic regions
 }
 \details{
-For \code{maxGap} = 200 and \code{minCpGs} = 3, we have calculated
-   the close-by regions output files already. They are in /inst/extdata/
-   File extension should not be supplied. We add it automatically through
-   the fileType argument.
-   Creating and writing this file will take around 25 minutes for
-   genomicRegionType = "ISLAND"
+For \code{maxGap} = 200 and \code{minCpGs} = 3, we already calculated
+   the clusters of CpGs. They are saved in folder \code{/inst/extdata/}.
+
+ Note that for output files, .gmt files can be opened as flat text file. .RDS files are half
+ the size of .gmt files, but they can only be read in the R enviroment.
+
+ Creating and writing the file for one type of genomic region (\code{genomicRegionType = "ISLAND"}
+ ) took about 25 minutes.
 }
 \examples{
 \dontrun{

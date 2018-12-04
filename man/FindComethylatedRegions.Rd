@@ -2,25 +2,28 @@
 % Please edit documentation in R/FindComethylatedRegions.R
 \name{FindComethylatedRegions}
 \alias{FindComethylatedRegions}
-\title{Find contiguous comethylated regions}
+\title{Find contiguous comethylated regions based on output file from function \code{MarkComethylatedCpGs}}
 \usage{
 FindComethylatedRegions(CpGs_df, minCpGs_int = 3)
 }
 \arguments{
-\item{CpGs_df}{a dataframe with cpg name (CpG), keep=1/drop=0 (alpha),
-ind=1:number of CpGs in the region}
+\item{CpGs_df}{an output dataframe from function \code{MarkComethylatedCpGs}, with variables
+\code{CpG, keep, ind, r_drop}. See details in documentation for \code{MarkComethylatedCpGs}.}
 
-\item{minCpGs_int}{n integer, minimum nubmer of cpgs for resulting regions}
+\item{minCpGs_int}{an integer, indicates minimum nubmer of CpGs for output genomic regions}
 }
 \value{
-data frame with CpG and subregion number
+A data frame with variables \code{ProbeID} and \code{Subregion} (index for each output
+contiguous comethylated regions)
 }
 \description{
-Find contiguous comethylated regions
+Find contiguous comethylated regions based on output file from function \code{MarkComethylatedCpGs}
 }
 \examples{
-data(betaCluster_mat_example4)
+   data(betaCluster_mat_example4)
+
    CpGs_df <- MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex4)
+
    FindComethylatedRegions(CpGs_df)
 
 }
