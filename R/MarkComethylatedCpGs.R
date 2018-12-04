@@ -40,17 +40,18 @@
 #'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex3)
 #'
 #'    data(betaMatrix_ex4)
-#'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex4)
+#'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex4, rDropThresh_num = 0.6)
 #'
 
 
 MarkComethylatedCpGs <- function (betaCluster_mat, rDropThresh_num = 0.5) {
 
-
   ### Calculate alpha and Store CpGs ###
-  convertFromBetaToMvalues<-function(x){log2(x/(1-x))}
-  betaClusterMvalues_mat <- apply(betaCluster_mat, c(1,2), convertFromBetaToMvalues)
-  clusterAlpha_ls <- alpha(betaClusterMvalues_mat, warnings = FALSE)
+
+  mvalues_mat <- log2(betaCluster_mat / (1 - betaCluster_mat))
+
+  clusterAlpha_ls <- alpha(mvalues_mat, warnings = FALSE)
+
   CpGs_char <- rownames(clusterAlpha_ls$alpha.drop)
 
   ### Drop CpGs with r.drop < threshold_r_num ###

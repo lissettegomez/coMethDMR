@@ -31,8 +31,7 @@
 #'   contiguous comethylated subregions)
 #'   }
 #'
-#'   \item{\code{CpGs_subregions} : } {lists of CpGs in each contiguous co-methylated
-#'    subregion from all the regions
+#'   \item{\code{CpGsSubregions} : } {results from all the regions, each item is a list of CpGs in the contiguous co-methylated subregion
 #'    }
 #' }
 #'
@@ -42,7 +41,8 @@
 #'
 #'    data(betaMatrixChr22_df)
 #'
-#'    CoMethAllRegions(
+#'    CoMethAllRegions (
+#'
 #'       betaMatrix = betaMatrixChr22_df,
 #'
 #'       file = system.file(
@@ -56,6 +56,7 @@
 #'       returnAllCpGs = FALSE
 #'
 #'       )
+
 CoMethAllRegions <- function(betaMatrix, rDropThresh_num = 0.5,
                              file, fileType = c("gmt","RDS"),
                              arrayType = c("450k","EPIC"),
