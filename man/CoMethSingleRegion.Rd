@@ -43,7 +43,6 @@ pre-defined genomic region
 }
 \examples{
    data(betaMatrixChr22_df)
-
    CpGsChr22_char <- c("cg02953382", "cg12419862", "cg24565820", "cg04234412",
       "cg04824771", "cg09033563", "cg10150615", "cg18538332", "cg20007245",
       "cg23131131", "cg25703541")
@@ -56,4 +55,5 @@ pre-defined genomic region
       "cg26856676", "cg25246745")
    CoMethSingleRegion (CpGs_char = CpGsEx3_char, betaMatrix = betaMatrix_ex3,
       returnAllCpGs = TRUE)
+
 }
