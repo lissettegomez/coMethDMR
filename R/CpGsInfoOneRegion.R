@@ -36,22 +36,23 @@ CpGsInfoOneRegion <- function(regionName_char, betaMatrix, pheno_df,
 
   ### Transpose betaMatrix from wide to long ###
   betaMatrix$ProbeID <- row.names(betaMatrix)
-  betaMatrixTransp_df <- reshape(
-    betaMatrix,
-    varying = colnames(betaMatrix[-ncol(betaMatrix)]),
+  CpGsBetaMatrix <- betaMatrix[which(betaMatrix$ProbeID %in% CpGsToTest), ]
+  CpGsBetaMatrixTransp_df <- reshape(
+    CpGsBetaMatrix,
+    varying = colnames(CpGsBetaMatrix[-ncol(CpGsBetaMatrix)]),
     v.names = "beta",
     direction = "long",
-    times = colnames(betaMatrix[-ncol(betaMatrix)]),
+    times = colnames(CpGsBetaMatrix[-ncol(CpGsBetaMatrix)]),
     timevar = "Sample"
   )
 
   ### Calculate M values ###
-  betaMatrixTransp_df$Mvalue <- log2(
-    betaMatrixTransp_df$beta / (1 - betaMatrixTransp_df$beta)
+  CpGsBetaMatrixTransp_df$Mvalue <- log2(
+    CpGsBetaMatrixTransp_df$beta / (1 - CpGsBetaMatrixTransp_df$beta)
   )
 
   ### Merge transposed beta matrix with phenotype ###
-  betaMatrixPheno_df <- merge(betaMatrixTransp_df, pheno_df, by="Sample")
+  CpGsBetaMatrixPheno_df <- merge(CpGsBetaMatrixTransp_df, pheno_df, by="Sample")
 
   ### Run linal model for each CpG ###
   cov <- paste(covariates_char, collapse = "+")
@@ -60,10 +61,10 @@ CpGsInfoOneRegion <- function(regionName_char, betaMatrix, pheno_df,
 
   for (i in 1:length(CpGsToTest)){
 
-    f <- lm(
-      lmFormula,
-      data = betaMatrixPheno_df[which(betaMatrixPheno_df$ProbeID %in% CpGsToTest[i]), ]
-    )
+    f <- lm(lmFormula,
+            data = CpGsBetaMatrixPheno_df[
+              which(CpGsBetaMatrixPheno_df$ProbeID == CpGsToTest[i]), ])
+
     result <- coef(summary(f))[contPheno_char, c(1, 4), drop = FALSE]
     resultAllCpGs[i, ] <- cbind(CpGsToTest[i], round(result, 4))
 
@@ -73,7 +74,8 @@ CpGsInfoOneRegion <- function(regionName_char, betaMatrix, pheno_df,
   colnames(resultAllCpGs) <- c("CpG", "slopeEstimate", "slopePval")
   CpGsLocation <- OrderCpGsByLocation(
     CpGs_char = CpGsToTest, arrayType = arrayType, output = "dataframe")
-  outDF <- merge(CpGsLocation, resultAllCpGs, by.x = "cpg", by.y = "CpG", sort = FALSE)[-4]
+  outDF <- merge(CpGsLocation, resultAllCpGs,
+                 by.x = "cpg", by.y = "CpG", sort = FALSE)[-4]
 
   outDF
 
