@@ -40,8 +40,7 @@ A list of two components:
   contiguous comethylated subregions)
   }
 
-  \item{\code{CpGs_subregions} : } {lists of CpGs in each contiguous co-methylated
-   subregion from all the regions
+  \item{\code{CpGsSubregions} : } {results from all the regions, each item is a list of CpGs in the contiguous co-methylated subregion
    }
 }
 }
@@ -53,7 +52,8 @@ pre-defined genomic regions
 
    data(betaMatrixChr22_df)
 
-   CoMethAllRegions(
+   CoMethAllRegions (
+
       betaMatrix = betaMatrixChr22_df,
 
       file = system.file(

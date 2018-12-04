@@ -2,43 +2,63 @@
 % Please edit documentation in R/lmmTest.R
 \name{lmmTest}
 \alias{lmmTest}
-\title{Fit mixed model for one region}
+\title{Fit mixed model to methylation values in one genomic region}
 \usage{
 lmmTest(betaMatrix, pheno_df, contPheno_char, covariates_char,
-  modelType = c("randCoeffMixed", "mixed"), arrayType = c("450k",
-  "EPIC"))
+  modelType = c("randCoef", "simple"), arrayType = c("450k", "EPIC"))
 }
 \arguments{
-\item{betaMatrix}{matrix of beta values for one contiguous comethylated region,
-with row names = CpG ids, column names = sample ids}
+\item{betaMatrix}{matrix of beta values for one genomic region,
+with row names = CpG IDs, column names = sample IDs}
 
-\item{pheno_df}{a data frame with phenotype and covariates
-(sample ID column = "Sample")}
+\item{pheno_df}{a data frame with phenotype and covariates, with variable \code{Sample}
+indicating sample IDs.}
 
-\item{contPheno_char}{character string of the phenotype name}
+\item{contPheno_char}{character string of the main effect (a continuous phenotype)
+to be tested for association with methylation values in the region}
 
-\item{covariates_char}{character vector of covariate names}
+\item{covariates_char}{character vector for names of the covariate variables}
 
-\item{modelType}{model used to fit mixed model}
+\item{modelType}{type of mixed model, can be \code{randCoef} for random
+coefficient mixed model, or \code{simple} for simple linear mixed model.}
 
-\item{arrayType}{Type of array, 450k or EPIC}
+\item{arrayType}{Type of array, can be "450k" or "EPIC"}
 }
 \value{
-list of pvalue and median correlation
-   for the contiguous comethylated region being tested
+A list with two components: (1) \code{Estimate}, \code{StdErr}, and \code{pvalue} for the association of methylation
+values in the genomic region tested vs. continuous phenotype \code{contPheno_char};
+(2) CpG IDs that belong to the region
 }
 \description{
-Fit mixed model for one region
+Fit mixed model to methylation values in one genomic region
+}
+\details{
+This function implements a mixed model to test association between methylation values in a genomic region with a continuous phenotype.
+
+When \code{randCoef} is selected,
+the model is \code{methylation M value ~ contPheno_char + covariates_char + (1|Sample) + (contPheno_char|CpG)}. The last two terms are random intercepts and slopes for each CpG.
+
+When \code{simple} is selected, the model is \code{methylation M value ~ contPheno_char + covariates_char + (1|Sample)}
 }
 \examples{
   data(betaMatrixChr22_df)
+
   CpGsChr22_char<-c("cg02953382", "cg12419862", "cg24565820", "cg04234412",
       "cg04824771", "cg09033563", "cg10150615", "cg18538332", "cg20007245",
       "cg23131131", "cg25703541")
+
   coMethCpGs <- CoMethSingleRegion(CpGsChr22_char, betaMatrixChr22_df)
+
+  # test only the first co-methylated region
   coMethBetaMatrix <- betaMatrixChr22_df[coMethCpGs$CpGsSubregions[[1]], ]
+
   data(pheno_df)
-  lmmTest(betaMatrix = coMethBetaMatrix, pheno_df, contPheno_char = "stage",
-      covariates_char = c("age.brain", "sex"), modelType = "randCoeffMixed",
-      arrayType = "450k")
+
+  lmmTest (betaMatrix = coMethBetaMatrix,
+           pheno_df,
+           contPheno_char = "stage",
+           covariates_char = c("age.brain", "sex"),
+           modelType = "simple",
+           arrayType = "450k")
+
 }
