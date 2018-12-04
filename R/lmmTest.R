@@ -10,8 +10,8 @@
 #' @param modelType model used to fit mixed model
 #' @param arrayType Type of array, 450k or EPIC
 #'
-#' @return list of pvalue and median correlation
-#'    for the contiguous comethylated region being tested
+#' @return list of pvalues for the contiguous comethylated region being tested
+#'    and CpGs in the region
 #' @export
 #'
 #' @importFrom lmerTest lmer
