@@ -4,15 +4,15 @@
 \alias{CpGsInfoOneRegion}
 \title{Test individual CpGs}
 \usage{
-CpGsInfoOneRegion(regionName_char, betaMatrix, pheno_df, contPheno_char,
-  covariates_char, arrayType = c("450k", "EPIC"))
+CpGsInfoOneRegion(regionName_char, betaMatrixAllRegions, pheno_df,
+  contPheno_char, covariates_char, arrayType = c("450k", "EPIC"))
 }
 \arguments{
 \item{regionName_char}{character string with location info for one region in
 this format: "chrxx:xxxxxx-xxxxxx"}
 
-\item{betaMatrix}{matrix of beta values for one contiguous comethylated region,
-with row names = CpG ids, column names = sample ids}
+\item{betaMatrixAllRegions}{matrix of beta values for all contiguous
+comethylated regions, with row names = CpG ids, column names = sample ids}
 
 \item{pheno_df}{a data frame with phenotype and covariates
 (sample ID column = "Sample")}
@@ -34,6 +34,6 @@ Test individual CpGs
    data(betaMatrixChr22_df)
    data(pheno_df)
    CpGsInfoOneRegion(regionName_char = "chr22:18267969-18268249",
-    betaMatrix = betaMatrixChr22_df, pheno_df, contPheno_char = "stage",
+    betaMatrixAllRegions = betaMatrixChr22_df, pheno_df, contPheno_char = "stage",
     covariates_char = c("age.brain", "sex"))
 }

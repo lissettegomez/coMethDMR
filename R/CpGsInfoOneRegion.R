@@ -3,8 +3,8 @@
 #'
 #' @param regionName_char character string with location info for one region in
 #'    this format: "chrxx:xxxxxx-xxxxxx"
-#' @param betaMatrix matrix of beta values for one contiguous comethylated region,
-#'    with row names = CpG ids, column names = sample ids
+#' @param betaMatrixAllRegions matrix of beta values for all contiguous
+#'    comethylated regions, with row names = CpG ids, column names = sample ids
 #' @param pheno_df a data frame with phenotype and covariates
 #'    (sample ID column = "Sample")
 #' @param contPheno_char character string of the phenotype name
@@ -23,9 +23,9 @@
 #'    data(betaMatrixChr22_df)
 #'    data(pheno_df)
 #'    CpGsInfoOneRegion(regionName_char = "chr22:18267969-18268249",
-#'     betaMatrix = betaMatrixChr22_df, pheno_df, contPheno_char = "stage",
+#'     betaMatrixAllRegions = betaMatrixChr22_df, pheno_df, contPheno_char = "stage",
 #'     covariates_char = c("age.brain", "sex"))
-CpGsInfoOneRegion <- function(regionName_char, betaMatrix, pheno_df,
+CpGsInfoOneRegion <- function(regionName_char, betaMatrixAllRegions, pheno_df,
                               contPheno_char, covariates_char,
                               arrayType = c("450k","EPIC")){
 
@@ -35,8 +35,8 @@ CpGsInfoOneRegion <- function(regionName_char, betaMatrix, pheno_df,
   CpGsToTest <- ExtractCpGs(regionName_char, arrayType = "450k")
 
   ### Transpose betaMatrix from wide to long ###
-  betaMatrix$ProbeID <- row.names(betaMatrix)
-  CpGsBetaMatrix <- betaMatrix[which(betaMatrix$ProbeID %in% CpGsToTest), ]
+  betaMatrixAllRegions$ProbeID <- row.names(betaMatrixAllRegions)
+  CpGsBetaMatrix <- betaMatrixAllRegions[which(betaMatrixAllRegions$ProbeID %in% CpGsToTest), ]
   CpGsBetaMatrixTransp_df <- reshape(
     CpGsBetaMatrix,
     varying = colnames(CpGsBetaMatrix[-ncol(CpGsBetaMatrix)]),
