@@ -16,7 +16,7 @@
 #' @importFrom utils globalVariables
 #'
 #' @examples
-#'    data(betaCluster_mat_example4)
+#'    data(betaMatrix_ex4)
 #'
 #'    CpGs_df <- MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex4)
 #'

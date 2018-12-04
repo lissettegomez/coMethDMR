@@ -5,9 +5,9 @@
 \title{Fit mixed model for all regions}
 \usage{
 lmmTestAllRegions(betaMatrixAllRegions, pheno_df, contPheno_char,
-  covariates_char, inFile, outFile, inFileType = c("gmt", "RDS"),
-  arrayType = c("450k", "EPIC"), returnAllCpGs = FALSE,
-  modelType = c("randCoeffMixed", "mixed"))
+  covariates_char, inFile, outFile = NULL, inFileType = c("gmt",
+  "RDS"), arrayType = c("450k", "EPIC"), returnAllCpGs = FALSE,
+  modelType = c("randCoeffMixed", "mixed"), rDropThresh_num = 0.5)
 }
 \arguments{
 \item{betaMatrixAllRegions}{matrix of beta values for all contiguous
@@ -33,6 +33,9 @@ when there is not a contiguous comethylated region or
 only the CpGs in the contiguous comethylated regions}
 
 \item{modelType}{model used to fit mixed model}
+
+\item{rDropThresh_num}{thershold for min correlation between a cpg with sum of the
+rest of the CpGs}
 }
 \value{
 text file with RegionID, p-value and median correlation value for
@@ -42,7 +45,7 @@ text file with RegionID, p-value and median correlation value for
 Fit mixed model for all regions
 }
 \examples{
-   data(betaMatrixChr22_df)
+  data(betaMatrixChr22_df)
    data(pheno_df)
    inFile <- system.file(
      "extdata", "CpGislandsChr22_ex.RDS",
@@ -51,15 +54,15 @@ Fit mixed model for all regions
 
    lmmTestAllRegions(
      betaMatrixAllRegions = betaMatrixChr22_df,
+     pheno_df,
+     contPheno_char = "stage",
+     covariates_char = c("age.brain", "sex"),
      inFile,
      inFileType = "RDS",
      arrayType = "450k",
      returnAllCpGs = FALSE,
-     pheno_df,
-     contPheno_char = "stage",
-     covariates_char = c("age.brain", "sex"),
      modelType = "randCoeffMixed",
-     outFile = "outEx.txt"
+     rDropThresh_num = 0.5
    )
 
 }

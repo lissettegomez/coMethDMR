@@ -5,7 +5,8 @@
 \title{Fit mixed model for one region}
 \usage{
 lmmTest(betaMatrix, pheno_df, contPheno_char, covariates_char,
-  modelType = c("randCoeffMixed", "mixed"))
+  modelType = c("randCoeffMixed", "mixed"), arrayType = c("450k",
+  "EPIC"))
 }
 \arguments{
 \item{betaMatrix}{matrix of beta values for one contiguous comethylated region,
@@ -19,6 +20,8 @@ with row names = CpG ids, column names = sample ids}
 \item{covariates_char}{character vector of covariate names}
 
 \item{modelType}{model used to fit mixed model}
+
+\item{arrayType}{Type of array, 450k or EPIC}
 }
 \value{
 list of pvalue and median correlation

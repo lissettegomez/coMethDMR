@@ -15,13 +15,20 @@
 #'    when there is not a contiguous comethylated region or
 #'    only the CpGs in the contiguous comethylated regions
 #' @param modelType model used to fit mixed model
+#' @param rDropThresh_num thershold for min correlation between a cpg with sum of the
+#'    rest of the CpGs
 #'
 #' @return text file with RegionID, p-value and median correlation value for
 #'    each contiguous comethylated region tested.
 #' @export
 #'
+#' @importFrom stats as.formula
+#' @importFrom stats coef
+#' @importFrom stats reshape
+#' @importFrom utils write.csv
+#'
 #' @examples
-#'    data(betaMatrixChr22_df)
+#'   data(betaMatrixChr22_df)
 #'    data(pheno_df)
 #'    inFile <- system.file(
 #'      "extdata", "CpGislandsChr22_ex.RDS",
@@ -34,24 +41,34 @@
 #'      contPheno_char = "stage",
 #'      covariates_char = c("age.brain", "sex"),
 #'      inFile,
-#'      outFile = "outEx.txt",
 #'      inFileType = "RDS",
 #'      arrayType = "450k",
 #'      returnAllCpGs = FALSE,
-#'      modelType = "randCoeffMixed"
+#'      modelType = "randCoeffMixed",
+#'      rDropThresh_num = 0.5
 #'    )
 #'
 lmmTestAllRegions <- function(betaMatrixAllRegions, pheno_df,
                               contPheno_char, covariates_char,
-                              inFile, outFile,
+                              inFile, outFile = NULL,
                               inFileType = c("gmt","RDS"),
                               arrayType = c("450k","EPIC"),
                               returnAllCpGs = FALSE,
-                              modelType = c("randCoeffMixed", "mixed")){
+                              modelType = c("randCoeffMixed", "mixed"),
+                              rDropThresh_num = 0.5){
+
+  arrayType <- match.arg(arrayType)
+  inFileType  <- match.arg(inFileType)
+  modelType <- match.arg(modelType)
 
   ### Extract cotiguous comethylated regions ###
   coMeth_ls <- CoMethAllRegions(
-    betaMatrixAllRegions, file = inFile, inFileType, arrayType, returnAllCpGs
+    betaMatrix = betaMatrixAllRegions,
+    rDropThresh_num = rDropThresh_num,
+    file = inFile,
+    fileType = inFileType,
+    arrayType = arrayType,
+    returnAllCpGs = returnAllCpGs
   )
 
   ### Create list of contiguous comethylated beta matrices ###
@@ -69,34 +86,21 @@ lmmTestAllRegions <- function(betaMatrixAllRegions, pheno_df,
   )
 
   ### Output results ###
-  out <- data.frame(
-    RegionID = names(results_ls),
-    Pval_Mixed_Model = unlist(unname(
-      lapply(results_ls, function(x) x$`Pval_Mixed_Model`)
-    )),
-    Pval_Mixed_Model2 = unname(
-      sapply(results_ls, function(x) x$`model`)
-    )
-  )
+  outDF <- NULL
+  out <- lapply(results_ls, `[[`, 1)
+  for (i in 1:length(out)){
+    outDF <- rbind(outDF,out[[i]])
+  }
 
-  write.csv(out, outFile, quote = FALSE, row.names = FALSE)
+  if (is.null(outFile)){
+
+    outDF
+
+  } else {
+
+    message(paste0("writing results to ", outFile))
+    write.csv(outDF, outFile, quote = FALSE, row.names = FALSE)
+
+  }
 
 }
-
-# $`chr22:18268062-18268249`
-# $`chr22:18268062-18268249`$`model`
-#               Region_Name    Estimate Std..Error       df t.value   Pr...t..
-# 1 chr22:18268062-18268249 -0.07256779  0.0403895 14.72166 -1.7967 0.09292632
-#
-# $`chr22:18268062-18268249`$CpGs
-# [1] "cg12460175" "cg14086922" "cg21463605"
-#
-#
-# $`chr22:18531243-18531447`
-# $`chr22:18531243-18531447`$`model`
-#               Region_Name    Estimate Std..Error      df  t.value  Pr...t..
-# 1 chr22:18531243-18531447 -0.07127557   0.047668 16.4677 -1.49525 0.1537658
-#
-# $`chr22:18531243-18531447`$CpGs
-# [1] "cg06961233" "cg08819022" "cg25257671"
-

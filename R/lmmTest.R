@@ -8,6 +8,7 @@
 #' @param contPheno_char character string of the phenotype name
 #' @param covariates_char character vector of covariate names
 #' @param modelType model used to fit mixed model
+#' @param arrayType Type of array, 450k or EPIC
 #'
 #' @return list of pvalue and median correlation
 #'    for the contiguous comethylated region being tested
@@ -30,6 +31,8 @@ lmmTest <- function(betaMatrix, pheno_df, contPheno_char, covariates_char,
                     modelType = c("randCoeffMixed", "mixed"),
                     arrayType = c("450k","EPIC"))  {
 
+  modelType <- match.arg(modelType)
+
   ### Transpose betaMatrix from wide to long ###
   betaMatrix$ProbeID <- row.names(betaMatrix)
   betaMatrixTransp_df <- reshape(
@@ -37,7 +40,7 @@ lmmTest <- function(betaMatrix, pheno_df, contPheno_char, covariates_char,
     varying = colnames(betaMatrix[-ncol(betaMatrix)]),
     v.names = "beta",
     direction = "long",
-    time = colnames(betaMatrix[-ncol(betaMatrix)]),
+    times = colnames(betaMatrix[-ncol(betaMatrix)]),
     timevar = "Sample"
   )
 
@@ -58,9 +61,19 @@ lmmTest <- function(betaMatrix, pheno_df, contPheno_char, covariates_char,
   }, error = function(e){ NULL })
 
   if(is.null(f)){
-    ps <- 1
+
+    ps_df <- data.frame(
+      Estimate = NA_real_,
+      StdErr = NA_real_,
+      pValue = 1
+    )
+
   } else {
-    ps <- coef(summary(f))[contPheno_char, ]
+
+    ps_mat <- coef(summary(f))[contPheno_char, c(1, 2, 5), drop = FALSE]
+    ps_df <- as.data.frame(ps_mat)
+    colnames(ps_df) <- c("Estimate", "StdErr", "pValue")
+
   }
 
   regionName <- NameRegion(
@@ -71,15 +84,11 @@ lmmTest <- function(betaMatrix, pheno_df, contPheno_char, covariates_char,
 
   ### Return results ###
   list(
-    model = cbind("Region_Name" = regionName, data.frame(as.list(ps))),
+    model = cbind("Region_Name" = regionName, ps_df),
     CpGs = betaMatrix$ProbeID
   )
 
 }
 
-
-#$`model`
-#              regionName  Estimate Std..Error       df  t.value  Pr...t..
-#1 chr22:24372913-24372926 0.1061544 0.08215363 15.16173 1.292145 0.2156552
 
 

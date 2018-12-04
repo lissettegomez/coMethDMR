@@ -16,7 +16,7 @@
 #' @export
 #'
 #' @examples
-#'    data(betaCluster_mat_example4)
+#'    data(betaMatrix_ex4)
 #'    CpGs_df <- MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex4)
 #'    CpGsSubregions_df <- FindComethylatedRegions(CpGs_df)
 #'    SplitCpGDFbyRegion(CpGsSubregions_df, "450k")

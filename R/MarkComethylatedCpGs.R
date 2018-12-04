@@ -30,21 +30,27 @@
 #' @export
 #'
 #' @examples
-#'    data(betaCluster_mat_example1)
+#'    data(betaMatrix_ex1)
 #'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex1)
 #'
-#'    data(betaCluster_mat_example2)
+#'    data(betaMatrix_ex2)
 #'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex2)
 #'
-#'    data(betaCluster_mat_example3)
+#'    data(betaMatrix_ex3)
 #'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex3)
+#'
+#'    data(betaMatrix_ex4)
+#'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex4)
+#'
 
 
 MarkComethylatedCpGs <- function (betaCluster_mat, rDropThresh_num = 0.5) {
 
 
   ### Calculate alpha and Store CpGs ###
-  clusterAlpha_ls <- alpha(betaCluster_mat, warnings = FALSE)
+  convertFromBetaToMvalues<-function(x){log2(x/(1-x))}
+  betaClusterMvalues_mat <- apply(betaCluster_mat, c(1,2), convertFromBetaToMvalues)
+  clusterAlpha_ls <- alpha(betaClusterMvalues_mat, warnings = FALSE)
   CpGs_char <- rownames(clusterAlpha_ls$alpha.drop)
 
   ### Drop CpGs with r.drop < threshold_r_num ###

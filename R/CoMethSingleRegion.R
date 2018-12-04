@@ -8,6 +8,9 @@
 #'    column names = sample ids. This should include the CpGs in \code{CpGs_char}, as well as
 #'    additional CpGs.
 #'
+#' @param rDropThresh_num thershold for min correlation between a cpg with sum of the
+#'    rest of the CpGs
+#'
 #' @param arrayType Type of array, can be "450k" or "EPIC"
 #'
 #' @param returnAllCpGs When there is not a contiguous comethylated region in the inputing
@@ -30,16 +33,22 @@
 #'
 #' @examples
 #'    data(betaMatrixChr22_df)
-#'
 #'    CpGsChr22_char <- c("cg02953382", "cg12419862", "cg24565820", "cg04234412",
 #'       "cg04824771", "cg09033563", "cg10150615", "cg18538332", "cg20007245",
 #'       "cg23131131", "cg25703541")
+#'    CoMethSingleRegion (CpGs_char = CpGsChr22_char,
+#'       betaMatrix = betaMatrixChr22_df)
 #'
-#'    CoMethSingleRegion (CpGsChr22_char, betaMatrixChr22_df)
+#'    data(betaCluster_mat_example3)
+#'    betaMatrix_ex3 <- t(betaMatrix_ex3)
+#'    CpGsEx3_char <- c("cg14221598", "cg02433884", "cg07372974", "cg13419809",
+#'       "cg26856676", "cg25246745")
+#'    CoMethSingleRegion (CpGs_char = CpGsEx3_char, betaMatrix = betaMatrix_ex3,
+#'       returnAllCpGs = TRUE)
 #'
 CoMethSingleRegion <- function(CpGs_char, betaMatrix, rDropThresh_num = 0.5,
                                arrayType = c("450k","EPIC"),
-                               returnAllCpGs = TRUE){
+                               returnAllCpGs = FALSE){
 
   arrayType <- match.arg(arrayType)
 
@@ -55,7 +64,8 @@ CoMethSingleRegion <- function(CpGs_char, betaMatrix, rDropThresh_num = 0.5,
   betaClusterTransp_mat <- t(betaCluster_mat)
 
   ### Mark comethylated CpGs ###
-  keepCpGs_df <- MarkComethylatedCpGs(betaCluster_mat = betaClusterTransp_mat, rDropThresh_num )
+  keepCpGs_df <- MarkComethylatedCpGs(betaCluster_mat = betaClusterTransp_mat,
+                                      rDropThresh_num)
 
   ### Find contiguous comethylated regions ###
   keepContiguousCpGs_df <- FindComethylatedRegions(
@@ -69,7 +79,7 @@ CoMethSingleRegion <- function(CpGs_char, betaMatrix, rDropThresh_num = 0.5,
 
   ### Create Output Data Frame  ###
   coMethCpGs_df <- CreateOutputDF(
-    keepCpGs_df, keepContiguousCpGs_df, CpGsOrdered_df
+    keepCpGs_df, keepContiguousCpGs_df, CpGsOrdered_df, returnAllCpGs
   )
 
   ### Create output list of data frame and CpGs by subregion ###
