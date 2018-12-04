@@ -30,7 +30,6 @@ regions, \code{returnAllCpGs = 0} indicates not returning any CpG.}
 
 \item{...}{}
 }
-
 \value{
 A list of two components:
 
@@ -46,14 +45,12 @@ A list of two components:
    }
 }
 }
-
 \description{
 Extract contiguous co-methylated genomic regions from a list of
 pre-defined genomic regions
 }
 \examples{
 
-\dontrun{
    data(betaMatrixChr22_df)
 
    CoMethAllRegions(
@@ -66,10 +63,8 @@ pre-defined genomic regions
          mustWork = TRUE),
 
       fileType = "RDS",
-
       arrayType = "450k",
       returnAllCpGs = FALSE
 
       )
-}
 }

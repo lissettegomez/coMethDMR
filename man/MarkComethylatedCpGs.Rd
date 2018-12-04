@@ -48,6 +48,6 @@ An outlier CpG in a genomic region will typically have low correlation with the 
    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex3)
 
    data(betaMatrix_ex4)
-   MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex4)
+   MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex4, rDropThresh_num = 0.6)
 
 }
