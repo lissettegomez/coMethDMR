@@ -61,6 +61,7 @@ lmmTest <- function(betaMatrix, pheno_df, contPheno_char, covariates_char,
                     arrayType = c("450k","EPIC"))  {
 
   modelType <- match.arg(modelType)
+  arrayType <- match.arg(arrayType)
 
   ### Transpose betaMatrix from wide to long ###
   betaMatrix$ProbeID <- row.names(betaMatrix)

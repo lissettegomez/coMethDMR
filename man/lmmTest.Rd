@@ -25,9 +25,14 @@ coefficient mixed model, or \code{simple} for simple linear mixed model.}
 \item{arrayType}{Type of array, can be "450k" or "EPIC"}
 }
 \value{
+<<<<<<< HEAD
 A list with two components: (1) \code{Estimate}, \code{StdErr}, and \code{pvalue} for the association of methylation
 values in the genomic region tested vs. continuous phenotype \code{contPheno_char};
 (2) CpG IDs that belong to the region
+=======
+list of pvalues for the contiguous comethylated region being tested
+   and CpGs in the region
+>>>>>>> 31ee29bb1c03d602e67292576fabd15034d0adef
 }
 \description{
 Fit mixed model to methylation values in one genomic region
