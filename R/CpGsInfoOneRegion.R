@@ -3,8 +3,8 @@
 #'
 #' @param regionName_char character string with location info for one region in
 #'    this format: "chrxx:xxxxxx-xxxxxx"
-#' @param betaMatrix matrix of beta values for one contiguous comethylated region,
-#'    with row names = CpG ids, column names = sample ids
+#' @param betaMatrixAllRegions matrix of beta values for all contiguous
+#'    comethylated regions, with row names = CpG ids, column names = sample ids
 #' @param pheno_df a data frame with phenotype and covariates
 #'    (sample ID column = "Sample")
 #' @param contPheno_char character string of the phenotype name
@@ -23,9 +23,9 @@
 #'    data(betaMatrixChr22_df)
 #'    data(pheno_df)
 #'    CpGsInfoOneRegion(regionName_char = "chr22:18267969-18268249",
-#'     betaMatrix = betaMatrixChr22_df, pheno_df, contPheno_char = "stage",
+#'     betaMatrixAllRegions = betaMatrixChr22_df, pheno_df, contPheno_char = "stage",
 #'     covariates_char = c("age.brain", "sex"))
-CpGsInfoOneRegion <- function(regionName_char, betaMatrix, pheno_df,
+CpGsInfoOneRegion <- function(regionName_char, betaMatrixAllRegions, pheno_df,
                               contPheno_char, covariates_char,
                               arrayType = c("450k","EPIC")){
 
@@ -35,23 +35,24 @@ CpGsInfoOneRegion <- function(regionName_char, betaMatrix, pheno_df,
   CpGsToTest <- ExtractCpGs(regionName_char, arrayType = "450k")
 
   ### Transpose betaMatrix from wide to long ###
-  betaMatrix$ProbeID <- row.names(betaMatrix)
-  betaMatrixTransp_df <- reshape(
-    betaMatrix,
-    varying = colnames(betaMatrix[-ncol(betaMatrix)]),
+  betaMatrixAllRegions$ProbeID <- row.names(betaMatrixAllRegions)
+  CpGsBetaMatrix <- betaMatrixAllRegions[which(betaMatrixAllRegions$ProbeID %in% CpGsToTest), ]
+  CpGsBetaMatrixTransp_df <- reshape(
+    CpGsBetaMatrix,
+    varying = colnames(CpGsBetaMatrix[-ncol(CpGsBetaMatrix)]),
     v.names = "beta",
     direction = "long",
-    times = colnames(betaMatrix[-ncol(betaMatrix)]),
+    times = colnames(CpGsBetaMatrix[-ncol(CpGsBetaMatrix)]),
     timevar = "Sample"
   )
 
   ### Calculate M values ###
-  betaMatrixTransp_df$Mvalue <- log2(
-    betaMatrixTransp_df$beta / (1 - betaMatrixTransp_df$beta)
+  CpGsBetaMatrixTransp_df$Mvalue <- log2(
+    CpGsBetaMatrixTransp_df$beta / (1 - CpGsBetaMatrixTransp_df$beta)
   )
 
   ### Merge transposed beta matrix with phenotype ###
-  betaMatrixPheno_df <- merge(betaMatrixTransp_df, pheno_df, by="Sample")
+  CpGsBetaMatrixPheno_df <- merge(CpGsBetaMatrixTransp_df, pheno_df, by="Sample")
 
   ### Run linal model for each CpG ###
   cov <- paste(covariates_char, collapse = "+")
@@ -60,10 +61,10 @@ CpGsInfoOneRegion <- function(regionName_char, betaMatrix, pheno_df,
 
   for (i in 1:length(CpGsToTest)){
 
-    f <- lm(
-      lmFormula,
-      data = betaMatrixPheno_df[which(betaMatrixPheno_df$ProbeID %in% CpGsToTest[i]), ]
-    )
+    f <- lm(lmFormula,
+            data = CpGsBetaMatrixPheno_df[
+              which(CpGsBetaMatrixPheno_df$ProbeID == CpGsToTest[i]), ])
+
     result <- coef(summary(f))[contPheno_char, c(1, 4), drop = FALSE]
     resultAllCpGs[i, ] <- cbind(CpGsToTest[i], round(result, 4))
 
@@ -73,7 +74,8 @@ CpGsInfoOneRegion <- function(regionName_char, betaMatrix, pheno_df,
   colnames(resultAllCpGs) <- c("CpG", "slopeEstimate", "slopePval")
   CpGsLocation <- OrderCpGsByLocation(
     CpGs_char = CpGsToTest, arrayType = arrayType, output = "dataframe")
-  outDF <- merge(CpGsLocation, resultAllCpGs, by.x = "cpg", by.y = "CpG", sort = FALSE)[-4]
+  outDF <- merge(CpGsLocation, resultAllCpGs,
+                 by.x = "cpg", by.y = "CpG", sort = FALSE)[-4]
 
   outDF
 
