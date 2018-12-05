@@ -15,23 +15,32 @@ CloseBySingleRegion(CpGs_char, arrayType = c("450k", "EPIC"),
 \item{maxGap}{an integer, genomic locations within maxGap from each other
 are placed into the same cluster}
 
-\item{minCpGs}{an integer, minimum number of CpGs for the resulting CpG cluster}
+\item{minCpGs}{an integer, minimum number of CpGs for the resulting CpG
+cluster}
 }
 \value{
-a list, each item in the list is a character vector of CpG IDs located closely (i.e. in the same cluster)
+a list, each item in the list is a character vector of CpG IDs
+   located closely (i.e. in the same cluster)
 }
 \description{
 Extract clusters of CpGs located closely in a genomic region.
 }
 \details{
-Note that this function depends only on CpG locations, and not on any methylation data. The algorithm is
- based on the \code{clusterMaker} function in \code{bumphunter} R package. Each cluster is essentially a group of
- CpG locations such that two consecutive locations in the clsuter are separated by less than
- \code{maxGap}.
+Note that this function depends only on CpG locations, and not on
+   any methylation data. The algorithm is based on the
+   \code{\link[bumphunter]{clusterMaker}} function in the \code{bumphunter}
+   R package. Each cluster is essentially a group of CpG locations such that
+   two consecutive locations in the clsuter are separated by less than
+   \code{maxGap}.
 }
 \examples{
-   CpGs_char <- c("cg02505293", "cg03618257", "cg04421269", "cg17885402",
-       "cg19890033", "cg20566587", "cg27505880")
-   cluster_ls <- CloseBySingleRegion(CpGs_char, arrayType="450k", maxGap=100, minCpGs=3)
+   CpGs_char <- c(
+     "cg02505293", "cg03618257", "cg04421269", "cg17885402", "cg19890033",
+     "cg20566587", "cg27505880"
+   )
+
+   cluster_ls <- CloseBySingleRegion(
+     CpGs_char, arrayType = "450k", maxGap = 100, minCpGs = 3
+   )
 
 }
