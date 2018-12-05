@@ -10,8 +10,9 @@
 #' @param modelType model used to fit mixed model
 #' @param arrayType Type of array, 450k or EPIC
 #'
-#' @return list of pvalues for the contiguous comethylated region being tested
-#'    and CpGs in the region
+#' @return estimate, standard error and pvalue for the contiguous comethylated
+#'    region being tested
+#'
 #' @export
 #'
 #' @importFrom lmerTest lmer
@@ -74,6 +75,7 @@ lmmTest <- function(betaMatrix, pheno_df, contPheno_char, covariates_char,
     ps_mat <- coef(summary(f))[contPheno_char, c(1, 2, 5), drop = FALSE]
     ps_df <- as.data.frame(ps_mat)
     colnames(ps_df) <- c("Estimate", "StdErr", "pValue")
+    rownames(ps_df) <- NULL
 
   }
 
@@ -84,10 +86,9 @@ lmmTest <- function(betaMatrix, pheno_df, contPheno_char, covariates_char,
   )
 
   ### Return results ###
-  list(
-    model = cbind("Region_Name" = regionName, ps_df),
-    CpGs = betaMatrix$ProbeID
-  )
+  model = cbind("Region_Name" = regionName, ps_df)
+  model
+
 
 }
 

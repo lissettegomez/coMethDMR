@@ -32,7 +32,7 @@ CpGsInfoOneRegion <- function(regionName_char, betaMatrixAllRegions, pheno_df,
   arrayType <- match.arg(arrayType)
 
   ### Extract individual CpGs in the region ###
-  CpGsToTest <- ExtractCpGs(regionName_char, arrayType = "450k")
+  CpGsToTest <- CpGsInRegion(regionName_char, arrayType = "450k")
 
   ### Transpose betaMatrix from wide to long ###
   betaMatrixAllRegions$ProbeID <- row.names(betaMatrixAllRegions)

@@ -1,5 +1,18 @@
 
-.ExtractCpGs <- function(regionName_char, arrayType = c("450k","EPIC")){
+#' Extract individual CpGs in a region
+#'
+#' @param regionName_char character string with location info for one region in
+#'    this format: "chrxx:xxxxxx-xxxxxx"
+#' @param arrayType Type of array, 450k or EPIC
+#'
+#' @return vector of CpGs in the region
+#' @export
+#'
+#' @importFrom stats lm
+#'
+#' @examples
+#'    ExtractCpGs(regionName_char = "chr22:18267969-18268249", arrayType = "450k")
+ExtractCpGs <- function(regionName_char, arrayType = c("450k","EPIC")){
 
 
   arrayType <- match.arg(arrayType)

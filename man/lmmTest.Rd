@@ -24,8 +24,8 @@ with row names = CpG ids, column names = sample ids}
 \item{arrayType}{Type of array, 450k or EPIC}
 }
 \value{
-list of pvalues for the contiguous comethylated region being tested
-   and CpGs in the region
+estimate, standard error and pvalue for the contiguous comethylated
+   region being tested
 }
 \description{
 Fit mixed model for one region
