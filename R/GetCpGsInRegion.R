@@ -11,11 +11,11 @@
 #' @importFrom stats lm
 #'
 #' @examples
-#'    CpGsInRegion(
+#'    GetCpGsInRegion(
 #'      regionName_char = "chr22:18267969-18268249",
 #'      arrayType = "450k"
 #'    )
-CpGsInRegion <- function(regionName_char, arrayType = c("450k","EPIC")){
+GetCpGsInRegion <- function(regionName_char, arrayType = c("450k","EPIC")){
 
 
   arrayType <- match.arg(arrayType)
@@ -31,19 +31,21 @@ CpGsInRegion <- function(regionName_char, arrayType = c("450k","EPIC")){
 
 
   ### Split the region name in chr and positions ###
-  split1 <- strsplit(regionName_char, ":")
-  split2 <- strsplit(split1[[1]][2], "-")
-  split3 <- c(split1[[1]][1], split2[[1]][1], split2[[1]][2])
+  split1 <- unlist(strsplit(regionName_char, ":"))
+  split2 <- unlist(strsplit(split1[2], "-"))
+  chr <- split1[1]
+  start <- split2[1]
+  end <- split2[2]
+
 
   ### Subset the location Data Frame  ###
   # Remove S4 class DataFrame
-  CpGlocations_df <- as.data.frame(CpGlocations_df, stringsAsFactors = FALSE)
+  CpGlocations_df <- as.data.frame(CpGlocations_df)
   CpGlocations_df$cpg <- row.names(CpGlocations_df)
   row.names(CpGlocations_df) <- NULL
-  CpGs_df <- CpGlocations_df[which(
-    CpGlocations_df$chr == split3[1] &
-    CpGlocations_df$pos >= as.integer(split3[2]) &
-    CpGlocations_df$pos <= as.integer(split3[3])),]
+  chr_df <- CpGlocations_df[which(CpGlocations_df$chr == chr), ]
+  CpGs_df <- chr_df[which(chr_df$pos >= as.integer(start) &
+    chr_df$pos <= as.integer(end)), ]
 
 
   OrderCpGsByLocation(CpGs_df$cpg, arrayType = arrayType, output = "vector")

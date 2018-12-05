@@ -3,7 +3,7 @@
 export(CloseBySingleRegion)
 export(CoMethAllRegions)
 export(CoMethSingleRegion)
-export(CpGsInRegion)
+export(GetCpGsInRegion)
 export(CpGsInfoOneRegion)
 export(CreateOutputDF)
 export(FindComethylatedRegions)
