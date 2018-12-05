@@ -2,47 +2,50 @@
 % Please edit documentation in R/lmmTestAllRegions.R
 \name{lmmTestAllRegions}
 \alias{lmmTestAllRegions}
-\title{Fit mixed model for all regions}
+\title{Fit mixed model to methylation values in a list of genomic region}
 \usage{
 lmmTestAllRegions(betaMatrixAllRegions, pheno_df, contPheno_char,
   covariates_char, inFile, outFile = NULL, inFileType = c("gmt",
   "RDS"), arrayType = c("450k", "EPIC"), returnAllCpGs = FALSE,
-  modelType = c("randCoeffMixed", "mixed"), rDropThresh_num = 0.5)
+  modelType = c("randCoef", "simple"), rDropThresh_num = 0.5)
 }
 \arguments{
 \item{betaMatrixAllRegions}{matrix of beta values for all contiguous
-comethylated regions, with row names = CpG ids, column names = sample ids}
+comethylated regions, with row names = CpG IDs, column names = sample IDs. This is often the
+genome-wide array data.}
 
-\item{pheno_df}{a data frame with phenotype and covariates
-(sample ID column = "Sample")}
+\item{pheno_df}{a data frame with phenotype and covariates, with variable \code{Sample}
+indicating sample IDs.}
 
-\item{contPheno_char}{character string of the phenotype name}
+\item{contPheno_char}{character string of the main effect (a continuous phenotype)
+to be tested for association with methylation values in the region}
 
-\item{covariates_char}{character vector of covariate names}
+\item{covariates_char}{character vector for names of the covariate variables}
 
-\item{inFile}{name of input file with close by regions}
+\item{inFile}{name of input file with genomic regions}
 
-\item{outFile}{output csv file with the results for the mixed model analysis}
+\item{outFile}{output .csv file with the results for the mixed model analysis}
 
-\item{inFileType}{extension of input file: "gmt" or "RDS"}
+\item{inFileType}{extension of input file: "gmt" or "RDS". Sample datasets with these formats
+can be found in /code{inst/extdata folder}}
 
-\item{arrayType}{Type of array, 450k or EPIC}
+\item{arrayType}{Type of array, can be "450k" or "EPIC"}
 
-\item{returnAllCpGs}{indicates if outputting all the CpGs in the region
-when there is not a contiguous comethylated region or
-only the CpGs in the contiguous comethylated regions}
+\item{returnAllCpGs}{When there is not a contiguous comethylated region in the inputing
+pre-defined region, \code{returnAllCpGs = 1} indicates outputting all the CpGs in the input
+region, \code{returnAllCpGs = 0} indicates not returning any CpG.}
 
-\item{modelType}{model used to fit mixed model}
+\item{modelType}{type of mixed model, can be \code{randCoef} for random
+coefficient mixed model, or \code{simple} for simple linear mixed model.}
 
 \item{rDropThresh_num}{thershold for min correlation between a cpg with sum of the
 rest of the CpGs}
 }
 \value{
-text file with RegionID, p-value and median correlation value for
-   each contiguous comethylated region tested.
+text file with RegionID, p-value for each genomic region tested.
 }
 \description{
-Fit mixed model for all regions
+Fit mixed model to methylation values in a list of genomic region
 }
 \examples{
   data(betaMatrixChr22_df)
@@ -61,7 +64,7 @@ Fit mixed model for all regions
      inFileType = "RDS",
      arrayType = "450k",
      returnAllCpGs = FALSE,
-     modelType = "randCoeffMixed",
+     modelType = "randCoef",
      rDropThresh_num = 0.5
    )
 

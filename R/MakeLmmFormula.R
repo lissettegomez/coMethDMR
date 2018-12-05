@@ -1,15 +1,18 @@
 
 .MakeLmmFormula <- function(contPheno_char, covariates_char = NULL,
-                            modelType = c("randCoeffMixed", "mixed")){
+                            modelType = c("randCoef", "simple")){
 
   modelType <- match.arg(modelType)
+
   baseMod_char <- "Mvalue ~ (1|Sample)"
+
   randomCoef_char <- paste0("(",contPheno_char, "|ProbeID)")
+
   cov_char <- paste(covariates_char, collapse = " + ")
 
 
   ###    ###
-  if(modelType == "randCoeffMixed"){
+  if(modelType == "randCoef"){
 
     ifelse(
       is.null(covariates_char),
