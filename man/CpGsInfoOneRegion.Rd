@@ -33,7 +33,11 @@ Test individual CpGs
 \examples{
    data(betaMatrixChr22_df)
    data(pheno_df)
-   CpGsInfoOneRegion(regionName_char = "chr22:18267969-18268249",
-    betaMatrixAllRegions = betaMatrixChr22_df, pheno_df, contPheno_char = "stage",
-    covariates_char = c("age.brain", "sex"))
+
+   CpGsInfoOneRegion(
+     regionName_char = "chr22:18267969-18268249",
+     betaMatrixAllRegions = betaMatrixChr22_df,
+     pheno_df, contPheno_char = "stage",
+     covariates_char = c("age.brain", "sex")
+   )
 }

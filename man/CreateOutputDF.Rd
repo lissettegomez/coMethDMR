@@ -47,3 +47,4 @@ Create Output Dataframe
    keepContiguousCpGs_df <- FindComethylatedRegions(CpGs_df = keepCpGs_df)
    CreateOutputDF(keepCpGs_df, keepContiguousCpGs_df, CpGsOrdered_df)
 }
+\keyword{internal}

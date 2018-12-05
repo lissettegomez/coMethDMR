@@ -50,7 +50,9 @@ MarkComethylatedCpGs <- function (betaCluster_mat, rDropThresh_num = 0.5) {
 
   mvalues_mat <- log2(betaCluster_mat / (1 - betaCluster_mat))
 
-  clusterAlpha_ls <- alpha(mvalues_mat, warnings = FALSE)
+  clusterAlpha_ls <- suppressWarnings(
+    alpha(mvalues_mat, warnings = FALSE)
+  )
 
   CpGs_char <- rownames(clusterAlpha_ls$alpha.drop)
 

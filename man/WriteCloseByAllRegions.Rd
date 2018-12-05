@@ -24,7 +24,7 @@ are placed into the same cluster}
 
 \item{fileType}{the output files can be saved as .gmt or .RDS.}
 
-\item{...}{}
+\item{...}{Dots for internal arguments. Currently unused.}
 }
 \value{
 a file with the genomic regions containing CpGs located closely within each

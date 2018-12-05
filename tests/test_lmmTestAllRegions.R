@@ -22,5 +22,5 @@ lmmTestAllRegions(
   inFileType = "RDS",
   arrayType = "450k",
   returnAllCpGs = FALSE,
-  modelType = "randCoeffMixed"
+  modelType = "randCoef"
 )

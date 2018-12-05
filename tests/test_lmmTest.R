@@ -15,12 +15,12 @@ CpGsChr22_char <- c(
 coMethCpGs <- CoMethSingleRegion(CpGsChr22_char, betaMatrixChr22_df)
 coMethBetaMatrix <- betaMatrixChr22_df[coMethCpGs$CpGsSubregions[[1]], ]
 
-out_ls <- lmmTest(
+lmmTest(
   betaMatrix = coMethBetaMatrix,
   pheno_df,
   contPheno_char = "stage",
   covariates_char = c("age.brain", "sex"),
-  modelType = "randCoeffMixed",
+  modelType = "randCoef",
   arrayType = "450k"
 )
 

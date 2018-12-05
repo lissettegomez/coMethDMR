@@ -2,7 +2,8 @@
 % Please edit documentation in R/lmmTestAllRegions.R
 \name{lmmTestAllRegions}
 \alias{lmmTestAllRegions}
-\title{Fit mixed model to methylation values in a list of genomic region}
+\title{Fit mixed model to test association between a continuous phenotype and methylation values in
+ a list of genomic regions}
 \usage{
 lmmTestAllRegions(betaMatrixAllRegions, pheno_df, contPheno_char,
   covariates_char, inFile, outFile = NULL, inFileType = c("gmt",
@@ -10,9 +11,9 @@ lmmTestAllRegions(betaMatrixAllRegions, pheno_df, contPheno_char,
   modelType = c("randCoef", "simple"), rDropThresh_num = 0.5)
 }
 \arguments{
-\item{betaMatrixAllRegions}{matrix of beta values for all contiguous
-comethylated regions, with row names = CpG IDs, column names = sample IDs. This is often the
-genome-wide array data.}
+\item{betaMatrixAllRegions}{matrix of beta values for all genomic regions,
+with row names = CpG IDs, column names = sample IDs. This is often the
+   genome-wide array data.}
 
 \item{pheno_df}{a data frame with phenotype and covariates, with variable \code{Sample}
 indicating sample IDs.}
@@ -22,12 +23,12 @@ to be tested for association with methylation values in the region}
 
 \item{covariates_char}{character vector for names of the covariate variables}
 
-\item{inFile}{name of input file with genomic regions}
+\item{inFile}{name of input file, specifying pre-defined genomic regions}
 
 \item{outFile}{output .csv file with the results for the mixed model analysis}
 
 \item{inFileType}{extension of input file: "gmt" or "RDS". Sample datasets with these formats
-can be found in /code{inst/extdata folder}}
+can be found in \code{inst/extdata} folder}
 
 \item{arrayType}{Type of array, can be "450k" or "EPIC"}
 
@@ -45,7 +46,8 @@ rest of the CpGs}
 text file with RegionID, p-value for each genomic region tested.
 }
 \description{
-Fit mixed model to methylation values in a list of genomic region
+Fit mixed model to test association between a continuous phenotype and methylation values in
+ a list of genomic regions
 }
 \examples{
   data(betaMatrixChr22_df)

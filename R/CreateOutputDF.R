@@ -1,5 +1,3 @@
-
-
 #' Create Output Dataframe
 #'
 #' @param keepCpGs_df a data frame with CpG = CpG name,
@@ -19,6 +17,9 @@
 #'    r_drop = correlation between the CpG with rest of the CpGs,
 #'    keep = indicator for co-methylated CpG,
 #'    keep_contiguous = cotiguous comethylated subregion number
+#'
+#' @keywords internal
+#'
 #' @export
 #'
 #' @examples

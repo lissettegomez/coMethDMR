@@ -11,11 +11,12 @@ lmmTest(betaMatrix, pheno_df, contPheno_char, covariates_char,
 \item{betaMatrix}{matrix of beta values for one genomic region,
 with row names = CpG IDs, column names = sample IDs}
 
-\item{pheno_df}{a data frame with phenotype and covariates, with variable \code{Sample}
-indicating sample IDs.}
+\item{pheno_df}{a data frame with phenotype and covariates, with variable
+\code{Sample} indicating sample IDs.}
 
-\item{contPheno_char}{character string of the main effect (a continuous phenotype)
-to be tested for association with methylation values in the region}
+\item{contPheno_char}{character string of the main effect (a continuous
+phenotype) to be tested for association with methylation values in the
+region}
 
 \item{covariates_char}{character vector for names of the covariate variables}
 
@@ -25,30 +26,24 @@ coefficient mixed model, or \code{simple} for simple linear mixed model.}
 \item{arrayType}{Type of array, can be "450k" or "EPIC"}
 }
 \value{
-<<<<<<< HEAD
-estimate, standard error and pvalue for the contiguous comethylated
-   region being tested
-=======
-<<<<<<< HEAD
-A list with two components: (1) \code{Estimate}, \code{StdErr}, and \code{pvalue} for the association of methylation
-values in the genomic region tested vs. continuous phenotype \code{contPheno_char};
-(2) CpG IDs that belong to the region
-=======
-list of pvalues for the contiguous comethylated region being tested
-   and CpGs in the region
->>>>>>> 31ee29bb1c03d602e67292576fabd15034d0adef
->>>>>>> f6608f4c569b86a307ed9d93cd5416df47d7d2ee
+A list with two components: (1) \code{Estimate}, \code{StdErr}, and
+   \code{pvalue} for the association of methylation values in the genomic
+   region tested vs. continuous phenotype \code{contPheno_char}; (2) CpG IDs
+   that belong to the region
 }
 \description{
 Fit mixed model to methylation values in one genomic region
 }
 \details{
-This function implements a mixed model to test association between methylation values in a genomic region with a continuous phenotype.
+This function implements a mixed model to test association between
+   methylation values in a genomic region with a continuous phenotype.
 
-When \code{randCoef} is selected,
-the model is \code{methylation M value ~ contPheno_char + covariates_char + (1|Sample) + (contPheno_char|CpG)}. The last two terms are random intercepts and slopes for each CpG.
+   When \code{randCoef} is selected, the model is \code{methylation M value
+   ~ contPheno_char + covariates_char + (1|Sample) + (contPheno_char|CpG)}.
+   The last two terms are random intercepts and slopes for each CpG.
 
-When \code{simple} is selected, the model is \code{methylation M value ~ contPheno_char + covariates_char + (1|Sample)}
+   When \code{simple} is selected, the model is \code{methylation M value ~
+   contPheno_char + covariates_char + (1|Sample)}
 }
 \examples{
   data(betaMatrixChr22_df)

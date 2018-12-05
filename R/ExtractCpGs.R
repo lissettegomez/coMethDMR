@@ -11,7 +11,10 @@
 #' @importFrom stats lm
 #'
 #' @examples
-#'    CpGsInRegion(regionName_char = "chr22:18267969-18268249", arrayType = "450k")
+#'    CpGsInRegion(
+#'      regionName_char = "chr22:18267969-18268249",
+#'      arrayType = "450k"
+#'    )
 CpGsInRegion <- function(regionName_char, arrayType = c("450k","EPIC")){
 
 
@@ -34,7 +37,7 @@ CpGsInRegion <- function(regionName_char, arrayType = c("450k","EPIC")){
 
   ### Subset the location Data Frame  ###
   # Remove S4 class DataFrame
-  CpGlocations_df <- as.data.frame(CpGlocations_df)
+  CpGlocations_df <- as.data.frame(CpGlocations_df, stringsAsFactors = FALSE)
   CpGlocations_df$cpg <- row.names(CpGlocations_df)
   row.names(CpGlocations_df) <- NULL
   CpGs_df <- CpGlocations_df[which(

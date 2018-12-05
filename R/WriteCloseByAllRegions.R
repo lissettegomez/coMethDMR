@@ -4,20 +4,13 @@
 #'
 #' @param file file where the output genomic regions will be saved. File extension should not
 #' be supplied, it is automatically added via the \code{fileType} argument.
-#'
 #' @param fileType the output files can be saved as .gmt or .RDS.
-#'
 #' @param genomicRegionType Type of input genomic regions (e.g. "ISLAND" for CpG island)
-#'
 #' @param arrayType Type of array, can be "450k" or "EPIC"
-#'
 #' @param maxGap an integer, genomic locations within maxGap from each other
 #'    are placed into the same cluster
-#'
 #' @param minCpGs an integer, minimum number of CpGs for each resulting region
-#'
-#'
-#' @param ...
+#' @param ... Dots for internal arguments. Currently unused.
 #'
 #' @return a file with the genomic regions containing CpGs located closely within each
 #'  inputing pre-defined genomic region
