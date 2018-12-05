@@ -11,8 +11,8 @@
 #' @importFrom stats lm
 #'
 #' @examples
-#'    ExtractCpGs(regionName_char = "chr22:18267969-18268249", arrayType = "450k")
-ExtractCpGs <- function(regionName_char, arrayType = c("450k","EPIC")){
+#'    CpGsInRegion(regionName_char = "chr22:18267969-18268249", arrayType = "450k")
+CpGsInRegion <- function(regionName_char, arrayType = c("450k","EPIC")){
 
 
   arrayType <- match.arg(arrayType)
