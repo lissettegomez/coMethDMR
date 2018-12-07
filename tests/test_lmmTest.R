@@ -16,7 +16,7 @@ coMethCpGs <- CoMethSingleRegion(CpGsChr22_char, betaMatrixChr22_df)
 coMethBetaMatrix <- betaMatrixChr22_df[coMethCpGs$CpGsSubregions[[1]], ]
 
 lmmTest(
-  betaMatrix = coMethBetaMatrix,
+  betaOne_df = coMethBetaMatrix,
   pheno_df,
   contPheno_char = "stage",
   covariates_char = c("age.brain", "sex"),

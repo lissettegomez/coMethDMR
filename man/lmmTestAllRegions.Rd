@@ -2,24 +2,25 @@
 % Please edit documentation in R/lmmTestAllRegions.R
 \name{lmmTestAllRegions}
 \alias{lmmTestAllRegions}
-\title{Fit mixed model to test association between a continuous phenotype and methylation values in
- a list of genomic regions}
+\title{Fit mixed model to test association between a continuous phenotype and
+methylation values in a list of genomic regions}
 \usage{
-lmmTestAllRegions(betaMatrixAllRegions, pheno_df, contPheno_char,
-  covariates_char, inFile, outFile = NULL, inFileType = c("gmt",
-  "RDS"), arrayType = c("450k", "EPIC"), returnAllCpGs = FALSE,
+lmmTestAllRegions(beta_df, pheno_df, contPheno_char, covariates_char,
+  inFile, outFile = NULL, inFileType = c("gmt", "RDS"),
+  arrayType = c("450k", "EPIC"), returnAllCpGs = FALSE,
   modelType = c("randCoef", "simple"), rDropThresh_num = 0.5)
 }
 \arguments{
-\item{betaMatrixAllRegions}{matrix of beta values for all genomic regions,
+\item{beta_df}{data frame of beta values for all genomic regions,
 with row names = CpG IDs, column names = sample IDs. This is often the
-   genome-wide array data.}
+genome-wide array data.}
 
-\item{pheno_df}{a data frame with phenotype and covariates, with variable \code{Sample}
-indicating sample IDs.}
+\item{pheno_df}{a data frame with phenotype and covariates, with variable
+\code{Sample} indicating sample IDs.}
 
-\item{contPheno_char}{character string of the main effect (a continuous phenotype)
-to be tested for association with methylation values in the region}
+\item{contPheno_char}{character string of the main effect (a continuous
+phenotype) to be tested for association with methylation values in
+the region}
 
 \item{covariates_char}{character vector for names of the covariate variables}
 
@@ -27,14 +28,15 @@ to be tested for association with methylation values in the region}
 
 \item{outFile}{output .csv file with the results for the mixed model analysis}
 
-\item{inFileType}{extension of input file: "gmt" or "RDS". Sample datasets with these formats
-can be found in \code{inst/extdata} folder}
+\item{inFileType}{extension of input file: "gmt" or "RDS". Sample datasets
+with these formats can be found in \code{inst/extdata} folder}
 
 \item{arrayType}{Type of array, can be "450k" or "EPIC"}
 
-\item{returnAllCpGs}{When there is not a contiguous comethylated region in the inputing
-pre-defined region, \code{returnAllCpGs = 1} indicates outputting all the CpGs in the input
-region, \code{returnAllCpGs = 0} indicates not returning any CpG.}
+\item{returnAllCpGs}{When there is not a contiguous comethylated region in
+the inputing pre-defined region, \code{returnAllCpGs = 1} indicates
+outputting all the CpGs in the input region, \code{returnAllCpGs = 0}
+indicates not returning any CpG.}
 
 \item{modelType}{type of mixed model, can be \code{randCoef} for random
 coefficient mixed model, or \code{simple} for simple linear mixed model.}
@@ -46,11 +48,11 @@ rest of the CpGs}
 text file with RegionID, p-value for each genomic region tested.
 }
 \description{
-Fit mixed model to test association between a continuous phenotype and methylation values in
- a list of genomic regions
+Fit mixed model to test association between a continuous phenotype and
+methylation values in a list of genomic regions
 }
 \examples{
-  data(betaMatrixChr22_df)
+   data(betaMatrixChr22_df)
    data(pheno_df)
    inFile <- system.file(
      "extdata", "CpGislandsChr22_ex.RDS",
@@ -58,7 +60,7 @@ Fit mixed model to test association between a continuous phenotype and methylati
    )
 
    lmmTestAllRegions(
-     betaMatrixAllRegions = betaMatrixChr22_df,
+     beta_df = betaMatrixChr22_df,
      pheno_df,
      contPheno_char = "stage",
      covariates_char = c("age.brain", "sex"),

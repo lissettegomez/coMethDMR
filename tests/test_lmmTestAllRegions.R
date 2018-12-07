@@ -14,7 +14,7 @@ inFile <- system.file(
 )
 
 lmmTestAllRegions(
-  betaMatrixAllRegions = betaMatrixChr22_df,
+  beta_df = betaMatrixChr22_df,
   pheno_df,
   contPheno_char = "stage",
   covariates_char = c("age.brain", "sex"),

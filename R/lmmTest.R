@@ -1,6 +1,6 @@
 #' Fit mixed model to methylation values in one genomic region
 #'
-#' @param betaMatrix matrix of beta values for one genomic region,
+#' @param betaOne_df matrix of beta values for one genomic region,
 #'    with row names = CpG IDs, column names = sample IDs
 #' @param pheno_df a data frame with phenotype and covariates, with variable
 #'    \code{Sample} indicating sample IDs.
@@ -46,39 +46,39 @@
 #'
 #'   data(pheno_df)
 #'
-#'   lmmTest (betaMatrix = coMethBetaMatrix,
+#'   lmmTest (betaOne_df = coMethBetaMatrix,
 #'            pheno_df,
 #'            contPheno_char = "stage",
 #'            covariates_char = c("age.brain", "sex"),
-#'            modelType = "simple",
+#'            modelType = "randCoef",
 #'            arrayType = "450k")
 #'
 
-lmmTest <- function(betaMatrix, pheno_df, contPheno_char, covariates_char,
-                    modelType = c("randCoef", "simple"),
+lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
+                    modelType = c("randCoef", "mixed"),
                     arrayType = c("450k","EPIC"))  {
 
   modelType <- match.arg(modelType)
   arrayType <- match.arg(arrayType)
 
-  ### Transpose betaMatrix from wide to long ###
-  betaMatrix$ProbeID <- row.names(betaMatrix)
-  betaMatrixTransp_df <- reshape(
-    betaMatrix,
-    varying = colnames(betaMatrix[-ncol(betaMatrix)]),
+  ### Transpose betaOne_df from wide to long ###
+  betaOne_df$ProbeID <- row.names(betaOne_df)
+  betaOneTransp_df <- reshape(
+    betaOne_df,
+    varying = colnames(betaOne_df)[-ncol(betaOne_df)],
     v.names = "beta",
     direction = "long",
-    times = colnames(betaMatrix[-ncol(betaMatrix)]),
+    times = colnames(betaOne_df)[-ncol(betaOne_df)],
     timevar = "Sample"
   )
 
   ### Calculate M values ###
-  betaMatrixTransp_df$Mvalue <- log2(
-    betaMatrixTransp_df$beta / (1 - betaMatrixTransp_df$beta)
+  betaOneTransp_df$Mvalue <- log2(
+    betaOneTransp_df$beta / (1 - betaOneTransp_df$beta)
   )
 
   ### Merge transposed beta matrix with phenotype ###
-  betaMatrixPheno_df <- merge(betaMatrixTransp_df, pheno_df, by = "Sample")
+  betaOnePheno_df <- merge(betaOneTransp_df, pheno_df, by = "Sample")
 
 
   ### Run the mixed model ###
@@ -86,7 +86,7 @@ lmmTest <- function(betaMatrix, pheno_df, contPheno_char, covariates_char,
   modelFormula_char <- .MakeLmmFormula(contPheno_char, covariates_char, modelType)
 
    tryCatch({
-    f <- lmer(as.formula(modelFormula_char), betaMatrixPheno_df)
+    f <- lmer(as.formula(modelFormula_char), betaOnePheno_df)
   }, error = function(e){ NULL })
 
   if(is.null(f)){
@@ -100,6 +100,7 @@ lmmTest <- function(betaMatrix, pheno_df, contPheno_char, covariates_char,
   } else {
 
     ps_mat <- coef(summary(f))[contPheno_char, c(1, 2, 5), drop = FALSE]
+    ps_mat <- round(ps_mat,4)
     ps_df <- as.data.frame(ps_mat)
     colnames(ps_df) <- c("Estimate", "StdErr", "pValue")
     rownames(ps_df) <- NULL
@@ -108,7 +109,7 @@ lmmTest <- function(betaMatrix, pheno_df, contPheno_char, covariates_char,
 
   regionName <- NameRegion(
     OrderCpGsByLocation(
-      betaMatrix$ProbeID, arrayType, output = "dataframe"
+      betaOne_df$ProbeID, arrayType, output = "dataframe"
     )
   )
 
