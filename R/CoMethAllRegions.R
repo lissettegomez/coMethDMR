@@ -70,7 +70,7 @@ CoMethAllRegions <- function(betaMatrix, rDropThresh_num = 0.5,
 
 
   ### Extract contiguous comethylated region(s) from each close by region ###
-  # A pathway is a set of CpGs in a region
+  # A "pathway" = a set of CpGs in a region
   coMethCpGsAllREgions_ls <- lapply(
     unname(closeByGenomicRegion_ls$pathways),
     FUN = CoMethSingleRegion,
