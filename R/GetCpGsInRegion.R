@@ -1,11 +1,11 @@
 
-#' Extract individual CpGs in a region
+#' Extract probe IDs for CpGs located in a genomic region
 #'
-#' @param regionName_char character string with location info for one region in
+#' @param regionName_char character string with location information for one region in
 #'    this format: "chrxx:xxxxxx-xxxxxx"
 #' @param arrayType Type of array, 450k or EPIC
 #'
-#' @return vector of CpGs in the region
+#' @return vector of CpG probe IDs mapped to the genomic region
 #' @export
 #'
 #' @importFrom stats lm

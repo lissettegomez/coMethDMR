@@ -5,47 +5,38 @@
 \title{Fit mixed model to test association between a continuous phenotype and
 methylation values in a list of genomic regions}
 \usage{
-lmmTestAllRegions(beta_df, pheno_df, contPheno_char, covariates_char,
-  inFile, outFile = NULL, inFileType = c("gmt", "RDS"),
-  arrayType = c("450k", "EPIC"), returnAllCpGs = FALSE,
-  modelType = c("randCoef", "simple"), rDropThresh_num = 0.5)
+lmmTestAllRegions(beta_df, region_ls, pheno_df, contPheno_char,
+  covariates_char, modelType = c("randCoef", "simple"),
+  arrayType = c("450k", "EPIC"), outFile = NULL)
 }
 \arguments{
 \item{beta_df}{data frame of beta values for all genomic regions,
 with row names = CpG IDs, column names = sample IDs. This is often the
 genome-wide array data.}
 
+\item{region_ls}{a list of genomic regions, each item is a vector of CpG IDs within a genomic region. The co-methylated
+regions can be obtained by function \code{CoMethAllRegions}.}
+
 \item{pheno_df}{a data frame with phenotype and covariates, with variable
 \code{Sample} indicating sample IDs.}
 
 \item{contPheno_char}{character string of the main effect (a continuous
-phenotype) to be tested for association with methylation values in
-the region}
+phenotype) to be tested for association with methylation values in each
+region}
 
 \item{covariates_char}{character vector for names of the covariate variables}
-
-\item{inFile}{name of input file, specifying pre-defined genomic regions}
-
-\item{outFile}{output .csv file with the results for the mixed model analysis}
-
-\item{inFileType}{extension of input file: "gmt" or "RDS". Sample datasets
-with these formats can be found in \code{inst/extdata} folder}
-
-\item{arrayType}{Type of array, can be "450k" or "EPIC"}
-
-\item{returnAllCpGs}{When there is not a contiguous comethylated region in
-the inputing pre-defined region, \code{returnAllCpGs = 1} indicates
-outputting all the CpGs in the input region, \code{returnAllCpGs = 0}
-indicates not returning any CpG.}
 
 \item{modelType}{type of mixed model, can be \code{randCoef} for random
 coefficient mixed model, or \code{simple} for simple linear mixed model.}
 
-\item{rDropThresh_num}{thershold for min correlation between a cpg with sum of the
-rest of the CpGs}
+\item{arrayType}{Type of array, can be "450k" or "EPIC"}
+
+\item{outFile}{output .csv file with the results for the mixed model analysis}
 }
 \value{
-text file with RegionID, p-value for each genomic region tested.
+csv file with location of the genomic region (\code{Region_Name}), \code{Estimate},
+Standard error (\code{StdErr}) of the test statistic, and p-value for association between methylation values
+in each genomic region with phenotype (\code{pValue}).
 }
 \description{
 Fit mixed model to test association between a continuous phenotype and
@@ -53,23 +44,31 @@ methylation values in a list of genomic regions
 }
 \examples{
    data(betaMatrixChr22_df)
+
    data(pheno_df)
-   inFile <- system.file(
+
+   CpGisland_ls <- system.file(
      "extdata", "CpGislandsChr22_ex.RDS",
       package = 'coMethDMR', mustWork = TRUE
    )
 
+   coMeth_ls <- CoMethAllRegions(
+                   betaMatrix = betaMatrixChr22_df,
+                   rDropThresh_num = 0.5,
+                   file = CpGisland_ls,
+                   fileType = "RDS",
+                   arrayType = "450k",
+                   returnAllCpGs = FALSE
+               )
+
    lmmTestAllRegions(
      beta_df = betaMatrixChr22_df,
+     region_ls = coMeth_ls,
      pheno_df,
      contPheno_char = "stage",
      covariates_char = c("age.brain", "sex"),
-     inFile,
-     inFileType = "RDS",
-     arrayType = "450k",
-     returnAllCpGs = FALSE,
      modelType = "randCoef",
-     rDropThresh_num = 0.5
+     arrayType = "450k"
    )
 
 }

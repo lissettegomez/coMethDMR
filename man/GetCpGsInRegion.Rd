@@ -2,21 +2,21 @@
 % Please edit documentation in R/GetCpGsInRegion.R
 \name{GetCpGsInRegion}
 \alias{GetCpGsInRegion}
-\title{Extract individual CpGs in a region}
+\title{Extract probe IDs for CpGs located in a genomic region}
 \usage{
 GetCpGsInRegion(regionName_char, arrayType = c("450k", "EPIC"))
 }
 \arguments{
-\item{regionName_char}{character string with location info for one region in
+\item{regionName_char}{character string with location information for one region in
 this format: "chrxx:xxxxxx-xxxxxx"}
 
 \item{arrayType}{Type of array, 450k or EPIC}
 }
 \value{
-vector of CpGs in the region
+vector of CpG probe IDs mapped to the genomic region
 }
 \description{
-Extract individual CpGs in a region
+Extract probe IDs for CpGs located in a genomic region
 }
 \examples{
    GetCpGsInRegion(
