@@ -1,17 +1,17 @@
-#' Test individual CpGs in one region
+#' Test associations of individual CpGs in a genomic region with a continuous phenotype
 #'
-#' @param regionName_char character string with location info for one region in
-#'    this format: "chrxx:xxxxxx-xxxxxx"
+#' @param regionName_char character string of location information for a genomic region, specified in
+#' the format of "chrxx:xxxxxx-xxxxxx"
 #' @param betas_df data frame of beta values for all contiguous
-#'    comethylated regions, with row names = CpG ids, column names = sample ids
-#' @param pheno_df a data frame with phenotype and covariates
-#'    (sample ID column = "Sample")
-#' @param contPheno_char character string of the phenotype name
-#' @param covariates_char character vector of covariate names
-#' @param arrayType Type of array, 450k or EPIC
+#'    comethylated regions, with row names = CpG IDs, column names = sample IDs
+#' @param pheno_df a data frame with phenotype and covariate variables, with variable "Sample" for sample IDs.
+#' @param contPheno_char character string of the continuous phenotype, to be tested against methylation values
+#' @param covariates_char character vector of covariate variables names
+#' @param arrayType Type of array, can be "450k" or "EPIC"
 #'
-#' @return a data frame with cpg, chr, pos, slopeEstimate and slopePval for
-#'    each CpG in the region
+#' @return a data frame with CpG ID (cpg), chromosome (chr), position (pos), and results for testing
+#' association of methylation in individual CpGs with continuous phenotype (slopeEstimate, slopePval)
+#'
 #' @export
 #'
 #' @importFrom stats as.formula
