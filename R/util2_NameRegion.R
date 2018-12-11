@@ -1,10 +1,10 @@
 
-#' Name a CpG region based on its genomic location
+#' Name a region with several CpGs based on its genomic location
 #'
-#' @param CpGsOrdered_df dataframe with cpg name as character (cpg),
-#'    chromosome number as integer (CHR) and genomic location as integer (MAPINFO)
+#' @param CpGsOrdered_df dataframe with columns for Probe IDs as character (cpg),
+#'    chromosome number as character (chr) and genomic location as integer (pos)
 #'
-#' @return genome location of the CpGs region
+#' @return genome location of the CpGs, in the format of "chrxx:xxxxxx-xxxxxx"
 #' @export
 #'
 #' @examples

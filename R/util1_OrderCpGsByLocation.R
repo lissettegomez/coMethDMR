@@ -5,7 +5,8 @@
 #' @param arrayType Type of array, 450k or EPIC
 #' @param output vector of CpGs or dataframe with CpGs, CHR, MAPINFO
 #'
-#' @return vector of ordered CpGs or dataframe with ordered CpGs, CHR, MAPINFO
+#' @return vector of CpGs ordered by location or dataframe with CpGs ordered by location (cpg),
+#' chromosome (chr), position (pos)
 #' @export
 #'
 #' @import IlluminaHumanMethylation450kanno.ilmn12.hg19
@@ -31,6 +32,9 @@ OrderCpGsByLocation <- function(CpGs_char, arrayType = c("450k","EPIC"), output 
   ### Subset the location Data Frame  ###
   # Remove S4 class DataFrame
   CpGlocations_df <- as.data.frame(CpGlocations_df)
+
+  CpGlocations_df <- subset (CpGlocations_df, select = -strand)
+
   CpGlocations_df$cpg <- row.names(CpGlocations_df)
   row.names(CpGlocations_df) <- NULL
   CpGs_df <- CpGlocations_df[which(CpGlocations_df$cpg%in%CpGs_char),]
