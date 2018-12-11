@@ -2,30 +2,26 @@
 #' Fit mixed model to test association between a continuous phenotype and
 #' methylation values in a list of genomic regions
 #'
+#'
 #' @param beta_df data frame of beta values for all genomic regions,
 #'    with row names = CpG IDs, column names = sample IDs. This is often the
 #'    genome-wide array data.
+#' @param region_ls a list of genomic regions, each item is a vector of CpG IDs within a genomic region. The co-methylated
+#' regions can be obtained by function \code{CoMethAllRegions}.
 #' @param pheno_df a data frame with phenotype and covariates, with variable
 #'    \code{Sample} indicating sample IDs.
 #' @param contPheno_char character string of the main effect (a continuous
-#'    phenotype) to be tested for association with methylation values in
-#'    the region
+#'    phenotype) to be tested for association with methylation values in each
+#'    region
 #' @param covariates_char character vector for names of the covariate variables
 #' @param modelType type of mixed model, can be \code{randCoef} for random
 #'    coefficient mixed model, or \code{simple} for simple linear mixed model.
 #' @param arrayType Type of array, can be "450k" or "EPIC"
-#' @param inFile name of input file, specifying pre-defined genomic regions
 #' @param outFile output .csv file with the results for the mixed model analysis
-#' @param inFileType extension of input file: "gmt" or "RDS". Sample datasets
-#'    with these formats can be found in \code{inst/extdata} folder
-#' @param returnAllCpGs When there is not a contiguous comethylated region in
-#'    the inputing pre-defined region, \code{returnAllCpGs = 1} indicates
-#'    outputting all the CpGs in the input region, \code{returnAllCpGs = 0}
-#'    indicates not returning any CpG.
-#' @param rDropThresh_num thershold for min correlation between a cpg with sum of the
-#'    rest of the CpGs
 #'
-#' @return text file with RegionID, p-value for each genomic region tested.
+#' @return csv file with location of the genomic region (\code{Region_Name}), \code{Estimate},
+#' Standard error (\code{StdErr}) of the test statistic, and p-value for association between methylation values
+#' in each genomic region with phenotype (\code{pValue}).
 #'
 #' @export
 #'
@@ -36,54 +32,47 @@
 #'
 #' @examples
 #'    data(betaMatrixChr22_df)
+#'
 #'    data(pheno_df)
-#'    inFile <- system.file(
+#'
+#'    CpGisland_ls <- system.file(
 #'      "extdata", "CpGislandsChr22_ex.RDS",
 #'       package = 'coMethDMR', mustWork = TRUE
 #'    )
 #'
+#'    coMeth_ls <- CoMethAllRegions(
+#'                    betaMatrix = betaMatrixChr22_df,
+#'                    rDropThresh_num = 0.5,
+#'                    file = CpGisland_ls,
+#'                    fileType = "RDS",
+#'                    arrayType = "450k",
+#'                    returnAllCpGs = FALSE
+#'                )
+#'
 #'    lmmTestAllRegions(
 #'      beta_df = betaMatrixChr22_df,
+#'      region_ls = coMeth_ls,
 #'      pheno_df,
 #'      contPheno_char = "stage",
 #'      covariates_char = c("age.brain", "sex"),
-#'      inFile,
-#'      inFileType = "RDS",
-#'      arrayType = "450k",
-#'      returnAllCpGs = FALSE,
 #'      modelType = "randCoef",
-#'      rDropThresh_num = 0.5
+#'      arrayType = "450k"
 #'    )
 #'
-lmmTestAllRegions <- function(beta_df, pheno_df,
+
+lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
                               contPheno_char, covariates_char,
-                              inFile, outFile = NULL,
-                              inFileType = c("gmt","RDS"),
-                              arrayType = c("450k","EPIC"),
-                              returnAllCpGs = FALSE,
                               modelType = c("randCoef", "simple"),
-                              rDropThresh_num = 0.5){
+                              arrayType = c("450k","EPIC"),
+                              outFile = NULL){
 
-  arrayType <- match.arg(arrayType)
-  inFileType  <- match.arg(inFileType)
   modelType <- match.arg(modelType)
-
-  ### Extract cotiguous comethylated regions ###
-  coMeth_ls <- CoMethAllRegions(
-    betaMatrix = beta_df,
-    rDropThresh_num = rDropThresh_num,
-    file = inFile,
-    fileType = inFileType,
-    arrayType = arrayType,
-    returnAllCpGs = returnAllCpGs
-  )
-
-  ### Create list of contiguous comethylated beta matrices ###
+  arrayType <- match.arg(arrayType)
 
   CpGnames <- rownames(beta_df)
 
   coMethBetaDF_ls <- lapply(
-    coMeth_ls$CpGsSubregions,
+    region_ls$CpGsSubregions,
     function(x) beta_df[which(CpGnames %in% x), ]
   )
 
@@ -96,10 +85,14 @@ lmmTestAllRegions <- function(beta_df, pheno_df,
   )
 
   ### Output results ###
-  outDF <- NULL
-  for (i in 1:length(results_ls)){
-    outDF <- rbind(outDF,results_ls[[i]])
+
+  if (length(results_ls) >0 ){
+
+    outDF <- do.call (rbind, results_ls)
+
+    row.names(outDF) <- NULL
   }
+
 
   if (is.null(outFile)){
 
