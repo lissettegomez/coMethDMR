@@ -2,15 +2,15 @@
 #'
 #' @param regionName_char character string of location information for a genomic region, specified in
 #' the format of "chrxx:xxxxxx-xxxxxx"
-#' @param betas_df data frame of beta values for all contiguous
-#'    comethylated regions, with row names = CpG IDs, column names = sample IDs
+#' @param betas_df data frame of beta values with row names = CpG IDs, column names = sample IDs
 #' @param pheno_df a data frame with phenotype and covariate variables, with variable "Sample" for sample IDs.
 #' @param contPheno_char character string of the continuous phenotype, to be tested against methylation values
 #' @param covariates_char character vector of covariate variables names
 #' @param arrayType Type of array, can be "450k" or "EPIC"
 #'
-#' @return a data frame with CpG ID (cpg), chromosome (chr), position (pos), and results for testing
-#' association of methylation in individual CpGs with continuous phenotype (slopeEstimate, slopePval)
+#' @return a data frame with location of the genomic region (Region), CpG ID (cpg), chromosome (chr),
+#' position (pos), and results for testing association of methylation in individual CpGs with
+#' continuous phenotype (slopeEstimate, slopePval)
 #'
 #' @export
 #'

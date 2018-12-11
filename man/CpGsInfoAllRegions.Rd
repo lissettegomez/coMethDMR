@@ -2,33 +2,33 @@
 % Please edit documentation in R/CpGsInfoAllRegions.R
 \name{CpGsInfoAllRegions}
 \alias{CpGsInfoAllRegions}
-\title{Test individual CpGs in more than one region}
+\title{Test associations of individual CpGs in multiple genomic regions with a continuous phenotype}
 \usage{
 CpGsInfoAllRegions(AllRegionNames_char, betas_df, pheno_df, contPheno_char,
   covariates_char, arrayType = c("450k", "EPIC"))
 }
 \arguments{
-\item{AllRegionNames_char}{vector of character strings with location info for one region in
-this format: "chrxx:xxxxxx-xxxxxx"}
+\item{AllRegionNames_char}{vector of character strings with location info for all the genomic regions.
+Each region should be specified in this format: "chrxx:xxxxxx-xxxxxx"}
 
-\item{betas_df}{data frame of beta values for all contiguous
-comethylated regions, with row names = CpG ids, column names = sample ids}
+\item{betas_df}{data frame of beta values for all genomic regions,
+with row names = CpG IDs, column names = sample IDs}
 
-\item{pheno_df}{a data frame with phenotype and covariates
-(sample ID column = "Sample")}
+\item{pheno_df}{a data frame with phenotype and covariate variables, with variable "Sample" for sample IDs.}
 
-\item{contPheno_char}{character string of the phenotype name}
+\item{contPheno_char}{character string of the continuous phenotype, to be tested against methylation values}
 
-\item{covariates_char}{character vector of covariate names}
+\item{covariates_char}{character vector of covariate variables names}
 
-\item{arrayType}{Type of array, 450k or EPIC}
+\item{arrayType}{Type of array, can be "450k" or "EPIC"}
 }
 \value{
-a data frame with Region, cpg, chr, pos, slopeEstimate and slopePval for
-   each CpG in the tested regions
+a data frame with locations of the genomic region (Region), CpG ID (cpg), chromosome (chr),
+position (pos), and results for testing association of methylation in individual CpGs with
+continuous phenotype (slopeEstimate, slopePval)
 }
 \description{
-Test individual CpGs in more than one region
+Test associations of individual CpGs in multiple genomic regions with a continuous phenotype
 }
 \examples{
    data(betaMatrixChr22_df)
