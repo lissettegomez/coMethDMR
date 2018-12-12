@@ -4,13 +4,14 @@
 #' @param betaMatrix matrix of beta values, with row names = CpG IDs,
 #'    column names = sample IDs. This is typically genome-wide methylation beta
 #'    values.
-#' @param rDropThresh_num thershold for min correlation between a cpg with sum
-#'    of the rest of the CpGs
+#' @param regionType Type of input genomic regions (e.g. "ISLAND" for CpG island)
+#' @param arrayType Type of array, can be "450k" or "EPIC"
 #' @param file name of input file with clusters of CpG locations (i.e. CpGs
 #'    located closely to each other on the genome). This file can be generated
 #'    by the \code{\link{WriteCloseByAllRegions}} function.
 #' @param fileType file extension for input file, can be "gmt" or "RDS"
-#' @param arrayType Type of array, can be "450k" or "EPIC"
+#' @param rDropThresh_num thershold for min correlation between a cpg with sum
+#'    of the rest of the CpGs
 #' @param returnAllCpGs When there is not a contiguous comethylated region in
 #'    the inputing pre-defined region, \code{returnAllCpGs = 1} indicates
 #'    outputting all the CpGs in the input regions, while
@@ -48,25 +49,37 @@
 #'      arrayType = "450k",
 #'      returnAllCpGs = FALSE
 #'    )
-CoMethAllRegions <- function(betaMatrix, rDropThresh_num = 0.5,
-                             file, fileType = c("gmt","RDS"),
+CoMethAllRegions <- function(betaMatrix,
+                             regionType = c(
+                               "ISLAND", "NSHORE", "NSHELF", "SSHORE", "SSHELF",
+                               "TSS1500", "TSS200", "UTR5", "EXON1", "GENEBODY",
+                               "UTR3"
+                             ),
                              arrayType = c("450k","EPIC"),
+                             file = NULL,
+                             fileType = c("gmt","RDS"),
+                             rDropThresh_num = 0.5,
                              returnAllCpGs = FALSE,
                              ...){
 
-  arrayType <- match.arg(arrayType)
-  fileType  <- match.arg(fileType)
+  regionType <- match.arg(regionType)
+  arrayType  <- match.arg(arrayType)
+  fileType   <- match.arg(fileType)
 
   ### Read file of close by CpGs ###
-  switch(
-    fileType,
-    "RDS" = {
-      closeByGenomicRegion_ls <- readRDS(file)
-    },
-    "gmt" = {
-      closeByGenomicRegion_ls <- read_gmt(file)
-    }
-  )
+  if(!is.null(file)){
+    switch(
+      fileType,
+      "RDS" = {
+        closeByGenomicRegion_ls <- readRDS(file)
+      },
+      "gmt" = {
+        closeByGenomicRegion_ls <- read_gmt(file)
+      }
+    )
+  } else {
+    # Function of regionType (paste0(regionType, "3_200.rda")?)
+  }
 
 
   ### Extract contiguous comethylated region(s) from each close by region ###

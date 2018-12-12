@@ -34,6 +34,7 @@ OrderCpGsByLocation <- function(CpGs_char, arrayType = c("450k","EPIC"), output 
   CpGlocations_df <- as.data.frame(CpGlocations_df)
 
   CpGlocations_df <- subset (CpGlocations_df, select = -strand)
+  # CpGlocations_df[, "strand"] <- NULL
 
   CpGlocations_df$cpg <- row.names(CpGlocations_df)
   row.names(CpGlocations_df) <- NULL

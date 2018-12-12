@@ -5,7 +5,7 @@
 #' @param file file where the output genomic regions will be saved. File extension should not
 #' be supplied, it is automatically added via the \code{fileType} argument.
 #' @param fileType the output files can be saved as .gmt or .RDS.
-#' @param genomicRegionType Type of input genomic regions (e.g. "ISLAND" for CpG island)
+#' @param regionType Type of input genomic regions (e.g. "ISLAND" for CpG island)
 #' @param arrayType Type of array, can be "450k" or "EPIC"
 #' @param maxGap an integer, genomic locations within maxGap from each other
 #'    are placed into the same cluster
@@ -21,7 +21,7 @@
 #'  Note that for output files, .gmt files can be opened as flat text file. .RDS files are half
 #'  the size of .gmt files, but they can only be read in the R enviroment.
 #'
-#'  Creating and writing the file for one type of genomic region (\code{genomicRegionType = "ISLAND"}
+#'  Creating and writing the file for one type of genomic region (\code{regionType = "ISLAND"}
 #'  ) took about 25 minutes.
 #'
 #' @importFrom pathwayPCA read_gmt write_gmt CreatePathwayCollection
@@ -31,15 +31,18 @@
 #' @examples
 #' \dontrun{
 #'   CloseByAllRegions(
-#'      genomicRegionType = "ISLAND", arrayType = "450k", maxGap = 50,
+#'      regionType = "ISLAND", arrayType = "450k", maxGap = 50,
 #'      minCpGs = 3, fileType = "gmt", file = "closeByRegions"
 #'   )
 #' }
 #'
 WriteCloseByAllRegions <- function(
   file,
-  genomicRegionType = c("ISLAND", "TSS1500", "TSS200", "UTR5", "EXON1",
-                        "GENEBODY", "UTR3", "NSHORE", "SSHORE", "NSHELF", "SSHELF"),
+  regionType = c(
+    "ISLAND", "NSHORE", "NSHELF", "SSHORE", "SSHELF",
+    "TSS1500", "TSS200", "UTR5", "EXON1", "GENEBODY",
+    "UTR3"
+  ),
   arrayType = c("450k","EPIC"),
   maxGap = 200,
   minCpGs = 3,
@@ -52,16 +55,16 @@ WriteCloseByAllRegions <- function(
     warning(
       paste("A file of close by CpGs for maxGap = 200 and minCpGs = 3
             already exist at /inst/extdata/",
-            genomicRegionType, "3_200.rda", sep = "")
+            regionType, "3_200.rda", sep = "")
       )
 
   } else {
 
-    genomicRegionType <- match.arg(genomicRegionType)
+    regionType <- match.arg(regionType)
     arrayType <- match.arg(arrayType)
 
     ### Read gmtFile ###
-    fileName <- paste(genomicRegionType, "Ind.gmt", sep = "")
+    fileName <- paste(regionType, "Ind.gmt", sep = "")
     data_path <- system.file(
       "extdata",fileName, package = 'coMethDMR', mustWork = TRUE
     )

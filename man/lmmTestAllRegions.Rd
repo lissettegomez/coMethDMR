@@ -63,7 +63,7 @@ methylation values in a list of genomic regions
 
    lmmTestAllRegions(
      beta_df = betaMatrixChr22_df,
-     region_ls = coMeth_ls,
+     region_ls = coMeth_ls$CpGsSubregions,
      pheno_df,
      contPheno_char = "stage",
      covariates_char = c("age.brain", "sex"),

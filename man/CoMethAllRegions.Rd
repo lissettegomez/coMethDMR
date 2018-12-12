@@ -5,8 +5,10 @@
 \title{Extract contiguous co-methylated genomic regions from a list of
   pre-defined genomic regions}
 \usage{
-CoMethAllRegions(betaMatrix, rDropThresh_num = 0.5, file,
-  fileType = c("gmt", "RDS"), arrayType = c("450k", "EPIC"),
+CoMethAllRegions(betaMatrix, regionType = c("ISLAND", "NSHORE", "NSHELF",
+  "SSHORE", "SSHELF", "TSS1500", "TSS200", "UTR5", "EXON1", "GENEBODY",
+  "UTR3"), arrayType = c("450k", "EPIC"), file = NULL,
+  fileType = c("gmt", "RDS"), rDropThresh_num = 0.5,
   returnAllCpGs = FALSE, ...)
 }
 \arguments{
@@ -14,8 +16,9 @@ CoMethAllRegions(betaMatrix, rDropThresh_num = 0.5, file,
 column names = sample IDs. This is typically genome-wide methylation beta
 values.}
 
-\item{rDropThresh_num}{thershold for min correlation between a cpg with sum
-of the rest of the CpGs}
+\item{regionType}{Type of input genomic regions (e.g. "ISLAND" for CpG island)}
+
+\item{arrayType}{Type of array, can be "450k" or "EPIC"}
 
 \item{file}{name of input file with clusters of CpG locations (i.e. CpGs
 located closely to each other on the genome). This file can be generated
@@ -23,7 +26,8 @@ by the \code{\link{WriteCloseByAllRegions}} function.}
 
 \item{fileType}{file extension for input file, can be "gmt" or "RDS"}
 
-\item{arrayType}{Type of array, can be "450k" or "EPIC"}
+\item{rDropThresh_num}{thershold for min correlation between a cpg with sum
+of the rest of the CpGs}
 
 \item{returnAllCpGs}{When there is not a contiguous comethylated region in
 the inputing pre-defined region, \code{returnAllCpGs = 1} indicates

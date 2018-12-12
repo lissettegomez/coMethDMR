@@ -51,7 +51,7 @@
 #'
 #'    lmmTestAllRegions(
 #'      beta_df = betaMatrixChr22_df,
-#'      region_ls = coMeth_ls,
+#'      region_ls = coMeth_ls$CpGsSubregions,
 #'      pheno_df,
 #'      contPheno_char = "stage",
 #'      covariates_char = c("age.brain", "sex"),
@@ -72,7 +72,7 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
   CpGnames <- rownames(beta_df)
 
   coMethBetaDF_ls <- lapply(
-    region_ls$CpGsSubregions,
+    region_ls,
     function(x) beta_df[which(CpGnames %in% x), ]
   )
 
