@@ -56,13 +56,13 @@ CpGsInfoOneRegion <- function(regionName_char, betas_df, pheno_df,
   cov <- paste(covariates_char, collapse = "+")
 
   lmF <- function(Mvalue) {
-    lmFormula <- as.formula(paste("Mvalue ~", contPheno_char, "+", cov ))
+    lmFormula <- as.formula(paste("Mvalue ~", contPheno_char, "+", cov))
     tmp = coef(summary(lm(lmFormula, data=phenoTest_df)))
-    tmp[contPheno_char,c(1,4)]
+    tmp[contPheno_char, c(1, 4)]
   }
 
-  resultAllCpGs <- t(apply(CpGsMvalueTest_df,1,lmF))
-  resultAllCpGs <- round(resultAllCpGs,4)
+  resultAllCpGs <- t(apply(CpGsMvalueTest_df, 1, lmF))
+  resultAllCpGs <- round(resultAllCpGs, 4)
 
   ### Return results ###
   colnames(resultAllCpGs) <- c("slopeEstimate", "slopePval")
@@ -74,7 +74,7 @@ CpGsInfoOneRegion <- function(regionName_char, betas_df, pheno_df,
     by.x = "cpg", by.y = "row.names", sort = FALSE
   )
 
-  outDF <- cbind(regionName_char, outDF[, -4])# remove the strand column
+  outDF <- cbind(regionName_char, outDF)
   colnames(outDF)[1] <- "Region"
   outDF
 
