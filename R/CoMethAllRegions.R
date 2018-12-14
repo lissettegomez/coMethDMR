@@ -78,15 +78,12 @@ CoMethAllRegions <- function(betaMatrix,
       }
     )
   } else {
-    load(system.file("extdata",
-                     paste0(regionType, "3_200.rda"),
+    closeByGenomicRegion_ls <- readRDS(system.file("extdata",
+                     paste0(regionType, "3_200.rds"),
                      package = 'coMethDMR',
                      mustWork = TRUE)
     )
 
-    closeByGenomicRegion_ls <- CreatePathwayCollection(
-      pathways = unname(as.factor(paste0(regionType, "3_200"))),
-      TERMS = names(paste0(regionType, "3_200")))
   }
 
 
