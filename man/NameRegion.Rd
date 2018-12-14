@@ -17,7 +17,8 @@ genome location of the CpGs, in the format of "chrxx:xxxxxx-xxxxxx"
 Name a region with several CpGs based on its genomic location
 }
 \examples{
-  data(CpGsOrdered_df)
+  CpGs_char <- c("cg04677227", "cg07146435", "cg11632906", "cg20214853")
+  CpGsOrdered_df <- OrderCpGsByLocation(CpGs_char, arrayType=c("EPIC"), output = "dataframe")
   NameRegion(CpGsOrdered_df)
 
 }
