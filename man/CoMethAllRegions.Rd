@@ -70,4 +70,16 @@ Extract contiguous co-methylated genomic regions from a list of
      arrayType = "450k",
      returnAllCpGs = FALSE
    )
+
+\dontrun{
+
+CoMethAllRegions (
+     betaMatrix = betaMatrixChr22_df,
+     regionType = "ISLAND",
+     arrayType = "450k",
+     returnAllCpGs = FALSE
+   )
+
+}
+
 }
