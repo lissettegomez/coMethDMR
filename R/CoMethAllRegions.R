@@ -49,6 +49,18 @@
 #'      arrayType = "450k",
 #'      returnAllCpGs = FALSE
 #'    )
+#'
+#'\dontrun{
+#'
+#'CoMethAllRegions (
+#'      betaMatrix = betaMatrixChr22_df,
+#'      regionType = "ISLAND",
+#'      arrayType = "450k",
+#'      returnAllCpGs = FALSE
+#'    )
+#'
+#'}
+#'
 CoMethAllRegions <- function(betaMatrix,
                              regionType = c(
                                "ISLAND", "NSHORE", "NSHELF", "SSHORE", "SSHELF",
@@ -97,7 +109,6 @@ CoMethAllRegions <- function(betaMatrix,
     arrayType = arrayType,
     returnAllCpGs = returnAllCpGs
   )
-
 
   ### Return list of contiguous comethylated CpGs by Regions ###
   out_ContigRegions <- lapply(coMethCpGsAllREgions_ls, `[[`, 1)
