@@ -37,12 +37,14 @@ Fit mixed model to methylation values in one genomic region
 This function implements a mixed model to test association between
    methylation values in a genomic region with a continuous phenotype.
 
-   When \code{randCoef} is selected, the model is \code{methylation M value
-   ~ contPheno_char + covariates_char + (1|Sample) + (contPheno_char|CpG)}.
+   When \code{randCoef} is selected, the model is
+
+   \code{methylation M value ~ contPheno_char + covariates_char + (1|Sample) + (contPheno_char|CpG)}.
    The last two terms are random intercepts and slopes for each CpG.
 
-   When \code{simple} is selected, the model is \code{methylation M value ~
-   contPheno_char + covariates_char + (1|Sample)}
+   When \code{simple} is selected, the model is
+
+   \code{methylation M value ~ contPheno_char + covariates_char + (1|Sample)}
 }
 \examples{
   data(betaMatrixChr22_df)

@@ -3,6 +3,7 @@
 #' Find contiguous comethylated regions based on output file from function \code{MarkComethylatedCpGs}
 #'
 #' @param CpGs_df an output dataframe from function \code{MarkComethylatedCpGs}, with variables
+#'
 #'  \code{CpG, keep, ind, r_drop}. See details in documentation for \code{MarkComethylatedCpGs}.
 #'
 #' @param minCpGs_int an integer, indicates minimum nubmer of CpGs for output genomic regions
