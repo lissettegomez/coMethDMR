@@ -101,7 +101,6 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
   } else {
 
     ps_mat <- coef(summary(f))[contPheno_char, c(1, 2, 5), drop = FALSE]
-    # ps_mat <- round(ps_mat,4)
     ps_df <- as.data.frame(ps_mat)
     colnames(ps_df) <- c("Estimate", "StdErr", "pValue")
     rownames(ps_df) <- NULL
