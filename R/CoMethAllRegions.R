@@ -70,7 +70,7 @@ CoMethAllRegions <- function(betaMatrix,
                              arrayType = c("450k","EPIC"),
                              file = NULL,
                              fileType = c("gmt","RDS"),
-                             rDropThresh_num = 0.5,
+                             rDropThresh_num = 0.4,
                              returnAllCpGs = FALSE,
                              ...){
 

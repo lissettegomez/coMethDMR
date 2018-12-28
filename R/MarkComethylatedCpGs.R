@@ -44,7 +44,7 @@
 #'
 
 
-MarkComethylatedCpGs <- function (betaCluster_mat, rDropThresh_num = 0.5) {
+MarkComethylatedCpGs <- function (betaCluster_mat, rDropThresh_num = 0.4) {
 
   ### Calculate alpha and Store CpGs ###
 
