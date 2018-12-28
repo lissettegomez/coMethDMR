@@ -1,4 +1,4 @@
-#' Convert a genomic region to GRanges format
+#' Convert genomic regions in a data frame to GRanges format
 #'
 #' @param dat_df dataframe with variable \code{regionName} as a character vector, in this format: "chrxx:xxxxxx-xxxxxx"
 #'
