@@ -134,10 +134,11 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
 
   randomCoef_char <- paste0("(",contPheno_char, "|ProbeID)")
 
-  cov_char <- paste(covariates_char, collapse = " + ")
+  if (!is.null(covariates_char)){
+    cov_char <- paste(covariates_char, collapse = " + ")
+    }
 
-
-  ###    ###
+  ######
   if(modelType == "randCoef"){
 
     ifelse(

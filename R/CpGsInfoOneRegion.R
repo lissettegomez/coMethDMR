@@ -28,6 +28,15 @@
 #'      pheno_df, contPheno_char = "stage",
 #'      covariates_char = c("age.brain", "sex")
 #'    )
+#'
+#'    # not adjusting for covariates
+#'    CpGsInfoOneRegion(
+#'      regionName_char = "chr22:18267969-18268249",
+#'      betas_df = betaMatrixChr22_df,
+#'      pheno_df, contPheno_char = "stage",
+#'      covariates_char = NULL
+#'    )
+#'
 CpGsInfoOneRegion <- function(regionName_char, betas_df, pheno_df,
                               contPheno_char, covariates_char,
                               arrayType = c("450k","EPIC")){
@@ -53,13 +62,25 @@ CpGsInfoOneRegion <- function(regionName_char, betas_df, pheno_df,
   #identical(rownames(phenoTest_df), colnames(CpGsMvalueTest_df))
 
   ### Run linear model for each CpG ###
-  cov <- paste(covariates_char, collapse = "+")
-
-  lmF <- function(Mvalue) {
-    lmFormula <- as.formula(paste("Mvalue ~", contPheno_char, "+", cov))
-    tmp = coef(summary(lm(lmFormula, data=phenoTest_df)))
-    tmp[contPheno_char, c(1, 4)]
+  if (!is.null(covariates_char)){
+    cov <- paste(covariates_char, collapse = "+")
   }
+
+  ifelse(
+    is.null(covariates_char),
+
+    lmF <- function(Mvalue) {
+      lmFormula <- as.formula(paste("Mvalue ~", contPheno_char))
+      tmp = coef(summary(lm(lmFormula, data=phenoTest_df)))
+      tmp[contPheno_char, c(1, 4)]
+    },
+
+    lmF <- function(Mvalue) {
+      lmFormula <- as.formula(paste("Mvalue ~", contPheno_char, "+", cov))
+      tmp = coef(summary(lm(lmFormula, data=phenoTest_df)))
+      tmp[contPheno_char, c(1, 4)]
+    }
+  )
 
   resultAllCpGs <- t(apply(CpGsMvalueTest_df, 1, lmF))
   resultAllCpGs <- round(resultAllCpGs, 4)
