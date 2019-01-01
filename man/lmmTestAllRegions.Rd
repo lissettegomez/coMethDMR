@@ -54,7 +54,7 @@ methylation values in a list of genomic regions
 
    coMeth_ls <- CoMethAllRegions(
                    betaMatrix = betaMatrixChr22_df,
-                   rDropThresh_num = 0.5,
+                   rDropThresh_num = 0.4,
                    file = CpGisland_ls,
                    fileType = "RDS",
                    arrayType = "450k",
