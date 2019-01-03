@@ -52,7 +52,7 @@
 #'      returnAllCpGs = TRUE
 #'    )
 #'
-CoMethSingleRegion <- function(CpGs_char, betaMatrix, rDropThresh_num = 0.5,
+CoMethSingleRegion <- function(CpGs_char, betaMatrix, rDropThresh_num = 0.4,
                                arrayType = c("450k","EPIC"),
                                returnAllCpGs = FALSE){
 

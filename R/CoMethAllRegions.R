@@ -6,9 +6,10 @@
 #'    values.
 #' @param regionType Type of input genomic regions (e.g. "ISLAND" for CpG island)
 #' @param arrayType Type of array, can be "450k" or "EPIC"
-#' @param file name of input file with clusters of CpG locations (i.e. CpGs
+#' @param file an RDS or gmt file with clusters of CpG locations (i.e. CpGs
 #'    located closely to each other on the genome). This file can be generated
-#'    by the \code{\link{WriteCloseByAllRegions}} function.
+#'    by the \code{\link{WriteCloseByAllRegions}} function. If RDS file, it would contain a list,
+#'    where each item is a character vector of CpGs IDs.
 #' @param fileType file extension for input file, can be "gmt" or "RDS"
 #' @param rDropThresh_num thershold for min correlation between a cpg with sum
 #'    of the rest of the CpGs
@@ -35,20 +36,26 @@
 #'
 #' @examples
 #'
+#'    #
 #'    data(betaMatrixChr22_df)
+#'
+#'    file1 <- readRDS (
+#'        system.file ( "extdata",
+#'                      "CpGislandsChr22_ex.RDS",
+#'                      package = 'coMethDMR',
+#'                      mustWork = TRUE)
+#'      ) [[1]]
+#'
+#'    exampleFile <- lapply(file1, as.character)
 #'
 #'    CoMethAllRegions (
 #'      betaMatrix = betaMatrixChr22_df,
-#'      file = system.file(
-#'        "extdata",
-#'        "CpGislandsChr22_ex.RDS",
-#'        package = 'coMethDMR',
-#'        mustWork = TRUE
-#'      ),
+#'      file = exampleFile,
 #'      fileType = "RDS",
 #'      arrayType = "450k",
 #'      returnAllCpGs = FALSE
 #'    )
+#'
 #'
 #'\dontrun{
 #'
@@ -70,7 +77,7 @@ CoMethAllRegions <- function(betaMatrix,
                              arrayType = c("450k","EPIC"),
                              file = NULL,
                              fileType = c("gmt","RDS"),
-                             rDropThresh_num = 0.5,
+                             rDropThresh_num = 0.4,
                              returnAllCpGs = FALSE,
                              ...){
 
@@ -83,7 +90,7 @@ CoMethAllRegions <- function(betaMatrix,
     switch(
       fileType,
       "RDS" = {
-        closeByGenomicRegion_ls <- readRDS(file)
+        closeByGenomicRegion_ls <- file
       },
       "gmt" = {
         closeByGenomicRegion_ls <- read_gmt(file)
@@ -100,7 +107,6 @@ CoMethAllRegions <- function(betaMatrix,
 
 
   ### Extract contiguous comethylated region(s) from each close by region ###
-  # A "pathway" = a set of CpGs in a region
   coMethCpGsAllREgions_ls <- lapply(
     unname(closeByGenomicRegion_ls),
     FUN = CoMethSingleRegion,

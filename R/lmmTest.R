@@ -101,7 +101,6 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
   } else {
 
     ps_mat <- coef(summary(f))[contPheno_char, c(1, 2, 5), drop = FALSE]
-    ps_mat <- round(ps_mat,4)
     ps_df <- as.data.frame(ps_mat)
     colnames(ps_df) <- c("Estimate", "StdErr", "pValue")
     rownames(ps_df) <- NULL
@@ -135,10 +134,11 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
 
   randomCoef_char <- paste0("(",contPheno_char, "|ProbeID)")
 
-  cov_char <- paste(covariates_char, collapse = " + ")
+  if (!is.null(covariates_char)){
+    cov_char <- paste(covariates_char, collapse = " + ")
+    }
 
-
-  ###    ###
+  ######
   if(modelType == "randCoef"){
 
     ifelse(
