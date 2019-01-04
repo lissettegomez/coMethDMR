@@ -113,14 +113,26 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
     )
   )
 
+  ### split regionName into chrom, start, end
+  chrom <- sub(":.*",  "",  regionName)
+
+  range <- sub ("c.*:", "",  regionName )
+
+  start <- sub ("-\\d*", "", range)
+
+  end <- sub ("\\d*.-", "", range)
+
+
   ### Return results ###
-  model <- cbind(
-    "Region_Name" = regionName, ps_df,
+
+  nCpGs <- nrow(betaOne_df)
+
+  result <- cbind (
+    chrom, start, end, nCpGs,
+    ps_df,
     stringsAsFactors = FALSE
   )
-  model
-
-
+  result
 }
 
 

@@ -34,9 +34,9 @@ coefficient mixed model, or \code{simple} for simple linear mixed model.}
 \item{outFile}{output .csv file with the results for the mixed model analysis}
 }
 \value{
-csv file with location of the genomic region (\code{Region_Name}), \code{Estimate},
-Standard error (\code{StdErr}) of the test statistic, and p-value for association between methylation values
-in each genomic region with phenotype (\code{pValue}).
+csv file with location of the genomic region (\code{chrom, start, end}), number of CpGs (\code{nCpGs}),
+\code{Estimate}, Standard error (\code{StdErr}) of the test statistic, p-value and False Discovery Rate (FDR)
+for association between methylation values in each genomic region with phenotype (\code{pValue}).
 }
 \description{
 Fit mixed model to test association between a continuous phenotype and
@@ -47,17 +47,18 @@ methylation values in a list of genomic regions
 
    data(pheno_df)
 
-   CpGisland_ls <- system.file(
+   CpGisland_ls <- readRDS(
+      system.file(
      "extdata", "CpGislandsChr22_ex.RDS",
-      package = 'coMethDMR', mustWork = TRUE
+      package = 'coMethDMR', mustWork = TRUE)
    )
 
    coMeth_ls <- CoMethAllRegions(
                    betaMatrix = betaMatrixChr22_df,
-                   rDropThresh_num = 0.4,
                    file = CpGisland_ls,
                    fileType = "RDS",
                    arrayType = "450k",
+                   rDropThresh_num = 0.4,
                    returnAllCpGs = FALSE
                )
 
