@@ -19,9 +19,9 @@
 #' @param arrayType Type of array, can be "450k" or "EPIC"
 #' @param outFile output .csv file with the results for the mixed model analysis
 #'
-#' @return csv file with location of the genomic region (\code{Region_Name}), \code{Estimate},
-#' Standard error (\code{StdErr}) of the test statistic, and p-value for association between methylation values
-#' in each genomic region with phenotype (\code{pValue}).
+#' @return csv file with location of the genomic region (\code{chrom, start, end}), number of CpGs (\code{nCpGs}),
+#' \code{Estimate}, Standard error (\code{StdErr}) of the test statistic, p-value and False Discovery Rate (FDR)
+#' for association between methylation values in each genomic region with phenotype (\code{pValue}).
 #'
 #' @export
 #'
@@ -35,17 +35,18 @@
 #'
 #'    data(pheno_df)
 #'
-#'    CpGisland_ls <- system.file(
+#'    CpGisland_ls <- readRDS(
+#'       system.file(
 #'      "extdata", "CpGislandsChr22_ex.RDS",
-#'       package = 'coMethDMR', mustWork = TRUE
+#'       package = 'coMethDMR', mustWork = TRUE)
 #'    )
 #'
 #'    coMeth_ls <- CoMethAllRegions(
 #'                    betaMatrix = betaMatrixChr22_df,
-#'                    rDropThresh_num = 0.4,
 #'                    file = CpGisland_ls,
 #'                    fileType = "RDS",
 #'                    arrayType = "450k",
+#'                    rDropThresh_num = 0.4,
 #'                    returnAllCpGs = FALSE
 #'                )
 #'
@@ -89,6 +90,9 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
   if (length(results_ls) >0 ){
 
     outDF <- do.call (rbind, results_ls)
+
+    outDF$FDR <- p.adjust(outDF$pValue, method = "fdr")
+
 
     row.names(outDF) <- NULL
   }

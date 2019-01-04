@@ -36,17 +36,15 @@
 #'
 #' @examples
 #'
-#'    #
+#'
 #'    data(betaMatrixChr22_df)
 #'
-#'    file1 <- readRDS (
+#'    exampleFile <- readRDS (
 #'        system.file ( "extdata",
 #'                      "CpGislandsChr22_ex.RDS",
 #'                      package = 'coMethDMR',
 #'                      mustWork = TRUE)
-#'      ) [[1]]
-#'
-#'    exampleFile <- lapply(file1, as.character)
+#'      )
 #'
 #'    CoMethAllRegions (
 #'      betaMatrix = betaMatrixChr22_df,
