@@ -60,14 +60,11 @@ Extract contiguous co-methylated genomic regions from a list of
    #
    data(betaMatrixChr22_df)
 
-   file1 <- readRDS (
-       system.file ( "extdata",
+   exampleFile <- system.file ("extdata",
                      "CpGislandsChr22_ex.RDS",
                      package = 'coMethDMR',
                      mustWork = TRUE)
-     ) [[1]]
 
-   exampleFile <- lapply(file1, as.character)
 
    CoMethAllRegions (
      betaMatrix = betaMatrixChr22_df,

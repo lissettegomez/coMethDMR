@@ -7,7 +7,7 @@
 RegionsToRanges(data_df)
 }
 \arguments{
-\item{dat_df}{dataframe with variable \code{regionName} as a character vector,
+\item{data_df}{dataframe with variable \code{regionName} as a character vector,
 in this format: "chrxx:xxxxxx-xxxxxx"}
 }
 \value{

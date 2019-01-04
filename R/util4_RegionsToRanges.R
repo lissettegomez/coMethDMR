@@ -1,6 +1,6 @@
 #' Convert genomic regions in a data frame to GRanges format
 #'
-#' @param dat_df dataframe with variable \code{regionName} as a character vector,
+#' @param data_df dataframe with variable \code{regionName} as a character vector,
 #' in this format: "chrxx:xxxxxx-xxxxxx"
 #'
 #' @return genomic regions in GRanges format
@@ -24,7 +24,7 @@ RegionsToRanges <- function(data_df){
 
   end <- sub ("\\d*.-", "", range)
 
-  return (GRanges ( seqname = as.factor(chr),
+  return (GRanges ( seqnames = as.factor(chr),
                     ranges = IRanges(as.numeric(start), as.numeric(end))
                   )
            )
