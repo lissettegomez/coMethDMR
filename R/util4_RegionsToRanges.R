@@ -7,6 +7,7 @@
 #' @export
 #'
 #' @importFrom GenomicRanges GRanges
+#' @importFrom IRanges IRanges
 #'
 #' @examples
 #'  df <- data.frame ( regionName = c("chr22:19709548-19709755",
