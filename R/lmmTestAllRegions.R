@@ -28,6 +28,7 @@
 #' @importFrom stats as.formula
 #' @importFrom stats coef
 #' @importFrom stats reshape
+#' @importFrom stats p.adjust
 #' @importFrom utils write.csv
 #'
 #' @examples
@@ -35,10 +36,9 @@
 #'
 #'    data(pheno_df)
 #'
-#'    CpGisland_ls <- readRDS(
-#'       system.file(
+#'    CpGisland_ls <- system.file(
 #'      "extdata", "CpGislandsChr22_ex.RDS",
-#'       package = 'coMethDMR', mustWork = TRUE)
+#'       package = 'coMethDMR', mustWork = TRUE
 #'    )
 #'
 #'    coMeth_ls <- CoMethAllRegions(

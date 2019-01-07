@@ -47,10 +47,9 @@ methylation values in a list of genomic regions
 
    data(pheno_df)
 
-   CpGisland_ls <- readRDS(
-      system.file(
+   CpGisland_ls <- system.file(
      "extdata", "CpGislandsChr22_ex.RDS",
-      package = 'coMethDMR', mustWork = TRUE)
+      package = 'coMethDMR', mustWork = TRUE
    )
 
    coMeth_ls <- CoMethAllRegions(
