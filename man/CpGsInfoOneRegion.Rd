@@ -23,8 +23,8 @@ the format of "chrxx:xxxxxx-xxxxxx"}
 }
 \value{
 a data frame with location of the genomic region (Region), CpG ID (cpg), chromosome (chr),
-position (pos), and results for testing association of methylation in individual CpGs with
-continuous phenotype (slopeEstimate, slopePval)
+position (pos), results for testing association of methylation in individual CpGs with
+continuous phenotype (slopeEstimate, slopePval) and annotations for the regions
 }
 \description{
 Test associations of individual CpGs in a genomic region with a continuous phenotype
@@ -34,10 +34,11 @@ Test associations of individual CpGs in a genomic region with a continuous pheno
    data(pheno_df)
 
    CpGsInfoOneRegion(
-     regionName_char = "chr22:18267969-18268249",
+     regionName_char = "chr22:19709548-19709755",
      betas_df = betaMatrixChr22_df,
      pheno_df, contPheno_char = "stage",
-     covariates_char = c("age.brain", "sex")
+     covariates_char = c("age.brain", "sex"),
+     arrayType = "450k"
    )
 
    # not adjusting for covariates

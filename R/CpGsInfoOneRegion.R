@@ -9,8 +9,8 @@
 #' @param arrayType Type of array, can be "450k" or "EPIC"
 #'
 #' @return a data frame with location of the genomic region (Region), CpG ID (cpg), chromosome (chr),
-#' position (pos), and results for testing association of methylation in individual CpGs with
-#' continuous phenotype (slopeEstimate, slopePval)
+#' position (pos), results for testing association of methylation in individual CpGs with
+#' continuous phenotype (slopeEstimate, slopePval) and annotations for the regions
 #'
 #' @export
 #'
@@ -23,10 +23,11 @@
 #'    data(pheno_df)
 #'
 #'    CpGsInfoOneRegion(
-#'      regionName_char = "chr22:18267969-18268249",
+#'      regionName_char = "chr22:19709548-19709755",
 #'      betas_df = betaMatrixChr22_df,
 #'      pheno_df, contPheno_char = "stage",
-#'      covariates_char = c("age.brain", "sex")
+#'      covariates_char = c("age.brain", "sex"),
+#'      arrayType = "450k"
 #'    )
 #'
 #'    # not adjusting for covariates
@@ -42,6 +43,16 @@ CpGsInfoOneRegion <- function(regionName_char, betas_df, pheno_df,
                               arrayType = c("450k","EPIC")){
 
   arrayType <- match.arg(arrayType)
+
+  switch(arrayType,
+         "450k" = {
+           annotation_df = IlluminaHumanMethylation450kanno.ilmn12.hg19::Other
+         },
+         "EPIC" = {
+           annotation_df = IlluminaHumanMethylationEPICanno.ilm10b2.hg19::Other
+         }
+  )
+
 
   ### Extract individual CpGs in the region ###
   CpGsToTest_char <- GetCpGsInRegion(regionName_char, arrayType = "450k")
@@ -82,8 +93,7 @@ CpGsInfoOneRegion <- function(regionName_char, betas_df, pheno_df,
     }
   )
 
-  resultAllCpGs <- t(apply(CpGsMvalueTest_df, 1, lmF))
-  resultAllCpGs <- round(resultAllCpGs, 4)
+  resultAllCpGs <- data.frame(t(apply(CpGsMvalueTest_df, 1, lmF)))
 
   ### Return results ###
   colnames(resultAllCpGs) <- c("slopeEstimate", "slopePval")
@@ -95,9 +105,23 @@ CpGsInfoOneRegion <- function(regionName_char, betas_df, pheno_df,
     by.x = "cpg", by.y = "row.names", sort = FALSE
   )
 
-  outDF <- cbind(regionName_char, outDF)
-  colnames(outDF)[1] <- "Region"
-  outDF
+  outDF$slopePval <- formatC(outDF$slopePval, format = "e", digits = 3)
+  outDF$slopeEstimate <- round(outDF$slopeEstimate,4)
+
+  ### Add annotations
+  CpGsAnno_df <- annotation_df[CpGsToTest_char ,
+                               c("UCSC_RefGene_Name", "UCSC_RefGene_Accession", "UCSC_RefGene_Group")]
+
+
+  outAnno_df <- merge(
+    outDF,  CpGsAnno_df,
+    by.x = "cpg", by.y = "row.names", sort = FALSE
+  )
+
+  outAnno_DF <- cbind(regionName_char, outAnno_df)
+  colnames(outAnno_DF)[1] <- "Region"
+
+  outAnno_DF
 
 }
 
