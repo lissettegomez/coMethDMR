@@ -105,7 +105,12 @@ CpGsInfoOneRegion <- function(regionName_char, betas_df, pheno_df,
     by.x = "cpg", by.y = "row.names", sort = FALSE
   )
 
-  outDF$slopePval <- formatC(outDF$slopePval, format = "e", digits = 3)
+  outDF$slopePval <- ifelse (
+    outDF$slopePval < 0.0001,
+    formatC(outDF$slopePval, format = "e", digits = 3),
+    round(outDF$slopePval,4)
+  )
+
   outDF$slopeEstimate <- round(outDF$slopeEstimate,4)
 
   ### Add annotations
