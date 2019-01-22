@@ -29,6 +29,13 @@ continuous phenotype (slopeEstimate, slopePval) and annotations for the regions
 \description{
 Test associations of individual CpGs in a genomic region with a continuous phenotype
 }
+\details{
+This function implements linear models that test association between
+methylation values in a genomic region with a continuous phenotype. Note that methylation M values
+are used as regression outcomes in these models. The model for each CpG is:
+
+  \code{methylation M value ~ contPheno_char + covariates_char}
+}
 \examples{
    data(betaMatrixChr22_df)
    data(pheno_df)

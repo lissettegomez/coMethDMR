@@ -12,6 +12,12 @@
 #' position (pos), results for testing association of methylation in individual CpGs with
 #' continuous phenotype (slopeEstimate, slopePval) and annotations for the regions
 #'
+#' @details This function implements linear models that test association between
+#' methylation values in a genomic region with a continuous phenotype. Note that methylation M values
+#' are used as regression outcomes in these models. The model for each CpG is:
+#'
+#'   \code{methylation M value ~ contPheno_char + covariates_char}
+#'
 #' @export
 #'
 #' @importFrom stats as.formula
