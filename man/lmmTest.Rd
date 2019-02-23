@@ -45,6 +45,9 @@ This function implements a mixed model to test association between
    When \code{simple} is selected, the model is
 
    \code{methylation M value ~ contPheno_char + covariates_char + (1|Sample)}
+
+   In our simulation studies, we found both models are conservative, so p-values are estimated from
+   normal distributions instead of t-distributions.
 }
 \examples{
   data(betaMatrixChr22_df)
