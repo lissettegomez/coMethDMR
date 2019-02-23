@@ -28,6 +28,8 @@
 #'
 #'    \code{methylation M value ~ contPheno_char + covariates_char + (1|Sample)}
 #'
+#'    In our simulation studies, we found both models are conservative, so p-values are estimated from
+#'    normal distributions instead of t-distributions.
 #'
 #' @export
 #'
@@ -100,10 +102,12 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
 
   } else {
 
-    ps_mat <- coef(summary(f))[contPheno_char, c(1, 2, 5), drop = FALSE]
+    ps_mat <- coef(summary(f))[contPheno_char, c(1, 2, 4), drop = FALSE]
     ps_df <- as.data.frame(ps_mat)
-    colnames(ps_df) <- c("Estimate", "StdErr", "pValue")
+    colnames(ps_df) <- c("Estimate", "StdErr", "Stat")
     rownames(ps_df) <- NULL
+
+    ps_df$pValue <- 2 * ( 1- pnorm (abs(ps_df$Stat)))
 
   }
 
