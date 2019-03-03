@@ -2,7 +2,7 @@
 #'   pre-defined genomic region
 #'
 #' @param CpGs_char vector of CpGs in the inputting pre-defined genomic region.
-#' @param betaMatrix matrix of beta values, with row names = CpG ids,
+#' @param betaMatrix matrix (or data frame) of beta values, with row names = CpG ids,
 #'    column names = sample ids. This should include the CpGs in \code{CpGs_char},
 #'    as well as additional CpGs.
 #' @param rDropThresh_num thershold for min correlation between a cpg with sum

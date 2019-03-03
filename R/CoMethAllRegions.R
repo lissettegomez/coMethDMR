@@ -1,7 +1,7 @@
 #' Extract contiguous co-methylated genomic regions from a list of
 #'   pre-defined genomic regions
 #'
-#' @param betaMatrix matrix of beta values, with row names = CpG IDs,
+#' @param betaMatrix matrix (or data frame) of beta values, with row names = CpG IDs,
 #'    column names = sample IDs. This is typically genome-wide methylation beta
 #'    values.
 #' @param regionType Type of input genomic regions (e.g. "ISLAND" for CpG island)
