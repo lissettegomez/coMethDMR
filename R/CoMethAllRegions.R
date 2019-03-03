@@ -39,10 +39,13 @@
 #'
 #'    data(betaMatrixChr22_df)
 #'
-#'    exampleFile <- system.file ("extdata",
-#'                      "CpGislandsChr22_ex.RDS",
-#'                      package = 'coMethDMR',
-#'                      mustWork = TRUE)
+#'    exampleFile <- readRDS(
+#'                      system.file ("extdata",
+#'                                   "CpGislandsChr22_ex.RDS",
+#'                                    package = 'coMethDMR',
+#'                                    mustWork = TRUE
+#'                                    )
+#'    )
 #'
 #'
 #'    CoMethAllRegions (
@@ -87,7 +90,7 @@ CoMethAllRegions <- function(betaMatrix,
     switch(
       fileType,
       "RDS" = {
-        closeByGenomicRegion_ls <- readRDS(file)
+        closeByGenomicRegion_ls <- file
       },
       "gmt" = {
         closeByGenomicRegion_ls <- read_gmt(file)

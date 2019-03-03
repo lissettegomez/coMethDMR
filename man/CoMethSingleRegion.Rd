@@ -11,7 +11,7 @@ CoMethSingleRegion(CpGs_char, betaMatrix, rDropThresh_num = 0.4,
 \arguments{
 \item{CpGs_char}{vector of CpGs in the inputting pre-defined genomic region.}
 
-\item{betaMatrix}{matrix of beta values, with row names = CpG ids,
+\item{betaMatrix}{matrix (or data frame) of beta values, with row names = CpG ids,
 column names = sample ids. This should include the CpGs in \code{CpGs_char},
 as well as additional CpGs.}
 

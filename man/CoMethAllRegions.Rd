@@ -12,7 +12,7 @@ CoMethAllRegions(betaMatrix, regionType = c("ISLAND", "NSHORE", "NSHELF",
   returnAllCpGs = FALSE, ...)
 }
 \arguments{
-\item{betaMatrix}{matrix of beta values, with row names = CpG IDs,
+\item{betaMatrix}{matrix (or data frame) of beta values, with row names = CpG IDs,
 column names = sample IDs. This is typically genome-wide methylation beta
 values.}
 
@@ -60,10 +60,13 @@ Extract contiguous co-methylated genomic regions from a list of
 
    data(betaMatrixChr22_df)
 
-   exampleFile <- system.file ("extdata",
-                     "CpGislandsChr22_ex.RDS",
-                     package = 'coMethDMR',
-                     mustWork = TRUE)
+   exampleFile <- readRDS(
+                     system.file ("extdata",
+                                  "CpGislandsChr22_ex.RDS",
+                                   package = 'coMethDMR',
+                                   mustWork = TRUE
+                                   )
+   )
 
 
    CoMethAllRegions (
