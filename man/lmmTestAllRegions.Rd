@@ -66,7 +66,7 @@ methylation values in a list of genomic regions
      region_ls = coMeth_ls$CpGsSubregions,
      pheno_df,
      contPheno_char = "stage",
-     covariates_char = c("age.brain", "sex"),
+     covariates_char = "age.brain",
      modelType = "randCoef",
      arrayType = "450k"
    )
