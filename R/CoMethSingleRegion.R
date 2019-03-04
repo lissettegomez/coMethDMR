@@ -7,6 +7,8 @@
 #'    as well as additional CpGs.
 #' @param rDropThresh_num thershold for min correlation between a cpg with sum
 #'    of the rest of the CpGs
+#' @param minCpGs mininum number of CpGs to be considered a "region".
+#'    Only regions with more than \code{minCpGs} will be returned.
 #' @param arrayType Type of array, can be "450k" or "EPIC"
 #' @param returnAllCpGs When there is not a contiguous comethylated region in
 #'    the inputing pre-defined region, \code{returnAllCpGs = 1} indicates
@@ -52,7 +54,7 @@
 #'      returnAllCpGs = TRUE
 #'    )
 #'
-CoMethSingleRegion <- function(CpGs_char, betaMatrix, rDropThresh_num = 0.4,
+CoMethSingleRegion <- function(CpGs_char, betaMatrix, rDropThresh_num = 0.4, minCpGs = 3,
                                arrayType = c("450k","EPIC"),
                                returnAllCpGs = FALSE){
 
@@ -67,38 +69,46 @@ CoMethSingleRegion <- function(CpGs_char, betaMatrix, rDropThresh_num = 0.4,
   # take common cpgs in beta matrix and the region first
   commonCpGs_char <- intersect (CpGsOrdered_df$cpg, row.names(betaMatrix))
 
-  betaCluster_mat <- betaMatrix[commonCpGs_char, ]
+  if (length(commonCpGs_char) >= minCpGs){
 
-  ### Transpose beta matrix ###
-  betaClusterTransp_mat <- t(betaCluster_mat)
+      betaCluster_mat <- betaMatrix[commonCpGs_char, ]
 
-  ### Mark comethylated CpGs ###
-  keepCpGs_df <- MarkComethylatedCpGs(
-    betaCluster_mat = betaClusterTransp_mat,
-    rDropThresh_num
-  )
+      ### Transpose beta matrix ###
+      betaClusterTransp_mat <- t(betaCluster_mat)
 
-  ### Find contiguous comethylated regions ###
-  keepContiguousCpGs_df <- FindComethylatedRegions(
-    CpGs_df = keepCpGs_df
-  )
+      ### Mark comethylated CpGs ###
+      keepCpGs_df <- MarkComethylatedCpGs(
+        betaCluster_mat = betaClusterTransp_mat,
+        rDropThresh_num
+      )
 
-  ### Split CpG dataframe by Subregion ###
-  keepContiguousCpGs_ls <- SplitCpGDFbyRegion(
-    keepContiguousCpGs_df, arrayType, returnAllCpGs
-  )
+      ### Find contiguous comethylated regions ###
+      keepContiguousCpGs_df <- FindComethylatedRegions(
+        CpGs_df = keepCpGs_df
+      )
 
-  ### Create Output Data Frame  ###
-  coMethCpGs_df <- CreateOutputDF(
-    keepCpGs_df, keepContiguousCpGs_df, CpGsOrdered_df, returnAllCpGs
-  )
+      ### Split CpG dataframe by Subregion ###
+      keepContiguousCpGs_ls <- SplitCpGDFbyRegion(
+        keepContiguousCpGs_df, arrayType, returnAllCpGs
+      )
 
-  ### Create output list of data frame and CpGs by subregion ###
-  coMethCpGs_ls <- list(
-    contiguousRegions = coMethCpGs_df,
-    CpGsSubregions = keepContiguousCpGs_ls
-  )
+      ### Create Output Data Frame  ###
+      coMethCpGs_df <- CreateOutputDF(
+        keepCpGs_df, keepContiguousCpGs_df, CpGsOrdered_df, returnAllCpGs
+      )
 
-  coMethCpGs_ls
+      ### Create output list of data frame and CpGs by subregion ###
+      coMethCpGs_ls <- list(
+        contiguousRegions = coMethCpGs_df,
+        CpGsSubregions = keepContiguousCpGs_ls
+      )
+
+      coMethCpGs_ls
+
+  } else {
+    return(NULL)
+  }
+
+
 
 }

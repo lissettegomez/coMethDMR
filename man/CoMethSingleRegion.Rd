@@ -6,7 +6,7 @@
   pre-defined genomic region}
 \usage{
 CoMethSingleRegion(CpGs_char, betaMatrix, rDropThresh_num = 0.4,
-  arrayType = c("450k", "EPIC"), returnAllCpGs = FALSE)
+  minCpGs = 3, arrayType = c("450k", "EPIC"), returnAllCpGs = FALSE)
 }
 \arguments{
 \item{CpGs_char}{vector of CpGs in the inputting pre-defined genomic region.}
@@ -17,6 +17,9 @@ as well as additional CpGs.}
 
 \item{rDropThresh_num}{thershold for min correlation between a cpg with sum
 of the rest of the CpGs}
+
+\item{minCpGs}{mininum number of CpGs to be considered a "region".
+Only regions with more than \code{minCpGs} will be returned.}
 
 \item{arrayType}{Type of array, can be "450k" or "EPIC"}
 
