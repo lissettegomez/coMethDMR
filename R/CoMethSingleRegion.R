@@ -64,7 +64,10 @@ CoMethSingleRegion <- function(CpGs_char, betaMatrix, rDropThresh_num = 0.4,
   )
 
   ### Extract beta matrix for the input CpGs ###
-  betaCluster_mat <- betaMatrix[CpGsOrdered_df$cpg,]
+  # take common cpgs in beta matrix and the region first
+  commonCpGs_char <- intersect (CpGsOrdered_df$cpg, row.names(betaMatrix))
+
+  betaCluster_mat <- betaMatrix[commonCpGs_char, ]
 
   ### Transpose beta matrix ###
   betaClusterTransp_mat <- t(betaCluster_mat)
