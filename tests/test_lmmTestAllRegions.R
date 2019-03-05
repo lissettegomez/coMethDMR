@@ -8,9 +8,11 @@ library(coMethDMR)
 data(betaMatrixChr22_df)
 data(pheno_df)
 
-CpGisland_ls <- system.file(
-  "extdata", "CpGislandsChr22_ex.RDS",
-  package = 'coMethDMR', mustWork = TRUE
+CpGisland_ls <- readRDS(
+                  system.file ("extdata", "CpGislandsChr22_ex.RDS",
+                               package = 'coMethDMR',
+                               mustWork = TRUE
+                               )
 )
 
 coMeth_ls <- CoMethAllRegions(
