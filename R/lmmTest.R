@@ -34,6 +34,7 @@
 #' @export
 #'
 #' @importFrom lmerTest lmer
+#' @importFrom stats pnorm
 #'
 #' @examples
 #'   data(betaMatrixChr22_df)
