@@ -226,7 +226,7 @@ coMeth_ls
 
 Note that the resulting `coMeth_ls` contains two lists:  the first list `coMeth_ls$CpGsSubregions` includes CpG probe IDs for each co-methylated sub-region. 
 
-The second list `coMeth_ls$contiguousRegions` shows the details on how the co-methylated region was obtained: Here keep = 1 if r_drop > 0.4 (i.e. a co-methylated CpG), and keep_contigous indicates if the probe is in a contiguous co-methylated region.   
+The second list `coMeth_ls$contiguousRegions` shows the details on how the co-methylated region was obtained: Here `keep = 1` if `r_drop > 0.4` (i.e. a co-methylated CpG), and `keep_contigous` indicates if the probe is in a contiguous co-methylated region.   
 
 ## 2.3 Testing genomic regions against a continuous phenotype 
 
