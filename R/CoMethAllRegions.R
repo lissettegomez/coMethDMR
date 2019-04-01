@@ -8,9 +8,9 @@
 #' @param arrayType Type of array, can be "450k" or "EPIC"
 #' @param file an RDS or gmt file with clusters of CpG locations (i.e. CpGs
 #'    located closely to each other on the genome). This file can be generated
-#'    by the \code{\link{WriteCloseByAllRegions}} function. If RDS file, it would contain a list,
-#'    where each item is a character vector of CpGs IDs.
+#'    by the \code{\link{WriteCloseByAllRegions}} function.
 #' @param fileType file extension for input file, can be "gmt" or "RDS"
+#' @param CpGs_ls list where each item is a character vector of CpGs IDs.
 #' @param rDropThresh_num thershold for min correlation between a cpg with sum
 #'    of the rest of the CpGs
 #' @param returnAllCpGs When there is not a contiguous comethylated region in
@@ -39,22 +39,23 @@
 #'
 #'    data(betaMatrixChr22_df)
 #'
-#'    exampleFile <- readRDS(
-#'                      system.file ("extdata",
-#'                                   "CpGislandsChr22_ex.RDS",
+#'    CpGsChr22_ls <- readRDS(
+#'                       system.file ("extdata",
+#'                                    "CpGislandsChr22_ex.RDS",
 #'                                    package = 'coMethDMR',
 #'                                    mustWork = TRUE
-#'                                    )
+#'                                   )
 #'    )
 #'
 #'
 #'    CoMethAllRegions (
 #'      betaMatrix = betaMatrixChr22_df,
-#'      file = exampleFile,
-#'      fileType = "RDS",
+#'      CpGs_ls = CpGsChr22_ls,
 #'      arrayType = "450k",
 #'      returnAllCpGs = FALSE
 #'    )
+#'
+#'
 #'
 #'
 #'\dontrun{
@@ -77,6 +78,7 @@ CoMethAllRegions <- function(betaMatrix,
                              arrayType = c("450k","EPIC"),
                              file = NULL,
                              fileType = c("gmt","RDS"),
+                             CpGs_ls = NULL,
                              rDropThresh_num = 0.4,
                              returnAllCpGs = FALSE,
                              ...){
@@ -86,14 +88,18 @@ CoMethAllRegions <- function(betaMatrix,
   fileType   <- match.arg(fileType)
 
   ### Read file of close by CpGs ###
-  if(!is.null(file)){
+  if(!is.null(CpGs_ls)){
+    closeByGenomicRegion_ls <- CreateCpGsRegions(CpGs_ls)$regions
+  } else if(!is.null(file)) {
     switch(
       fileType,
       "RDS" = {
-        closeByGenomicRegion_ls <- file
+        rdsFile <- readRDS(file)
+        closeByGenomicRegion_ls <- rdsFile$regions
       },
       "gmt" = {
-        closeByGenomicRegion_ls <- read_gmt(file)
+        gmtFile <- read_gmt(file, setType = "regions")
+        closeByGenomicRegion_ls <- gmtFile$regions
       }
     )
   } else {
