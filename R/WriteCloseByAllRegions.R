@@ -30,7 +30,7 @@
 #'
 #' @examples
 #' \dontrun{
-#'   CloseByAllRegions(
+#'   WriteCloseByAllRegions(
 #'      regionType = "ISLAND", arrayType = "450k", maxGap = 50,
 #'      minCpGs = 3, fileType = "gmt", file = "closeByRegions"
 #'   )
@@ -68,10 +68,10 @@ WriteCloseByAllRegions <- function(
     data_path <- system.file(
       "extdata",fileName, package = 'coMethDMR', mustWork = TRUE
     )
-    gmtFile <- read_gmt(data_path)
+    gmtFile <- read_gmt(data_path, setType = "regions")
 
     ### Extract regions with three or more CpGs ###
-    gmtFile3CpGs_ls <- gmtFile$pathway [lapply(gmtFile$pathway, length) >= 3]
+    gmtFile3CpGs_ls <- gmtFile$regions [lapply(gmtFile$regions, length) >= minCpGs]
 
     ### Find close by clusters in all the regions ###
     ### 45.92571 secs for 1000 regions
@@ -103,8 +103,9 @@ WriteCloseByAllRegions <- function(
 
     ### Create gmt file ###
     out_CloseByRegions <- CreatePathwayCollection(
-      pathways = closeByRegionsOrdered_ls,
-      TERMS = unlist(closeByRegionsNames_ls)
+      sets_ls = closeByRegionsOrdered_ls,
+      TERMS = unlist(closeByRegionsNames_ls),
+      setType = "regions"
     )
 
     ### Select and return output ###
@@ -116,7 +117,7 @@ WriteCloseByAllRegions <- function(
     if (fileType == "RDS") {
       saveRDS(out_CloseByRegions, file = fileName)
     } else {
-      write_gmt(out_CloseByRegions, file = fileName)
+      write_gmt(out_CloseByRegions, file = fileName, setType = "regions")
     }
 
     # END if else
