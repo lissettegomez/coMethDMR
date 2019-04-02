@@ -17,6 +17,7 @@
 #'    the inputing pre-defined region, \code{returnAllCpGs = 1} indicates
 #'    outputting all the CpGs in the input regions, while
 #'    \code{returnAllCpGs = 0} indicates not returning any CpG.
+#' @param output
 #' @param ... Dots for internal arguments. Currently unused.
 #'
 #' @return A list of two components:
@@ -81,11 +82,13 @@ CoMethAllRegions <- function(betaMatrix,
                              CpGs_ls = NULL,
                              rDropThresh_num = 0.4,
                              returnAllCpGs = FALSE,
+                             output = c("CpGs", "dataframe"),
                              ...){
 
   regionType <- match.arg(regionType)
-  arrayType  <- match.arg(arrayType)
-  fileType   <- match.arg(fileType)
+  arrayType <- match.arg(arrayType)
+  fileType <- match.arg(fileType)
+  output <- match.arg(output)
 
   ### Read file of close by CpGs ###
   if(!is.null(CpGs_ls)){
@@ -134,9 +137,12 @@ CoMethAllRegions <- function(betaMatrix,
 
 
   ### return output ###
-  list(
-    CpGsSubregions    = out_coMethCpGsAll,
-    contiguousRegions = out_ContigRegions
-  )
+  if(output == "CpGs"){
+    out_coMethCpGsAll
+  } else {
+    out_ContigRegions
+  }
+
 
 }
+

@@ -46,8 +46,7 @@
 #'
 #'    coMeth_ls <- CoMethAllRegions(
 #'                    betaMatrix = betaMatrixChr22_df,
-#'                    file = CpGisland_ls,
-#'                    fileType = "RDS",
+#'                    CpGs_ls = CpGisland_ls,
 #'                    arrayType = "450k",
 #'                    rDropThresh_num = 0.4,
 #'                    returnAllCpGs = FALSE
@@ -55,7 +54,7 @@
 #'
 #'    lmmTestAllRegions(
 #'      beta_df = betaMatrixChr22_df,
-#'      region_ls = coMeth_ls$CpGsSubregions,
+#'      region_ls = coMeth_ls,
 #'      pheno_df,
 #'      contPheno_char = "stage",
 #'      covariates_char = "age.brain",
