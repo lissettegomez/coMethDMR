@@ -1,5 +1,5 @@
 
-#' Create
+#' Create a list object with class CpGsRegions
 #'
 #' @param CpGs_ls a list where each item is a character vector of CpGs IDs in a
 #'    region. Each vector should be named with the region name.

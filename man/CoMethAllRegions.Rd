@@ -8,8 +8,8 @@
 CoMethAllRegions(betaMatrix, regionType = c("ISLAND", "NSHORE", "NSHELF",
   "SSHORE", "SSHELF", "TSS1500", "TSS200", "UTR5", "EXON1", "GENEBODY",
   "UTR3"), arrayType = c("450k", "EPIC"), file = NULL,
-  fileType = c("gmt", "RDS"), rDropThresh_num = 0.4,
-  returnAllCpGs = FALSE, ...)
+  fileType = c("gmt", "RDS"), CpGs_ls = NULL, rDropThresh_num = 0.4,
+  returnAllCpGs = FALSE, output = c("CpGs", "dataframe"), ...)
 }
 \arguments{
 \item{betaMatrix}{matrix (or data frame) of beta values, with row names = CpG IDs,
@@ -22,10 +22,11 @@ values.}
 
 \item{file}{an RDS or gmt file with clusters of CpG locations (i.e. CpGs
 located closely to each other on the genome). This file can be generated
-by the \code{\link{WriteCloseByAllRegions}} function. If RDS file, it would contain a list,
-where each item is a character vector of CpGs IDs.}
+by the \code{\link{WriteCloseByAllRegions}} function.}
 
 \item{fileType}{file extension for input file, can be "gmt" or "RDS"}
+
+\item{CpGs_ls}{list where each item is a character vector of CpGs IDs.}
 
 \item{rDropThresh_num}{thershold for min correlation between a cpg with sum
 of the rest of the CpGs}
@@ -60,22 +61,23 @@ Extract contiguous co-methylated genomic regions from a list of
 
    data(betaMatrixChr22_df)
 
-   exampleFile <- readRDS(
-                     system.file ("extdata",
-                                  "CpGislandsChr22_ex.RDS",
+   CpGsChr22_ls <- readRDS(
+                      system.file ("extdata",
+                                   "CpGislandsChr22_ex.RDS",
                                    package = 'coMethDMR',
                                    mustWork = TRUE
-                                   )
+                                  )
    )
 
 
    CoMethAllRegions (
      betaMatrix = betaMatrixChr22_df,
-     file = exampleFile,
-     fileType = "RDS",
+     CpGs_ls = CpGsChr22_ls,
      arrayType = "450k",
      returnAllCpGs = FALSE
    )
+
+
 
 
 \dontrun{

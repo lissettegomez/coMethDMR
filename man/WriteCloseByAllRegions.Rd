@@ -45,7 +45,7 @@ For \code{maxGap} = 200 and \code{minCpGs} = 3, we already calculated
 }
 \examples{
 \dontrun{
-  CloseByAllRegions(
+  WriteCloseByAllRegions(
      regionType = "ISLAND", arrayType = "450k", maxGap = 50,
      minCpGs = 3, fileType = "gmt", file = "closeByRegions"
   )
