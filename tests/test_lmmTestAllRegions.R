@@ -18,15 +18,14 @@ CpGisland_ls <- readRDS(
 coMeth_ls <- CoMethAllRegions(
   betaMatrix = betaMatrixChr22_df,
   rDropThresh_num = 0.5,
-  file = CpGisland_ls,
-  fileType = "RDS",
+  CpGs_ls = CpGisland_ls,
   arrayType = "450k",
   returnAllCpGs = FALSE
 )
 
 lmmTestAllRegions(
   beta_df = betaMatrixChr22_df,
-  region_ls = coMeth_ls$CpGsSubregions,
+  region_ls = coMeth_ls,
   pheno_df,
   contPheno_char = "stage",
   covariates_char = c("age.brain", "sex"),
