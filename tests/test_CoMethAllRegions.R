@@ -2,7 +2,7 @@
 # Gabriel Odom
 # 2018-11-28
 
-library(coMethDMR)
+context("CoMethAllRegions")
 
 data(betaMatrixChr22_df)
 CpGsChr22_ls <- readRDS(
@@ -14,9 +14,24 @@ CpGsChr22_ls <- readRDS(
   )
 )
 
-CoMethAllRegions(
+out_ls <- CoMethAllRegions(
   betaMatrix = betaMatrixChr22_df,
   CpGs_ls = CpGsChr22_ls,
   arrayType = "450k",
   returnAllCpGs = FALSE
 )
+
+test_that("CoMethAllRegions() returns a list", {
+  expect_equal(is.list(out_ls), TRUE)
+})
+
+test_that("CoMethAllRegions() returns an S3 list", {
+  expect_type(out_ls, "list")
+})
+
+test_that("CoMethAllRegions() has 3 elements", {
+  expect_equal(length(out_ls), 3)
+})
+
+
+
