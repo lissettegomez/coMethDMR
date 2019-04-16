@@ -6,12 +6,14 @@ library(coMethDMR)
 
 data(betaMatrixChr22_df)
 CpGsChr22_ls <- readRDS(
-                  system.file ("extdata",
-                               "CpGislandsChr22_ex.RDS",
-                               package = 'coMethDMR',
-                               mustWork = TRUE
-                              )
+  system.file(
+    "extdata",
+    "CpGislandsChr22_ex.RDS",
+    package = 'coMethDMR',
+    mustWork = TRUE
+  )
 )
+
 CoMethAllRegions(
   betaMatrix = betaMatrixChr22_df,
   CpGs_ls = CpGsChr22_ls,
