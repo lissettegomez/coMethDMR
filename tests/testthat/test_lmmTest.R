@@ -23,7 +23,7 @@ test_that("lmmTest returns df with correct classes", {
       modelType = "randCoef",
       arrayType = "450k"
     ),
-    c("data.frame")
+    "data.frame"
   )
 
 })
