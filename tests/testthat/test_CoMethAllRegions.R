@@ -10,16 +10,22 @@ CpGsChr22_ls <- readRDS(
   )
 )
 
-test_that("CoMethAllRegions returns df with correct classes", {
+out_ls <- CoMethAllRegions(
+  betaMatrix = betaMatrixChr22_df,
+  CpGs_ls = CpGsChr22_ls,
+  arrayType = "450k",
+  returnAllCpGs = FALSE
+)
 
-  expect_s3_class(
-    CoMethAllRegions(
-      betaMatrix = betaMatrixChr22_df,
-      CpGs_ls = CpGsChr22_ls,
-      arrayType = "450k",
-      returnAllCpGs = FALSE
-    ),
-    "list"
-  )
-
+test_that("CoMethAllRegions() returns a list", {
+  expect_equal(is.list(out_ls), TRUE)
 })
+
+test_that("CoMethAllRegions() returns an S3 list", {
+  expect_type(out_ls, "list")
+})
+
+test_that("CoMethAllRegions() has 3 elements", {
+  expect_equal(length(out_ls), 3)
+})
+
