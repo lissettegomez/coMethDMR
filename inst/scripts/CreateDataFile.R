@@ -43,11 +43,12 @@ pheno$sample.id  <- rownames(pheno)
 pheno$age.brain  <- as.numeric(substr(pheno$characteristics_ch1.6, 11, 14))
 pheno$age.blood  <- as.numeric(substr(pheno$characteristics_ch1.5, 11, 14))
 
-pheno_df         <- pheno[
+
+pheno_df <- pheno[
   pheno$source_name_ch1 == "frontal cortex" ,
   c("stage",  "subject.id", "Mplate", "sex", "sample.id", "age.brain")
 ]
-pheno_df         <- pheno_df[!is.na(pheno_df$stage), ]
+pheno_df <- pheno_df[!is.na(pheno_df$stage), ]
 
 
 saveRDS(pheno_df, "pheno_df.rds")
