@@ -1,16 +1,12 @@
-# Test CoMethAllRegions()
-# Gabriel Odom
-# 2018-11-28
-
+# Lizhong Liu
 context("CoMethAllRegions")
 
 data(betaMatrixChr22_df)
 CpGsChr22_ls <- readRDS(
-  system.file(
-    "extdata",
-    "CpGislandsChr22_ex.RDS",
-    package = 'coMethDMR',
-    mustWork = TRUE
+  system.file ("extdata",
+               "CpGislandsChr22_ex.RDS",
+               package = 'coMethDMR',
+               mustWork = TRUE
   )
 )
 
@@ -32,6 +28,4 @@ test_that("CoMethAllRegions() returns an S3 list", {
 test_that("CoMethAllRegions() has 3 elements", {
   expect_equal(length(out_ls), 3)
 })
-
-
 
