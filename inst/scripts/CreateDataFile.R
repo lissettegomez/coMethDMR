@@ -1,3 +1,11 @@
+# Download and Clean GEO Data for Example
+# Lissette Gomez and Lizhong Liu
+# 2019-04-15
+# Last edited: 2019-04-19
+
+# Description paragraph
+
+
 library(GEOquery)
 library(data.table)
 test <- getGEO(GEO = "GSE59685")
@@ -7,7 +15,12 @@ test <- getGEO(GEO = "GSE59685")
 assayData <- test$GSE59685_series_matrix.txt.gz@assayData
 saveRDS(assayData, "GSE59685_assay.rds")
 
-getGEOSuppFiles(GEO = "GSE59685", baseDir = "inst/extdata", filter_regex = "GSE59685_betas.csv.gz")
+getGEOSuppFiles(
+  GEO = "GSE59685",
+  baseDir = "inst/extdata",
+  filter_regex = "GSE59685_betas.csv.gz"
+)
+
 betas <- fread(
   system.file ("extdata/GSE59685",
                "GSE59685_betas.csv.gz",
