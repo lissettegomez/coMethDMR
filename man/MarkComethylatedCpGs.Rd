@@ -4,7 +4,8 @@
 \alias{MarkComethylatedCpGs}
 \title{Mark CpGs in contiguous and co-methylated region}
 \usage{
-MarkComethylatedCpGs(betaCluster_mat, rDropThresh_num = 0.4)
+MarkComethylatedCpGs(betaCluster_mat, rDropThresh_num = 0.4,
+  method = c("pearson", "spearman"))
 }
 \arguments{
 \item{betaCluster_mat}{matrix of beta values, with rownames = sample ids,
@@ -13,6 +14,8 @@ this can be accomplished by the \code{OrderCpGbyLocation} function.}
 
 \item{rDropThresh_num}{thershold for min correlation between a cpg with sum of the
 rest of the CpGs}
+
+\item{method}{correlation method, can be pearson or spearman}
 }
 \value{
 A data frame with the following columns:
