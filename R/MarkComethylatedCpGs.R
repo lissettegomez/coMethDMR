@@ -7,7 +7,7 @@
 #' @param rDropThresh_num thershold for min correlation between a cpg with sum of the
 #'    rest of the CpGs
 #'
-#' @importFrom psych alpha
+#' @param method correlation method, can be pearson or spearman
 #'
 #' @return A data frame with the following columns:
 #'
@@ -44,31 +44,28 @@
 #'
 
 
-MarkComethylatedCpGs <- function (betaCluster_mat, rDropThresh_num = 0.4) {
+MarkComethylatedCpGs <- function (betaCluster_mat,
+                                  rDropThresh_num = 0.4,
+                                  method = c("pearson", "spearman")) {
 
-  ### Calculate alpha and Store CpGs ###
+  ### Calculate r_drop and Store CpGs ###
 
   mvalues_mat <- log2(betaCluster_mat / (1 - betaCluster_mat))
 
-  clusterAlpha_ls <- suppressWarnings(
-    alpha(mvalues_mat, warnings = FALSE)
-  )
+  clusterRdrop_df <- CreateRdrop(data = mvalues_mat, method = method)
 
-  CpGs_char <- rownames(clusterAlpha_ls$alpha.drop)
+  CpGs_char <- clusterRdrop_df$CpG
 
   ### Drop CpGs with r.drop < threshold_r_num ###
   # drop these cpgs
-  dropCpGs_char <- row.names(
-    subset(clusterAlpha_ls$item.stats,
-           clusterAlpha_ls$item.stats$r.drop < rDropThresh_num)
-  )
+  dropCpGs_char <- CpGs_char[clusterRdrop_df$r_drop < rDropThresh_num]
 
   ###  Create Output Data Frame  ###
   CpGs_df <- data.frame(
-    CpG = CpGs_char,
+    CpG = clusterRdrop_df$CpG,
     keep = ifelse(CpGs_char %in% dropCpGs_char, 0, 1), ##(drop=0, keep=1)
     ind = 1:ncol(betaCluster_mat),
-    r_drop = clusterAlpha_ls$item.stats$r.drop,
+    r_drop = clusterRdrop_df$r_drop,
     stringsAsFactors = FALSE
   )
 
