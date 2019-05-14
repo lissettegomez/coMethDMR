@@ -2,14 +2,14 @@
 % Please edit documentation in R/CreateRdrop.R
 \name{CreateRdrop}
 \alias{CreateRdrop}
-\title{Create R-drop values}
+\title{Compute leave-one-out correlations (rDrop) for each CpG}
 \usage{
 CreateRdrop(data, method = c("pearson", "spearman"))
 }
 \arguments{
-\item{data}{a dataframe with rownames = sample ids, column names = CpG ids.}
+\item{data}{a dataframe with rownames = sample IDs, column names = CpG IDs.}
 
-\item{method}{correlation method, can be pearson or spearman}
+\item{method}{method for computing correlation, can be "pearson" or "spearman"}
 }
 \value{
 A data frame with the following columns:
@@ -21,10 +21,25 @@ A data frame with the following columns:
 }
 }
 \description{
-Create R-drop values
+Compute leave-one-out correlations (rDrop) for each CpG
+}
+\details{
+An outlier CpG in a genomic region will typically have low correlation with the rest of
+ the CpGs in a genomic region. On the other hand, in a cluster of co-methylated CpGs, we expect
+ each CpG to have high correlation with the rest of the CpGs. The \code{r.drop} statistic is used
+ to identify these co-methylated CpGs here.
+
+ Note that because of heteroscedasticity in beta values (PMID:21118553), we recommend the use of
+  Mvalues when computing the rdrop statistic.
 }
 \examples{
    data(betaMatrix_ex1)
-   CreateRdrop(data = betaMatrix_ex1, method = "pearson")
+
+   # using Mvalues
+   mvalues_mat <- log2 (betaMatrix_ex1/ (1-betaMatrix_ex1))
+
+   CreateRdrop(data = mvalues_mat, method = "pearson")
+
+
 
 }
