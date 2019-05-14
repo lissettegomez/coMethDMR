@@ -2,7 +2,7 @@
 % Please edit documentation in R/CreateRdrop.R
 \name{CreateRdrop}
 \alias{CreateRdrop}
-\title{Compute leave-one-out correlations (rDrop) for each CpG}
+\title{Computes leave-one-out correlations (rDrop) for each CpG}
 \usage{
 CreateRdrop(data, method = c("pearson", "spearman"))
 }
@@ -21,7 +21,7 @@ A data frame with the following columns:
 }
 }
 \description{
-Compute leave-one-out correlations (rDrop) for each CpG
+Computes leave-one-out correlations (rDrop) for each CpG
 }
 \details{
 An outlier CpG in a genomic region will typically have low correlation with the rest of
@@ -29,8 +29,8 @@ An outlier CpG in a genomic region will typically have low correlation with the 
  each CpG to have high correlation with the rest of the CpGs. The \code{r.drop} statistic is used
  to identify these co-methylated CpGs here.
 
- Note that because of heteroscedasticity in beta values (PMID:21118553), we recommend the use of
-  Mvalues when computing the rdrop statistic.
+ Note that because of heteroscedasticity in methylation beta values (PMID:21118553), we recommend
+ the use of Mvalues when computing the \code{rdrop} statistic.
 }
 \examples{
    data(betaMatrix_ex1)

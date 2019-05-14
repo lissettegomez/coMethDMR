@@ -1,4 +1,4 @@
-#' Compute leave-one-out correlations (rDrop) for each CpG
+#' Computes leave-one-out correlations (rDrop) for each CpG
 #'
 #' @param data a dataframe with rownames = sample IDs, column names = CpG IDs.
 #' @param method method for computing correlation, can be "pearson" or "spearman"
@@ -17,8 +17,8 @@
 #'  each CpG to have high correlation with the rest of the CpGs. The \code{r.drop} statistic is used
 #'  to identify these co-methylated CpGs here.
 #'
-#'  Note that because of heteroscedasticity in beta values (PMID:21118553), we recommend the use of
-#'   Mvalues when computing the rdrop statistic.
+#'  Note that because of heteroscedasticity in methylation beta values (PMID:21118553), we recommend
+#'  the use of Mvalues when computing the \code{rdrop} statistic.
 #'
 #' @export
 #'
