@@ -17,8 +17,6 @@
 #'  each CpG to have high correlation with the rest of the CpGs. The \code{r.drop} statistic is used
 #'  to identify these co-methylated CpGs here.
 #'
-#'  Note that because of heteroscedasticity in methylation beta values (PMID:21118553), we recommend
-#'  the use of Mvalues when computing the \code{rdrop} statistic.
 #'
 #' @export
 #'
