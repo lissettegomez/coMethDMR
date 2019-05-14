@@ -4,13 +4,15 @@
 \alias{MarkComethylatedCpGs}
 \title{Mark CpGs in contiguous and co-methylated region}
 \usage{
-MarkComethylatedCpGs(betaCluster_mat, rDropThresh_num = 0.4,
-  method = c("pearson", "spearman"))
+MarkComethylatedCpGs(betaCluster_mat, betaToM = TRUE,
+  rDropThresh_num = 0.4, method = c("pearson", "spearman"))
 }
 \arguments{
 \item{betaCluster_mat}{matrix of beta values, with rownames = sample ids,
 column names = CpG ids. Note that the CpGs need to be ordered by their genomic positions,
 this can be accomplished by the \code{OrderCpGbyLocation} function.}
+
+\item{betaToM}{indicates if converting to mvalues before computing correlations}
 
 \item{rDropThresh_num}{thershold for min correlation between a cpg with sum of the
 rest of the CpGs}
@@ -42,7 +44,7 @@ An outlier CpG in a genomic region will typically have low correlation with the 
 }
 \examples{
    data(betaMatrix_ex1)
-   MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex1, method = "pearson")
+   MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex1, betaToM = TRUE)
 
    data(betaMatrix_ex2)
    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex2)

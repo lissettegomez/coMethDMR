@@ -4,6 +4,8 @@
 #'    column names = CpG ids. Note that the CpGs need to be ordered by their genomic positions,
 #'    this can be accomplished by the \code{OrderCpGbyLocation} function.
 #'
+#' @param betaToM indicates if converting to mvalues before computing correlations
+#'
 #' @param rDropThresh_num thershold for min correlation between a cpg with sum of the
 #'    rest of the CpGs
 #'
@@ -31,7 +33,7 @@
 #'
 #' @examples
 #'    data(betaMatrix_ex1)
-#'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex1)
+#'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex1, betaToM = FALSE)
 #'
 #'    data(betaMatrix_ex2)
 #'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex2)
@@ -45,14 +47,22 @@
 
 
 MarkComethylatedCpGs <- function (betaCluster_mat,
+                                  betaToM = TRUE,
                                   rDropThresh_num = 0.4,
                                   method = c("pearson", "spearman")) {
 
   ### Calculate r_drop and Store CpGs ###
 
-  mvalues_mat <- log2(betaCluster_mat / (1 - betaCluster_mat))
+  if (betaToM == "TRUE") {
 
-  clusterRdrop_df <- CreateRdrop(data = mvalues_mat, method = method)
+    mvalues_mat <- log2(betaCluster_mat / (1 - betaCluster_mat))
+    clusterRdrop_df <- CreateRdrop(data = mvalues_mat, method = method)
+
+  } else {
+
+    clusterRdrop_df <- CreateRdrop(data = betaCluster_mat, method = method)
+
+  }
 
   CpGs_char <- clusterRdrop_df$CpG
 
