@@ -5,7 +5,8 @@
 \title{Wrapper function to find contiguous and comethyalted sub-regions within a
   pre-defined genomic region}
 \usage{
-CoMethSingleRegion(CpGs_char, betaMatrix, rDropThresh_num = 0.4,
+CoMethSingleRegion(CpGs_char, betaMatrix, betaToM = TRUE,
+  rDropThresh_num = 0.4, method = c("pearson", "spearman"),
   minCpGs = 3, arrayType = c("450k", "EPIC"), returnAllCpGs = FALSE)
 }
 \arguments{

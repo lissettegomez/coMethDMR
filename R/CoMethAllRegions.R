@@ -71,6 +71,7 @@
 #'}
 #'
 CoMethAllRegions <- function(betaMatrix,
+                             betaToM = TRUE,
                              regionType = c(
                                "ISLAND", "NSHORE", "NSHELF", "SSHORE", "SSHELF",
                                "TSS1500", "TSS200", "UTR5", "EXON1", "GENEBODY",
@@ -81,11 +82,13 @@ CoMethAllRegions <- function(betaMatrix,
                              fileType = c("gmt","RDS"),
                              CpGs_ls = NULL,
                              rDropThresh_num = 0.4,
+                             method = c("pearson", "spearman"),
                              returnAllCpGs = FALSE,
                              output = c("CpGs", "dataframe"),
                              ...){
 
   regionType <- match.arg(regionType)
+  method <- match.arg(method)
   arrayType <- match.arg(arrayType)
   fileType <- match.arg(fileType)
   output <- match.arg(output)
@@ -120,7 +123,9 @@ CoMethAllRegions <- function(betaMatrix,
     unname(closeByGenomicRegion_ls),
     FUN = CoMethSingleRegion,
     betaMatrix = betaMatrix,
+    betaToM = betaToM,
     rDropThresh_num = rDropThresh_num,
+    method = method,
     arrayType = arrayType,
     returnAllCpGs = returnAllCpGs
   )

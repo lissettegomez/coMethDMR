@@ -5,10 +5,11 @@
 \title{Extract contiguous co-methylated genomic regions from a list of
   pre-defined genomic regions}
 \usage{
-CoMethAllRegions(betaMatrix, regionType = c("ISLAND", "NSHORE", "NSHELF",
-  "SSHORE", "SSHELF", "TSS1500", "TSS200", "UTR5", "EXON1", "GENEBODY",
-  "UTR3"), arrayType = c("450k", "EPIC"), file = NULL,
-  fileType = c("gmt", "RDS"), CpGs_ls = NULL, rDropThresh_num = 0.4,
+CoMethAllRegions(betaMatrix, betaToM = TRUE, regionType = c("ISLAND",
+  "NSHORE", "NSHELF", "SSHORE", "SSHELF", "TSS1500", "TSS200", "UTR5",
+  "EXON1", "GENEBODY", "UTR3"), arrayType = c("450k", "EPIC"),
+  file = NULL, fileType = c("gmt", "RDS"), CpGs_ls = NULL,
+  rDropThresh_num = 0.4, method = c("pearson", "spearman"),
   returnAllCpGs = FALSE, output = c("CpGs", "dataframe"), ...)
 }
 \arguments{

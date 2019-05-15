@@ -28,9 +28,6 @@ An outlier CpG in a genomic region will typically have low correlation with the 
  the CpGs in a genomic region. On the other hand, in a cluster of co-methylated CpGs, we expect
  each CpG to have high correlation with the rest of the CpGs. The \code{r.drop} statistic is used
  to identify these co-methylated CpGs here.
-
- Note that because of heteroscedasticity in methylation beta values (PMID:21118553), we recommend
- the use of Mvalues when computing the \code{rdrop} statistic.
 }
 \examples{
    data(betaMatrix_ex1)
