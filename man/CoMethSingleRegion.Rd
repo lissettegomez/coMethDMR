@@ -59,15 +59,14 @@ Wrapper function to find contiguous and comethyalted sub-regions within a
      betaMatrix = betaMatrixChr22_df
    )
 
-   data(betaCluster_mat_example3)
-   betaMatrix_ex3 <- t(betaMatrix_ex3)
+   data(betaMatrix_ex3)
    CpGsEx3_char <- c(
      "cg14221598", "cg02433884", "cg07372974", "cg13419809", "cg26856676",
      "cg25246745"
    )
    CoMethSingleRegion(
      CpGs_char = CpGsEx3_char,
-     betaMatrix = betaMatrix_ex3,
+     betaMatrix = t(betaMatrix_ex3),
      returnAllCpGs = TRUE
    )
 

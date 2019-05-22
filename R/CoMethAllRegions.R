@@ -4,6 +4,8 @@
 #' @param betaMatrix matrix (or data frame) of beta values, with row names = CpG IDs,
 #'    column names = sample IDs. This is typically genome-wide methylation beta
 #'    values.
+#' @param betaToM indicates if converting methylation beta values mvalues
+#' @param method method for computing correlation, can be "spearman" or "pearson"
 #' @param regionType Type of input genomic regions (e.g. "ISLAND" for CpG island)
 #' @param arrayType Type of array, can be "450k" or "EPIC"
 #' @param file an RDS or gmt file with clusters of CpG locations (i.e. CpGs
@@ -17,7 +19,7 @@
 #'    the inputing pre-defined region, \code{returnAllCpGs = 1} indicates
 #'    outputting all the CpGs in the input regions, while
 #'    \code{returnAllCpGs = 0} indicates not returning any CpG.
-#' @param output
+#' @param output a character vector of CpGs or a dataframe of CpGs along with rdrop info
 #' @param ... Dots for internal arguments. Currently unused.
 #'
 #' @return A list of two components:
