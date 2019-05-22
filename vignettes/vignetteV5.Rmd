@@ -53,7 +53,7 @@ head(pheno_df)
 ## 1.3 Vanilla analysis
 We are interested in identifying co-methylated genomic regions associated with AD stages (`stage` treated as a linear variable). Here we illustrate analysis of genomic regions mapped to CpG islands, however the workflow can be similarly conducted for other types of genomic region as well. See section 2.1 below.   
 
-There are several steps: (1) obtain genomic regions with CpGs located closely mapped to CpG islands, (2) identify co-methylated regions, and (3) test co-methylated regions against the outcome variable AD stage. 
+There are several steps: (1) obtain CpGs located closely (see details in Section 2.1 below) in genomic regions mapped to CpG islands, (2) identify co-methylated regions, and (3) test co-methylated regions against the outcome variable AD stage. 
 
 For the first step, we use the following commands: 
 
