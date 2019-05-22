@@ -11,6 +11,6 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
-Imports: bumphunter, pathwayPCA, lmerTest, GenomicRanges, IRanges
+Imports: bumphunter, pathwayPCA, lmerTest, GenomicRanges, IRanges, testthat
 Suggests: 
     testthat
