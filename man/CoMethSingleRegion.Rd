@@ -16,8 +16,12 @@ CoMethSingleRegion(CpGs_char, betaMatrix, betaToM = TRUE,
 column names = sample ids. This should include the CpGs in \code{CpGs_char},
 as well as additional CpGs.}
 
+\item{betaToM}{indicates if converting methylation beta values mvalues}
+
 \item{rDropThresh_num}{thershold for min correlation between a cpg with sum
 of the rest of the CpGs}
+
+\item{method}{method for computing correlation, can be "spearman" or "pearson"}
 
 \item{minCpGs}{mininum number of CpGs to be considered a "region".
 Only regions with more than \code{minCpGs} will be returned.}

@@ -19,7 +19,8 @@
 #'    the inputing pre-defined region, \code{returnAllCpGs = 1} indicates
 #'    outputting all the CpGs in the input regions, while
 #'    \code{returnAllCpGs = 0} indicates not returning any CpG.
-#' @param output a character vector of CpGs or a dataframe of CpGs along with rdrop info
+#' @param output a character vector of CpGs or a dataframe of CpGs along with
+#'    rDrop info
 #' @param ... Dots for internal arguments. Currently unused.
 #'
 #' @return A list of two components:

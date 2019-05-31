@@ -17,6 +17,8 @@ CoMethAllRegions(betaMatrix, betaToM = TRUE, regionType = c("ISLAND",
 column names = sample IDs. This is typically genome-wide methylation beta
 values.}
 
+\item{betaToM}{indicates if converting methylation beta values mvalues}
+
 \item{regionType}{Type of input genomic regions (e.g. "ISLAND" for CpG island)}
 
 \item{arrayType}{Type of array, can be "450k" or "EPIC"}
@@ -32,10 +34,15 @@ by the \code{\link{WriteCloseByAllRegions}} function.}
 \item{rDropThresh_num}{thershold for min correlation between a cpg with sum
 of the rest of the CpGs}
 
+\item{method}{method for computing correlation, can be "spearman" or "pearson"}
+
 \item{returnAllCpGs}{When there is not a contiguous comethylated region in
 the inputing pre-defined region, \code{returnAllCpGs = 1} indicates
 outputting all the CpGs in the input regions, while
 \code{returnAllCpGs = 0} indicates not returning any CpG.}
+
+\item{output}{a character vector of CpGs or a dataframe of CpGs along with
+rDrop info}
 
 \item{...}{Dots for internal arguments. Currently unused.}
 }
