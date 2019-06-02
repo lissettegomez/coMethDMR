@@ -6,12 +6,14 @@
 #'    column names = sample ids. This should include the CpGs in \code{CpGs_char},
 #'    as well as additional CpGs.
 #' @param betaToM indicates if converting methylation beta values mvalues
+#' @param method method for computing correlation, can be  "pearson" or "spearman"
 #' @param rDropThresh_num thershold for min correlation between a cpg with sum
 #'    of the rest of the CpGs
+#'
 #' @param minCpGs mininum number of CpGs to be considered a "region".
 #'    Only regions with more than \code{minCpGs} will be returned.
 #' @param arrayType Type of array, can be "450k" or "EPIC"
-#' @param method method for computing correlation, can be "spearman" or "pearson"
+
 #' @param returnAllCpGs When there is not a contiguous comethylated region in
 #'    the inputing pre-defined region, \code{returnAllCpGs = 1} indicates
 #'    outputting all the CpGs in the input region, while \code{returnAllCpGs = 0}
@@ -34,6 +36,7 @@
 #'
 #' @examples
 #'    data(betaMatrixChr22_df)
+#'
 #'    CpGsChr22_char <- c(
 #'      "cg02953382", "cg12419862", "cg24565820", "cg04234412", "cg04824771",
 #'      "cg09033563", "cg10150615", "cg18538332", "cg20007245", "cg23131131",

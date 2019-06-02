@@ -21,7 +21,7 @@ as well as additional CpGs.}
 \item{rDropThresh_num}{thershold for min correlation between a cpg with sum
 of the rest of the CpGs}
 
-\item{method}{method for computing correlation, can be "spearman" or "pearson"}
+\item{method}{method for computing correlation, can be  "pearson" or "spearman"}
 
 \item{minCpGs}{mininum number of CpGs to be considered a "region".
 Only regions with more than \code{minCpGs} will be returned.}
