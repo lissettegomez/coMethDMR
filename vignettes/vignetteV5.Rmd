@@ -1,7 +1,7 @@
 ---
 title: coMethDMR's User Guide
 author: "Lissette Gomez, Gabriel Odom, Lily Wang"
-date: "March 11, 2019"
+date: "June 1, 2019"
 output:
   word_document: default
   pdf_document: default
@@ -68,22 +68,23 @@ CpGisland_ls <- readRDS(
 )
 ```
 
-Here, `CpGisland_ls` is a list of 20 items, with each item of the list including a group of CpG probe IDs located closely within a particular CpG island region. Section 2.1 discusses how to import additional genomic regions. 
+Here, `CpGisland_ls` is a list of 20 items, with each item of the list including a group of CpG probe IDs located closely within a particular CpG island region. Section 2.1 discusses how to import additional types of genomic regions. 
 
 Next, we identify co-methylated regions: 
 ```{r}
 coMeth_ls <- CoMethAllRegions (
   betaMatrix = betaMatrixChr22_df,
-  file = CpGisland_ls,
-  fileType = "RDS",
+  betaToM = TRUE,
+  CpGs_ls = CpGisland_ls,
   arrayType = "450k",
-  returnAllCpGs = FALSE
+  returnAllCpGs = FALSE, 
+  output = "CpGs"
 )
 
-coMeth_ls$CpGsSubregions
+coMeth_ls
 ```
 
-`coMeth_ls` is list with several components. In particular, the component `coMeth_ls$CpGsSubregions` is a list that contains groups of CpG probeIDs corresponding to co-methylated regions. Three comethylated regions were identified in this example. 
+`coMeth_ls` is list with that contains groups of CpG probeIDs corresponding to co-methylated regions. Three comethylated regions were identified in this example. 
 
 If we want to look at co-methylation within the first co-methylated region: 
 
@@ -111,7 +112,7 @@ WriteCorrPlot <- function (beta_mat){
 # subsetting beta values to include only co-methylated probes
 betas_df <- subset(
   betaMatrixChr22_df, 
-  row.names(betaMatrixChr22_df) %in% coMeth_ls$CpGsSubregions[[1]] 
+  row.names(betaMatrixChr22_df) %in% coMeth_ls [[1]]
 )
 
 WriteCorrPlot (betas_df)
@@ -122,7 +123,7 @@ Next, we test these co-methylated regions against `stage` using a random coeffic
 ```{r message=FALSE}
 out_df <- lmmTestAllRegions(
    beta_df = betaMatrixChr22_df,
-   region_ls = coMeth_ls$CpGsSubregions,
+   region_ls = coMeth_ls,
    pheno_df,
    contPheno_char = "stage",
    covariates_char = "age.brain",
@@ -175,7 +176,7 @@ These pre-computed genomic regions can be accessed from our GitHub repository `c
 gitHubPath_char <- "https://raw.githubusercontent.com/lissettegomez/coMethDMRdata/master/"
 
 CpGisland_ls <- readRDS (
-  url(paste0(gitHubPath_char, "ISLAND3_200.rds"))
+  url(paste0(gitHubPath_char, "ISLAND_3_200.rds"))
 )                 
 ```
 
@@ -184,12 +185,26 @@ Here `CpGisland_ls` is a list, with each item containing a character vector of C
 Similarly, CpGs in other types of genomic regions such as TSS200 can be extracted using the following commands:  
 
 ```{r}
-gitHubPath_char <- "https://raw.githubusercontent.com/lissettegomez/coMethDMRdata/master/"
+TSS200_ls <- readRDS (
+  url(paste0(gitHubPath_char, "TSS200_3_200.rds"))
+)                 
+```
+
+In addition, customized genomic regions can be specified in a .gmt file (http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#GMT:_Gene_Matrix_Transposed_file_format_.28.2A.gmt.29) and read into `coMethDMR` using the `read_gmt` function.  
+
+
+```{r}
+# library(devtools)
+# install_github ("gabrielodom/pathwayPCA")
+library(pathwayPCA)
 
 TSS200_ls <- read_gmt (
-  url(paste0(gitHubPath_char, "TSS200Ind.gmt")), 
-  description = FALSE
+  url(paste0(gitHubPath_char, "TSS200_3_200.gmt")), 
+  description = FALSE, 
+  setType = "regions"
 )
+
+names(TSS200_ls$regions) <- TSS200_ls$TERMS
 ```
 
 
@@ -212,11 +227,12 @@ Cgi_ls <- readRDS(
 )
 
 coMeth_ls <- CoMethAllRegions (
- betaMatrix = betaMatrixChr22_df,
- file = Cgi_ls[1],
- fileType = "RDS",
- arrayType = "450k",
- returnAllCpGs = FALSE
+  betaMatrix = betaMatrixChr22_df,
+  betaToM = TRUE,
+  CpGs_ls = Cgi_ls[1],
+  arrayType = "450k",
+  returnAllCpGs = FALSE, 
+  output = "CpGs"
 )
 
 coMeth_ls
@@ -229,19 +245,35 @@ Next we look at a region (13th region in `Cgi_ls`) where there is a co-methylate
 
 ```{r}
 coMeth_ls <- CoMethAllRegions (
- betaMatrix = betaMatrixChr22_df,
- file = Cgi_ls[13],
- fileType = "RDS",
- arrayType = "450k",
- returnAllCpGs = FALSE
+  betaMatrix = betaMatrixChr22_df,
+  betaToM = TRUE,
+  CpGs_ls = Cgi_ls[13],
+  arrayType = "450k",
+  returnAllCpGs = FALSE, 
+  output = "CpGs"
 )
 
 coMeth_ls
 ```
 
-Note that the resulting `coMeth_ls` contains two lists:  the first list `coMeth_ls$CpGsSubregions` includes CpG probe IDs for each co-methylated sub-region. 
+`coMeth_ls` is a list, where each item is a list of CpG probe IDs for a co-methylated sub-region. 
 
-The second list `coMeth_ls$contiguousRegions` shows the details on how the co-methylated region was obtained: Here `keep = 1` if `rDropThresh_num > 0.4` (i.e. a co-methylated CpG), and `keep_contigous` indicates if the probe is in a contiguous co-methylated region.   
+If we want to see the detailed output of the coMethDMR algorithm, that is, how the co-methylated region was obtained, we can specify `output = "dataframe"`: 
+
+```{r}
+coMethData_ls <- CoMethAllRegions (
+  betaMatrix = betaMatrixChr22_df,
+  betaToM = TRUE,
+  CpGs_ls = Cgi_ls[13],
+  arrayType = "450k",
+  returnAllCpGs = FALSE, 
+  output = "dataframe"
+)
+
+coMethData_ls
+```
+
+`coMethData_ls` provides the details on how the co-methylated region was obtained: Here `keep = 1` if `rDropThresh_num > 0.4` (i.e. a co-methylated CpG), and `keep_contigous` indicates if the probe is in a contiguous co-methylated region.   
 
 ## 2.3 Testing genomic regions against a continuous phenotype 
 
@@ -263,7 +295,7 @@ To test one genomic region against the continuous phenotype `stage`, adjusting f
 ```{r message = FALSE}
 lmmTestAllRegions(
   beta_df = betaMatrixChr22_df,
-  region_ls = coMeth_ls$CpGsSubregions[1],
+  region_ls = coMeth_ls[1],
   pheno_df,
   contPheno_char = "stage",
   covariates_char = "age.brain",
@@ -277,7 +309,7 @@ If we don't want to adjust for any covariate effect, we can set `covariates_char
 ```{r message = FALSE}
 lmmTestAllRegions(
   beta_df = betaMatrixChr22_df,
-  region_ls = coMeth_ls$CpGsSubregions[1],
+  region_ls = coMeth_ls[1],
   pheno_df,
   contPheno_char = "stage",
   covariates_char = NULL,
