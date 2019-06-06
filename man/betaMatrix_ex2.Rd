@@ -14,6 +14,6 @@ betaMatrix_ex2
 }
 \description{
 Subset of an Alzheimer's Disease methylation data set,
-  with beta values for CpGs.
+  with beta values for measured CpGs methylation levels.
 }
 \keyword{datasets}

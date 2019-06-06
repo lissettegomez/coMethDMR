@@ -1,6 +1,6 @@
 
 
-#' Extract clusters of close by CpGs from a list of pre-defined genomic regions
+#' Extract clusters of CpG probes located closely from a list of pre-defined genomic regions
 #'
 #' @param file file where the output genomic regions will be saved. File extension should not
 #' be supplied, it is automatically added via the \code{fileType} argument.

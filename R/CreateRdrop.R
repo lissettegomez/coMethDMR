@@ -23,10 +23,7 @@
 #' @examples
 #'    data(betaMatrix_ex1)
 #'
-#'    # using Mvalues
-#'    mvalues_mat <- log2 (betaMatrix_ex1/ (1-betaMatrix_ex1))
-#'
-#'    CreateRdrop(data = mvalues_mat, method = "pearson")
+#'    CreateRdrop(data = betaMatrix_ex1, method = "pearson")
 #'
 #'
 #'

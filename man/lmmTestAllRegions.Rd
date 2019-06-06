@@ -35,12 +35,29 @@ coefficient mixed model, or \code{simple} for simple linear mixed model.}
 }
 \value{
 csv file with location of the genomic region (\code{chrom, start, end}), number of CpGs (\code{nCpGs}),
-\code{Estimate}, Standard error (\code{StdErr}) of the test statistic, p-value and False Discovery Rate (FDR)
+\code{Estimate}, Standard error (\code{StdErr}) of the test statistic, p-value and False Discovery
+Rate (FDR)
 for association between methylation values in each genomic region with phenotype (\code{pValue}).
 }
 \description{
 Fit mixed model to test association between a continuous phenotype and
 methylation values in a list of genomic regions
+}
+\details{
+This function implements a mixed model to test association between
+   methylation values in a genomic region with a continuous phenotype.
+
+   When \code{randCoef} is selected, the model is
+
+   \code{methylation M value ~ contPheno_char + covariates_char + (1|Sample) + (contPheno_char|CpG)}.
+   The last term specifies random intercept and slope for each CpG.
+
+   When \code{simple} is selected, the model is
+
+   \code{methylation M value ~ contPheno_char + covariates_char + (1|Sample)}
+
+   In our simulation studies, we found both models are conservative, so p-values are estimated from
+   normal distributions instead of t-distributions.
 }
 \examples{
    data(betaMatrixChr22_df)

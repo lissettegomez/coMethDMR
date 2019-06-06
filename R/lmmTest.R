@@ -22,7 +22,7 @@
 #'    When \code{randCoef} is selected, the model is
 #'
 #'    \code{methylation M value ~ contPheno_char + covariates_char + (1|Sample) + (contPheno_char|CpG)}.
-#'    The last two terms are random intercepts and slopes for each CpG.
+#'    The last term specifies random intercept and slope for each CpG.
 #'
 #'    When \code{simple} is selected, the model is
 #'
@@ -46,11 +46,11 @@
 #'   coMethCpGs <- CoMethSingleRegion(CpGsChr22_char, betaMatrixChr22_df)
 #'
 #'   # test only the first co-methylated region
-#'   coMethBetaMatrix <- betaMatrixChr22_df[coMethCpGs$CpGsSubregions[[1]], ]
+#'   coMethBeta_df <- betaMatrixChr22_df[coMethCpGs$CpGsSubregions[[1]], ]
 #'
 #'   data(pheno_df)
 #'
-#'   res <- lmmTest (betaOne_df = coMethBetaMatrix,
+#'   res <- lmmTest (betaOne_df = coMethBeta_df,
 #'            pheno_df,
 #'            contPheno_char = "stage",
 #'            covariates_char = c("age.brain", "sex"),

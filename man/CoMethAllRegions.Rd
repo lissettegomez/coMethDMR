@@ -17,7 +17,7 @@ CoMethAllRegions(betaMatrix, betaToM = TRUE, method = c("pearson",
 column names = sample IDs. This is typically genome-wide methylation beta
 values.}
 
-\item{betaToM}{indicates if converting methylation beta values mvalues}
+\item{betaToM}{indicates if converting methylation beta values to mvalues}
 
 \item{method}{method for computing correlation, can be "spearman" or "pearson"}
 
@@ -63,13 +63,13 @@ Extract contiguous co-methylated genomic regions from a list of
 \details{
 There are several ways to input genomic regions for this function: (1) use \code{CpGs_ls}
 argument (2) use \code{regionType} argument (3) use \code{file} and \code{fileType} arguments,
-examples of these files are at \link{https://github.com/lissettegomez/coMethDMRdata}
+examples of these files are at https://github.com/lissettegomez/coMethDMRdata
 }
 \examples{
    data(betaMatrixChr22_df)
 
 
-   CpGsChr22_ls <- readRDS (
+   CpGisland_ls <- readRDS (
        system.file ("extdata",
                     "CpGislandsChr22_ex.RDS",
                      package = 'coMethDMR',
@@ -83,7 +83,7 @@ examples of these files are at \link{https://github.com/lissettegomez/coMethDMRd
      CpGs_ls = CpGisland_ls,
      arrayType = "450k",
      returnAllCpGs = FALSE,
-     output = "dataframe"
+     output = "CpGs"
    )
 
 \dontrun{

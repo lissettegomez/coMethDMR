@@ -12,7 +12,8 @@
 #'
 #' @return a data frame with locations of the genomic region (Region), CpG ID (cpg), chromosome (chr),
 #' position (pos), and results for testing association of methylation in individual CpGs with
-#' continuous phenotype (slopeEstimate, slopePval)
+#' continuous phenotype (slopeEstimate, slopePval), UCSC_RefGene_Name, UCSC_RefGene_Accession,
+#' UCSC_RefGene_Group
 #'
 #' @export
 #'
