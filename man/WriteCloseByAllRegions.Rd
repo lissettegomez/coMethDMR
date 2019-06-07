@@ -2,7 +2,7 @@
 % Please edit documentation in R/WriteCloseByAllRegions.R
 \name{WriteCloseByAllRegions}
 \alias{WriteCloseByAllRegions}
-\title{Extract clusters of close by CpGs from a list of pre-defined genomic regions}
+\title{Extract clusters of CpG probes located closely from a list of pre-defined genomic regions}
 \usage{
 WriteCloseByAllRegions(file, regionType = c("ISLAND", "NSHORE", "NSHELF",
   "SSHORE", "SSHELF", "TSS1500", "TSS200", "UTR5", "EXON1", "GENEBODY",
@@ -31,7 +31,7 @@ a file with the genomic regions containing CpGs located closely within each
  inputing pre-defined genomic region
 }
 \description{
-Extract clusters of close by CpGs from a list of pre-defined genomic regions
+Extract clusters of CpG probes located closely from a list of pre-defined genomic regions
 }
 \details{
 For \code{maxGap} = 200 and \code{minCpGs} = 3, we already calculated

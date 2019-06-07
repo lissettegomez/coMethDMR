@@ -33,16 +33,16 @@
 #'
 #' @examples
 #'    data(betaMatrix_ex1)
-#'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex1, betaToM = FALSE)
+#'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex1, betaToM = FALSE, method = "pearson")
 #'
 #'    data(betaMatrix_ex2)
-#'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex2)
+#'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex2, method = "pearson")
 #'
 #'    data(betaMatrix_ex3)
-#'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex3)
+#'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex3, method = "pearson")
 #'
 #'    data(betaMatrix_ex4)
-#'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex4, rDropThresh_num = 0.6)
+#'    MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex4, rDropThresh_num = 0.6, method = "pearson")
 #'
 
 
@@ -64,7 +64,7 @@ MarkComethylatedCpGs <- function (betaCluster_mat,
 
   }
 
-  CpGs_char <- clusterRdrop_df$CpG
+  CpGs_char <- as.character(clusterRdrop_df$CpG)
 
   ### Drop CpGs with r.drop < threshold_r_num ###
   # drop these cpgs

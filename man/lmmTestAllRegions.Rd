@@ -78,7 +78,7 @@ This function implements a mixed model to test association between
                    arrayType = "450k",
                    rDropThresh_num = 0.4,
                    returnAllCpGs = FALSE
-               )
+   )
 
    lmmTestAllRegions(
      beta_df = betaMatrixChr22_df,

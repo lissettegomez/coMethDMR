@@ -60,12 +60,14 @@
 #'
 CoMethSingleRegion <- function(CpGs_char,
                                betaMatrix, betaToM = TRUE,
-                               rDropThresh_num = 0.4, method = c("pearson", "spearman"),
+                               rDropThresh_num = 0.4,
+                               method = c("pearson", "spearman"),
                                minCpGs = 3,
                                arrayType = c("450k","EPIC"),
                                returnAllCpGs = FALSE){
 
   arrayType <- match.arg(arrayType)
+  method <- match.arg(method)
 
   ### Order CpGs by genomic location ###
   CpGsOrdered_df <- OrderCpGsByLocation(
@@ -86,6 +88,7 @@ CoMethSingleRegion <- function(CpGs_char,
       ### Mark comethylated CpGs ###
       keepCpGs_df <- MarkComethylatedCpGs(
         betaCluster_mat = betaClusterTransp_mat,
+        method = method,
         rDropThresh_num
       )
 

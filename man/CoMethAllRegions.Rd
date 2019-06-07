@@ -80,6 +80,7 @@ examples of these files are at https://github.com/lissettegomez/coMethDMRdata
    coMeth_ls <- CoMethAllRegions (
      betaMatrix = betaMatrixChr22_df,
      betaToM = TRUE,
+     method = "pearson",
      CpGs_ls = CpGisland_ls,
      arrayType = "450k",
      returnAllCpGs = FALSE,
