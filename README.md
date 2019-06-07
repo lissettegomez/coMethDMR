@@ -1,5 +1,6 @@
-# coMethDMR
-An unsupervised approach for identifying differentially methylated regions in Illumina arrays
+## coMethDMR: Accurate identification of co-methylated and differentially methylated regions in epigenome-wide association studies 
+
+by Lissette Gomez, Gabriel J. Odom, Juan I. Young, Eden R. Martin, Lizhong Liu, Xi Chen, Anthony J. Griswold, Zhen Gao, Lanyu Zhang and Lily Wang
 
 ## Description
 coMethDMR is an R package that identifies genomic regions associated with continuous phenotypes by optimally leverages covariations 
@@ -27,6 +28,4 @@ library(coMethDMR)
 The reference manual for coMethDMR can be downloaded from /docs/coMethDMR.pdf.
 
 ## References
-
-A manuscript on details of the coMethDMR methodology is coming soon.
-
+Manuscirpt is available at https://www.biorxiv.org/content/10.1101/615427v1
