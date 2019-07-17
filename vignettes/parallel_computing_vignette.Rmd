@@ -1,0 +1,214 @@
+---
+title: "Parallel Computing with coMethDMR"
+author: "Gabriel J. Odom, PhD, ThD"
+date: "7/16/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Example Data
+We will use the PFC Data from Lunnon et al. (2014).
+
+
+
+## Serial Computing
+Load packages:
+```{r packLoad, message=FALSE}
+library(coMethDMR)
+library(DMRcate)
+```
+
+### Dasen Normalized Data
+At current, these data sets are saved locally. The original data sets are available online, but we have pre-processed these data sets. We are working to make the import and cleaning scripts for these data sets publically available.
+```{r data}
+projectPath_char <-
+  "~/Dropbox (BBSR)/GabrielOdom/coMethDMR/vignette_parallel_computing/"
+pfc_df <- readRDS(
+  paste0(projectPath_char, "pfc_df.RDS")
+)
+pfcPheno_df <- readRDS(
+  paste0(projectPath_char, "pfcPheno_df.RDS")
+)
+```
+
+The PFC data is a <DESCRIBE DATA STRUCTURE>.
+```{r inspectPFC}
+dim(pfc_df)
+pfc_df[1:5, 1:5]
+```
+
+The phenotype data is <DESCRIBE DATA STRUCTURE>.
+```{r inspectPheno}
+str(pfcPheno_df)
+```
+EXPLAIN COLUMNS.
+
+### List of Island Regions
+EXPLAIN THIS DATA SET
+```{r importRegions}
+closeByGenomicRegion_ls <- readRDS(
+  system.file(
+    "extdata",
+    "ISLAND3_200.rds",
+    package = 'coMethDMR',
+    mustWork = TRUE
+  )
+)
+closeByGenomicRegion_ls <- unname(closeByGenomicRegion_ls)
+```
+
+### First Comment on Memory
+Loading the **coMethDMR**:: package requires 3.5Gb of available RAM. This is in addition to the 0.4Gb of RAM necessary to load the PFC data into memory. This cost is driven by the annotation data sets included in the many database packages that **coMethDMR** depends upon. In the next version, we will remove dependencies on as many of these data sets as possible, and move all necessary annotation data sets to a supplemental data package.
+
+### Find All Co-Methylated Regions
+```{r serial_CoMethAllRegions, eval = FALSE}
+a <- Sys.time()
+pfc_cgi_rdrop0_4_ls <- CoMethAllRegions(
+  betaMatrix = pfc_df,
+  regionType = "ISLAND",
+  arrayType = "450k",
+  rDropThresh_num = 0.4,
+  returnAllCpGs = FALSE
+)
+Sys.time() - a
+# 1.262612 hours
+```
+
+### Use the Linear Mixed Model on All Regions
+```{r serial_lmmTestAllRegions, eval = FALSE}
+a <- Sys.time()
+res_cgi_df1 <- lmmTestAllRegions(
+  beta_df = pfc_df,
+  region_ls = pfc_cgi_ls,
+  pheno_df = pfcPheno_df,
+  contPheno_char = "stage",
+  covariates_char = c("age.brain", "sex", "Mplate", "prop.neuron"),
+  modelType = "randCoef",
+  arrayType = "450k"
+)
+Sys.time() - a
+# 34.02621 min for 4892 regions
+```
+
+
+## Using the **parallel**:: Package
+Load the package. This package should be part of the base packages installed when you first installed R.
+```{r parallelPackLoad}
+library(parallel)
+```
+
+### Cluster Setup
+COMMENT ON WINDOWS vs UNIX.
+
+Create the cluster. Each worker will need access to the **coMethDMR**:: package, so budget for 3.5Gb of RAM per worker. For a machine with 64Gb of RAM, 12 workers will be plenty. 
+```{r parallel_cluster, eval=FALSE}
+clust <- makeCluster(12)
+```
+**DMRcate**:: only uses 0.1Gb of RAM, so the total RAM for packages is `12 * 3.6` 43.2Gb.
+
+Load the packages you need on these workers.
+```{r parallel_packLoad, eval=FALSE}
+clusterEvalQ(cl = clust, library(coMethDMR))
+clusterEvalQ(cl = clust, library(DMRcate))
+```
+
+Export the three data pieces to each cluster.
+```{r parallel_dataExport, eval=FALSE}
+clusterExport(
+  cl = clust,
+  varlist = c("pfc_df", "pfcPheno_df", "closeByGenomicRegion_ls")
+)
+```
+
+### Computing the Co-Methylated Regions in Parallel
+Now that we have a master and 12 workers initialized, we can use a parallel apply function.
+```{r parLapply, eval=FALSE}
+a <- Sys.time()
+coMethCpGsAllREgions_ls <- parLapply(
+  cl = clust,
+  X = closeByGenomicRegion_ls,
+  fun = CoMethSingleRegion,
+  betaMatrix = pfc_df,
+  method = "pearson",
+  arrayType = "450k",
+  returnAllCpGs = FALSE
+)
+Sys.time() - a
+# 12.66661 min over 12 cores
+```
+
+EXPLAIN WHAT EACH PIECE OF `parLapply()` IS DOING.
+
+
+#### Post Compute Wrangling
+Because the output of `CoMethSingleRegion()` is a nested list of lists of two elements, and we only care about the second element of each list right now, we will extract these elements.
+```{r post_parallel, eval=FALSE}
+pfc_cgi_ls <- unlist(
+  lapply(coMethCpGsAllREgions_ls, `[[`, 2),
+  recursive = FALSE
+)
+```
+
+### Computing the Linear Mixed Models in Parallel
+Instead of applying the mixed model to an entire data frame, we apply the model to the data subsets matching the co-methylated clusters found in the previous section.
+
+#### Creating the Cluster-Specific Data Subsets
+First, we create a list of cluster-specific data subsets.
+```{r list_of_DFs,eval=FALSE}
+a0 <- Sys.time()
+CpGnames <- rownames(pfc_df)
+coMethBetaDF_ls <- lapply(
+  pfc_cgi_ls,
+  function(x) pfc_df[which(CpGnames %in% x), ]
+)
+Sys.time() - a0
+# 2.492514 min in serial
+```
+
+#### Create a New Cluster
+We could use the exact same cluster as before, because these workers do not "expire" after use, but we need access to new data. It's easier then to create a new set of workers
+```{r parallel_createCluster2, eval=FALSE}
+# 12 cores
+clust <- makeCluster(12)
+# Load coMethDMR for each worker
+clusterEvalQ(cl = clust, library(coMethDMR))
+# Load DMRcate for each worker
+clusterEvalQ(cl = clust, library(DMRcate))
+# Export the list of cluster-specific data frames and the response data
+clusterExport(
+  cl = clust,
+  varlist = c("coMethBetaDF_ls", "pfcPheno_df")
+)
+```
+
+#### Linear Mixed Models in Parallel
+```{r parallel_lmm, eval=FALSE}
+a1 <- Sys.time()
+results_ls <- parLapply(
+  cl = clust,
+  coMethBetaDF_ls,
+  fun = lmmTest,
+  pheno_df = pfcPheno_df,
+  contPheno_char = "stage",
+  covariates_char = c("age.brain", "sex", "Mplate", "prop.neuron"),
+  modelType = "randCoef",
+  arrayType = "450k"
+)
+Sys.time() - a1
+# 3.735125 min over 12 cores
+```
+COMMENT ON RAM NECESSARY FOR COMPUTATION (ADDITIONAL 1Gb PER WORKER).
+
+
+## Using the **BiocParallel**:: Package
+
+### Cluster Setup
+
+### Computing
+
+
+
+## Comments
