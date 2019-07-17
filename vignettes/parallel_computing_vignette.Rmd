@@ -185,6 +185,7 @@ clusterExport(
 ```
 
 #### Linear Mixed Models in Parallel
+A benefit to the **parallel**:: version is that if we want to repeat this computation with the simple linear mixed model, rather than the random coefficient version, we do not have to re-initialize the cluster.
 ```{r parallel_lmm, eval=FALSE}
 a1 <- Sys.time()
 results_ls <- parLapply(
@@ -202,13 +203,133 @@ Sys.time() - a1
 ```
 COMMENT ON RAM NECESSARY FOR COMPUTATION (ADDITIONAL 1Gb PER WORKER).
 
+#### Post-computation Wrangling
+```{r wrangle_lmmOut1, eval=FALSE}
+res_cgi1_df <- do.call(rbind, results_ls)
+res_cgi1_df$FDR <- p.adjust(res_cgi1_df$pValue, method = "fdr")
+row.names(res_cgi1_df) <- NULL
+```
+
 
 ## Using the **BiocParallel**:: Package
 
 ### Cluster Setup
+For **BiocParallel**::, the cluster setup is very easy.
+```{r BiocParallel_setup, eval=FALSE}
+library(BiocParallel)
+snow_cl <- SnowParam(workers = 12, type = "SOCK")
+```
 
-### Computing
+### Finding the Comethylated Regions
+While setting up the cluster is very easy, computing on it is more challenging.
+
+#### Creating the Wrapper Function
+In the **parallel**:: cluster setup, we created the clusters, loaded the packages on them, and then exported the data we need to each. The **BiocParallel**:: cluster computing requires that we create a wrapper function to load the packages for each worker, but it does not require that we export any data to these workers.
+```{r BiocParallel_wrapper, eval=FALSE}
+worker_fun <- function(x, beta_mat){
+
+  suppressPackageStartupMessages({
+    library(coMethDMR)
+    library(DMRcate)
+  })
 
 
+  CoMethSingleRegion(
+    CpGs_char = x,
+    betaMatrix = beta_mat,
+    method = "pearson",
+    arrayType = "450k",
+    returnAllCpGs = FALSE
+  )
+
+}
+```
+This function requires us to understand exactly how the worker should act to complete your computation. Notice that we are calling the function we care about, `CoMethSingleRegion()` directly within this wrapper. Also note that we are loading the packages within this wrapper function. The `x` value will be the individual element of the list we are going to apply over, and the `beta_mat` is an argument placeholder for the `pfc_df` data.
+
+#### Executing the Wrapper Function on each Worker
+```{r BiocParallel_bplapply, eval=FALSE}
+a <- Sys.time()
+coMethCpGsAllREgions_ls <- bplapply(
+  X = closeByGenomicRegion_ls,
+  FUN = worker_fun,
+  BPPARAM = snow_cl,
+  beta_mat = pfc_df
+)
+Sys.time() - a
+# 14.83241 min over 12 cores
+```
+Note that this function doesn't appear to be as fast, but that's because this call to `bplapply()` loads the packages and exports the data for each worker as part of the computation. One of the main benefits here is that we don't have to export the data to the clusters manually. The cost here is that we can't re-use these clusters with the same data or packages loaded.
+
+#### Post-computational Wrangling
+We have the same wrangling to do here, as the results haven't changed.
+```{r BiocParallel_wrangling, eval=FALSE}
+pfc_cgi_rdrop0_4_ls <- unlist(
+  lapply(coMethCpGsAllREgions_ls, `[[`, 2),
+  recursive = FALSE
+)
+```
+
+### Testing the Comethylated Regions
+Once again, we have the results from `CoMethSingleRegion()` to pass along to a parallel version of `lmmTest()`.
+
+#### Create the Linear Mixed Model Wrapper
+As before, we need a worker function.
+```{r BiocParallel_worker2, eval=FALSE}
+worker2_fun <- function(cgi, beta_mat, pheno_mat){
+
+  suppressPackageStartupMessages({
+    library(coMethDMR)
+    library(DMRcate)
+  })
+
+  coMethBetaDF <- beta_mat[which(rownames(beta_mat) %in% cgi), ]
+
+  lmmTest(
+    betaOne_df = coMethBetaDF,
+    pheno_df = pheno_mat,
+    contPheno_char = "stage",
+    covariates_char = c("age.brain", "sex", "Mplate", "prop.neuron"),
+    modelType = "randCoef",
+    arrayType = "450k"
+  )
+
+}
+```
+This function is a touch more complicated than before, simply because we now have three arguments: the vector of comethylated CpG locations, the data frame of methylation values, and the data frame of responses and covariates.
+
+#### Apply the Wrapper
+Once again, the code to execute this function in parallel is rather simple. The difficult part was creating the wrapper function correctly.
+```{r BiocParallel_lmm, eval=FALSE}
+a1 <- Sys.time()
+results_ls <- bplapply(
+  X = pfc_cgi_ls,
+  FUN = worker2_fun,
+  BPPARAM = snow_cl,
+  beta_mat = pfc_df,
+  pheno_mat = pfcPheno_df
+)
+Sys.time() - a1
+# 6.800498 min over 12 cores
+```
+This execution is a little slower than it should be, but that is most likely due to the fact that the **parallel**: version used a pre-computed list of data frames, while this version subsets the `pfc_df` data within the loop.
+
+#### Post-compute Wrangling
+```{r BiocParallel_wangling2, eval=FALSE}
+res_cgi1_df <- do.call(rbind, results_ls)
+res_cgi1_df$FDR <- p.adjust(res_cgi1_df$pValue, method = "fdr")
+row.names(res_cgi1_df) <- NULL
+```
 
 ## Comments
+Overall, these methods have similar computational and memory costs. Comparison:
+
+- **Cluster Setup**:
+    + `parallel::parLapply()` requires a two-step process. It takes time at the very beginning to initialize all the workers, then the cluster is available for as many uses as needed, so long as the data input remains constant.
+    + The `BiocParallel::bplapply()` function initializes the pre-defined cluster setup and performs computation at the same time. This is much simpler to set up, but requires re-initialization before each new computational task.
+- **Speed**: Overall, the computational costs are very similar between the two methods.
+- **Executing Jobs**:
+    + For simple problems, the BiocParallel version is much nicer. You make a single call to create the cluster, and `bplapply()` handles all the setup as part of the execution.
+    + `parLapply()` requires the same type of setup no matter how easy or complicated the job.
+    + Comparison: for easy jobs, this is a solid win for `bplapply()`; for more complicated parallel computing jobs, this is a solid win for `parLapply()`.
+
+In summary, I think it is easier to write package code to use **parallel**::. The package setup to allow users the **BiocParallel** option is more difficult. However, allowing users to create their own clusters with **BiocParallel**:: is a very strong bonus. Additionally, it will make the Bioconductor folks happy if we use their parallel routines.
