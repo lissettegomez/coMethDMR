@@ -66,6 +66,8 @@ library(parallel)
 # clust <- makeCluster(4)
 # This spawns 4 instances of "R for Windows font-end" at 40.5Mb a piece; total
 #   RAM at 162Mb + 3.6Gb = 3.8Gb
+# clust <- makeCluster(6)
+# test for 32Gb machines
 # clust <- makeCluster(8)
 # This spawns 8 instances of "R for Windows font-end" at 40.5Mb a piece; total
 #   RAM at 324Mb + 3.6Gb = 3.9Gb

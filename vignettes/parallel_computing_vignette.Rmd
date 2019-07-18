@@ -2,26 +2,35 @@
 title: "Parallel Computing with coMethDMR"
 author: "Gabriel J. Odom, PhD, ThD"
 date: "7/16/2019"
-output: html_document
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 2
+    number_sections: true
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Example Data
+# Example Data
 We will use the PFC Data from Lunnon et al. (2014).
 
 
 
-## Serial Computing
-Load packages:
+# Serial Computing
+First we load the packages we will need.
+**TO DO: comment on why we need the `DMRcate` package.**
 ```{r packLoad, message=FALSE}
 library(coMethDMR)
 library(DMRcate)
 ```
 
-### Dasen Normalized Data
+All of these computations were performed on a Dell Precision 5810 with 64Gb of RAM, an Intel Xeon E5-2640 CPU at 2.40Ghz, and using up to 20 cores.
+
+## Dasen Normalized Data
+**TO DO: add source and cleaning scripts for `pfc_df` and `pfcPheno_df`.**
 At current, these data sets are saved locally. The original data sets are available online, but we have pre-processed these data sets. We are working to make the import and cleaning scripts for these data sets publically available.
 ```{r data}
 projectPath_char <-
@@ -34,20 +43,19 @@ pfcPheno_df <- readRDS(
 )
 ```
 
-The PFC data is a <DESCRIBE DATA STRUCTURE>.
+The PFC data is a data frame of methylation *beta* values values with CpG locations in the rows and samples in the columns.
 ```{r inspectPFC}
 dim(pfc_df)
 pfc_df[1:5, 1:5]
 ```
 
-The phenotype data is <DESCRIBE DATA STRUCTURE>.
+The phenotype data is a data frame with response (e.g. `stage`) and covariate information (e.g. `age.brain` and `sex`) for the given subjects.
 ```{r inspectPheno}
 str(pfcPheno_df)
 ```
-EXPLAIN COLUMNS.
 
-### List of Island Regions
-EXPLAIN THIS DATA SET
+## List of Island Regions
+Because we are interested in regions of the genome that are concurrently methylated, we need a list of CpG probe IDs that belong to our region of choice. The file `"ISLAND3_200.rds"` holds a list of all CG locations that fit the following criteria: they arefound in CpG Island regions, the maximum distance between consecutive probes is 200 base pairs, and there are at least 3 CpGs in the cluster.
 ```{r importRegions}
 closeByGenomicRegion_ls <- readRDS(
   system.file(
@@ -58,15 +66,18 @@ closeByGenomicRegion_ls <- readRDS(
   )
 )
 closeByGenomicRegion_ls <- unname(closeByGenomicRegion_ls)
+
+head(closeByGenomicRegion_ls)
 ```
 
-### First Comment on Memory
-Loading the **coMethDMR**:: package requires 3.5Gb of available RAM. This is in addition to the 0.4Gb of RAM necessary to load the PFC data into memory. This cost is driven by the annotation data sets included in the many database packages that **coMethDMR** depends upon. In the next version, we will remove dependencies on as many of these data sets as possible, and move all necessary annotation data sets to a supplemental data package.
+If you would like to use a different region, change the file name to match the region of interest (for the gene body region, use `"GENEBODY3_200.rds"`). If you would like to use a different maximum probe distance or different minimum number of CpGs, use the `WriteCloseByAllRegions()` function to compute and save such a list.
 
-### Find All Co-Methylated Regions
+## Find All Co-Methylated Regions
+The `CoMethAllRegions()` function enables you specify your own list of regions based on a region type (through the `file` or `CpGs_ls` arguments), or to use the pre-computed regions lists (through the `regionType` argument). This function currently takes quite a while to run (about 75 minutes), so don't use it on larger data sets. In fact, this is the motivation for this vignette.
 ```{r serial_CoMethAllRegions, eval = FALSE}
+# DON'T RUN
 a <- Sys.time()
-pfc_cgi_rdrop0_4_ls <- CoMethAllRegions(
+pfc_cgi_ls <- CoMethAllRegions(
   betaMatrix = pfc_df,
   regionType = "ISLAND",
   arrayType = "450k",
@@ -77,43 +88,60 @@ Sys.time() - a
 # 1.262612 hours
 ```
 
-### Use the Linear Mixed Model on All Regions
+## Use the Linear Mixed Model on All Regions
+Once we combine the pre-defined region clusters with the methylation data to find the co-methylated regions, we can find which co-methylated regions are related to the chosen output (conditional on the covariates specified).
 ```{r serial_lmmTestAllRegions, eval = FALSE}
 a <- Sys.time()
 res_cgi_df1 <- lmmTestAllRegions(
+  # methylation data
   beta_df = pfc_df,
+  # list of co-methylated regions
   region_ls = pfc_cgi_ls,
+  # phenotype data frame
   pheno_df = pfcPheno_df,
+  # column of the phenotype data to be used as the response
   contPheno_char = "stage",
+  # columns of the phenotype data to be used as covariates
   covariates_char = c("age.brain", "sex", "Mplate", "prop.neuron"),
+  # model type
   modelType = "randCoef",
+  # Type of probes
   arrayType = "450k"
 )
 Sys.time() - a
 # 34.02621 min for 4892 regions
 ```
 
+For a single row, this will return a table as shown:
 
-## Using the **parallel**:: Package
+| chrom |    start |      end | nCpGs | Estimate | StdErr |    Stat | pValue |    FDR |
+|-------|----------|----------|-------|----------|--------|---------|--------|--------|
+| chr22 | 18268062 | 18268249 |     3 |  -0.0732 | 0.0394 | -1.8564 | 0.0634 | 0.0634 |
+
+
+# Using the **parallel**:: Package
 Load the package. This package should be part of the base packages installed when you first installed R.
 ```{r parallelPackLoad}
 library(parallel)
 ```
 
-### Cluster Setup
-COMMENT ON WINDOWS vs UNIX.
+## Cluster Setup
+We first need a short discussion on parallel computing in Windows compared to Macintosh or Linux. Linux and MacOS are able to share information across multiple workers, while Windows does not allow sharing. This means that any data necessary for parallel computation must be copied for each worker in a Windows environment. Therefore, for larger problems, you may only be able to use 3-4 workers, even if you have 8 or more available.
 
-Create the cluster. Each worker will need access to the **coMethDMR**:: package, so budget for 3.5Gb of RAM per worker. For a machine with 64Gb of RAM, 12 workers will be plenty. 
+### First Comment on Memory
+Loading the **coMethDMR**:: package requires 3.5Gb of available RAM. This is in addition to the 0.4Gb of RAM necessary to load the PFC data into memory. This cost is driven by the annotation data sets included in the many database packages that **coMethDMR** depends upon. In the next version of this package, we will remove dependencies on as many of these data sets as possible, and move all necessary annotation data sets to a supplemental data package.
+
+Now we create the cluster of workers. Each worker will need access to the **coMethDMR**:: package, so budget for 3.5Gb of RAM per worker. For a machine with 64Gb of RAM, 12 workers will use most of this. 
 ```{r parallel_cluster, eval=FALSE}
 clust <- makeCluster(12)
 ```
-**DMRcate**:: only uses 0.1Gb of RAM, so the total RAM for packages is `12 * 3.6` 43.2Gb.
 
 Load the packages you need on these workers.
 ```{r parallel_packLoad, eval=FALSE}
 clusterEvalQ(cl = clust, library(coMethDMR))
 clusterEvalQ(cl = clust, library(DMRcate))
 ```
+**DMRcate**:: only uses 0.1Gb of RAM, so the total RAM for packages is `12 * (3.5 + 0.1) = ` 43.2Gb.
 
 Export the three data pieces to each cluster.
 ```{r parallel_dataExport, eval=FALSE}
@@ -122,15 +150,20 @@ clusterExport(
   varlist = c("pfc_df", "pfcPheno_df", "closeByGenomicRegion_ls")
 )
 ```
+The data we need is just under 0.5Gb, so we are now up to 48.6Gb of RAM for the 12 workers, and just under 4Gb for the master (52.2Gb total).
 
-### Computing the Co-Methylated Regions in Parallel
+## Computing the Co-Methylated Regions in Parallel
 Now that we have a master and 12 workers initialized, we can use a parallel apply function.
 ```{r parLapply, eval=FALSE}
 a <- Sys.time()
 coMethCpGsAllREgions_ls <- parLapply(
+  # Specify the cluster of workers
   cl = clust,
+  # The list of regions to apply over
   X = closeByGenomicRegion_ls,
+  # The function to apply
   fun = CoMethSingleRegion,
+  # Additional data passed to CoMethSingleRegion()
   betaMatrix = pfc_df,
   method = "pearson",
   arrayType = "450k",
@@ -139,11 +172,9 @@ coMethCpGsAllREgions_ls <- parLapply(
 Sys.time() - a
 # 12.66661 min over 12 cores
 ```
+We have decreased the computing time by a factor of 6 because we used 12 cores. This is an important concept to understand: using 10 cores does not cut the computing time by a factor of 10. While the workers are very helpful, they need the time to start working, they require constant "guidance" and input from the master, and they also need to return their components of the finished product to the master. Then, the master has to compile all of the results from the workers. This takes time. In fact, linearly increasing the number of workers does not linearly decrease the computational time. In fact, increasing from 8 workers to 12 workers only decreased the time from 14.5 to 12.7 minutes (all while increasing the RAM required from 36.3Gb to 52.2Gb). If you only have 32Gb of RAM available, use 5-6 workers (this computation completes in **17.8** minutes for 6 workers).
 
-EXPLAIN WHAT EACH PIECE OF `parLapply()` IS DOING.
-
-
-#### Post Compute Wrangling
+### Post Compute Wrangling
 Because the output of `CoMethSingleRegion()` is a nested list of lists of two elements, and we only care about the second element of each list right now, we will extract these elements.
 ```{r post_parallel, eval=FALSE}
 pfc_cgi_ls <- unlist(
@@ -152,11 +183,11 @@ pfc_cgi_ls <- unlist(
 )
 ```
 
-### Computing the Linear Mixed Models in Parallel
+## Computing the Linear Mixed Models in Parallel
 Instead of applying the mixed model to an entire data frame, we apply the model to the data subsets matching the co-methylated clusters found in the previous section.
 
-#### Creating the Cluster-Specific Data Subsets
-First, we create a list of cluster-specific data subsets.
+### Creating the Cluster-Specific Data Subsets
+First, we create a list of cluster-specific data subsets. Because this is a relatively simple computation, we would probably spend more time setting up a cluster of workers than the 2.5 minutes this computation takes to complete.
 ```{r list_of_DFs,eval=FALSE}
 a0 <- Sys.time()
 CpGnames <- rownames(pfc_df)
@@ -168,8 +199,10 @@ Sys.time() - a0
 # 2.492514 min in serial
 ```
 
-#### Create a New Cluster
-We could use the exact same cluster as before, because these workers do not "expire" after use, but we need access to new data. It's easier then to create a new set of workers
+### Create a New Cluster
+If we wanted to performa different calculation with the same data, we could use the exact same cluster as before, because these workers do not "expire" after use. However, because we need access to new data, we will create a new cluster of workers. It's often easier to create a new set of workers than try to modify the old workers.
+
+Another condition to consider: fitting the linear mixed model on this data takes nearly 1Gb of ram, so take this into consideration when you create these clusters. If you already tapped all of your available RAM in the last computation, then make this cluster of workers with 1-2 fewer workers to account for this extra RAM you need. Because I had only used 52Gb of the 64Gb of RAM my machine has available, I could afford to perform the linear mixed model computation on a 12-worker cluster.
 ```{r parallel_createCluster2, eval=FALSE}
 # 12 cores
 clust <- makeCluster(12)
@@ -184,8 +217,8 @@ clusterExport(
 )
 ```
 
-#### Linear Mixed Models in Parallel
-A benefit to the **parallel**:: version is that if we want to repeat this computation with the simple linear mixed model, rather than the random coefficient version, we do not have to re-initialize the cluster.
+### Linear Mixed Models in Parallel
+Now we fit the models. Notice that this is considerably faster; even if you need to reduce the number of workers due to RAM constraints, this is still quite fast.
 ```{r parallel_lmm, eval=FALSE}
 a1 <- Sys.time()
 results_ls <- parLapply(
@@ -201,9 +234,10 @@ results_ls <- parLapply(
 Sys.time() - a1
 # 3.735125 min over 12 cores
 ```
-COMMENT ON RAM NECESSARY FOR COMPUTATION (ADDITIONAL 1Gb PER WORKER).
 
-#### Post-computation Wrangling
+A benefit to the **parallel**:: version is that if we want to repeat this computation with the simple linear mixed model, rather than the random coefficient version, we do not have to re-initialize the cluster.
+
+### Post-computation Wrangling
 ```{r wrangle_lmmOut1, eval=FALSE}
 res_cgi1_df <- do.call(rbind, results_ls)
 res_cgi1_df$FDR <- p.adjust(res_cgi1_df$pValue, method = "fdr")
@@ -211,19 +245,19 @@ row.names(res_cgi1_df) <- NULL
 ```
 
 
-## Using the **BiocParallel**:: Package
+# Using the **BiocParallel**:: Package
 
-### Cluster Setup
+## Cluster Setup
 For **BiocParallel**::, the cluster setup is very easy.
 ```{r BiocParallel_setup, eval=FALSE}
 library(BiocParallel)
 snow_cl <- SnowParam(workers = 12, type = "SOCK")
 ```
 
-### Finding the Comethylated Regions
+## Finding the Comethylated Regions
 While setting up the cluster is very easy, computing on it is more challenging.
 
-#### Creating the Wrapper Function
+### Creating the Wrapper Function
 In the **parallel**:: cluster setup, we created the clusters, loaded the packages on them, and then exported the data we need to each. The **BiocParallel**:: cluster computing requires that we create a wrapper function to load the packages for each worker, but it does not require that we export any data to these workers.
 ```{r BiocParallel_wrapper, eval=FALSE}
 worker_fun <- function(x, beta_mat){
@@ -246,7 +280,7 @@ worker_fun <- function(x, beta_mat){
 ```
 This function requires us to understand exactly how the worker should act to complete your computation. Notice that we are calling the function we care about, `CoMethSingleRegion()` directly within this wrapper. Also note that we are loading the packages within this wrapper function. The `x` value will be the individual element of the list we are going to apply over, and the `beta_mat` is an argument placeholder for the `pfc_df` data.
 
-#### Executing the Wrapper Function on each Worker
+### Executing the Wrapper Function on each Worker
 ```{r BiocParallel_bplapply, eval=FALSE}
 a <- Sys.time()
 coMethCpGsAllREgions_ls <- bplapply(
@@ -260,7 +294,7 @@ Sys.time() - a
 ```
 Note that this function doesn't appear to be as fast, but that's because this call to `bplapply()` loads the packages and exports the data for each worker as part of the computation. One of the main benefits here is that we don't have to export the data to the clusters manually. The cost here is that we can't re-use these clusters with the same data or packages loaded.
 
-#### Post-computational Wrangling
+### Post-computational Wrangling
 We have the same wrangling to do here, as the results haven't changed.
 ```{r BiocParallel_wrangling, eval=FALSE}
 pfc_cgi_rdrop0_4_ls <- unlist(
@@ -269,10 +303,10 @@ pfc_cgi_rdrop0_4_ls <- unlist(
 )
 ```
 
-### Testing the Comethylated Regions
+## Testing the Comethylated Regions
 Once again, we have the results from `CoMethSingleRegion()` to pass along to a parallel version of `lmmTest()`.
 
-#### Create the Linear Mixed Model Wrapper
+### Create the Linear Mixed Model Wrapper
 As before, we need a worker function.
 ```{r BiocParallel_worker2, eval=FALSE}
 worker2_fun <- function(cgi, beta_mat, pheno_mat){
@@ -297,7 +331,7 @@ worker2_fun <- function(cgi, beta_mat, pheno_mat){
 ```
 This function is a touch more complicated than before, simply because we now have three arguments: the vector of comethylated CpG locations, the data frame of methylation values, and the data frame of responses and covariates.
 
-#### Apply the Wrapper
+### Apply the Wrapper
 Once again, the code to execute this function in parallel is rather simple. The difficult part was creating the wrapper function correctly.
 ```{r BiocParallel_lmm, eval=FALSE}
 a1 <- Sys.time()
@@ -313,14 +347,14 @@ Sys.time() - a1
 ```
 This execution is a little slower than it should be, but that is most likely due to the fact that the **parallel**: version used a pre-computed list of data frames, while this version subsets the `pfc_df` data within the loop.
 
-#### Post-compute Wrangling
+### Post-compute Wrangling
 ```{r BiocParallel_wangling2, eval=FALSE}
 res_cgi1_df <- do.call(rbind, results_ls)
 res_cgi1_df$FDR <- p.adjust(res_cgi1_df$pValue, method = "fdr")
 row.names(res_cgi1_df) <- NULL
 ```
 
-## Comments
+# Comments
 Overall, these methods have similar computational and memory costs. Comparison:
 
 - **Cluster Setup**:
