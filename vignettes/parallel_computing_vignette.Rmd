@@ -8,6 +8,8 @@ output:
     toc_float: true
     toc_depth: 2
     number_sections: true
+  word_document:
+    toc: true
 ---
 
 ```{r setup, include=FALSE}
@@ -43,7 +45,7 @@ pfcPheno_df <- readRDS(
 )
 ```
 
-The PFC data is a data frame of methylation *beta* values values with CpG locations in the rows and samples in the columns.
+The PFC data is a data frame of methylation *beta* values with CpG locations in the rows and samples in the columns.
 ```{r inspectPFC}
 dim(pfc_df)
 pfc_df[1:5, 1:5]
@@ -55,7 +57,7 @@ str(pfcPheno_df)
 ```
 
 ## List of Island Regions
-Because we are interested in regions of the genome that are concurrently methylated, we need a list of CpG probe IDs that belong to our region of choice. The file `"ISLAND3_200.rds"` holds a list of all CG locations that fit the following criteria: they arefound in CpG Island regions, the maximum distance between consecutive probes is 200 base pairs, and there are at least 3 CpGs in the cluster.
+Because we are interested in regions of the genome that are concurrently methylated, we need a list of CpG probe IDs that belong to our region of choice. The file `"ISLAND3_200.rds"` holds a list of all CG locations that fit the following criteria: they are found in CpG Island regions, the maximum distance between consecutive probes is 200 base pairs, and there are at least 3 CpGs in the cluster.
 ```{r importRegions}
 closeByGenomicRegion_ls <- readRDS(
   system.file(
@@ -88,7 +90,7 @@ Sys.time() - a
 # 1.262612 hours
 ```
 
-## Use the Linear Mixed Model on All Regions
+## Apply the Linear Mixed Model on All Regions
 Once we combine the pre-defined region clusters with the methylation data to find the co-methylated regions, we can find which co-methylated regions are related to the chosen output (conditional on the covariates specified).
 ```{r serial_lmmTestAllRegions, eval = FALSE}
 a <- Sys.time()
@@ -119,7 +121,7 @@ For a single row, this will return a table as shown:
 | chr22 | 18268062 | 18268249 |     3 |  -0.0732 | 0.0394 | -1.8564 | 0.0634 | 0.0634 |
 
 
-# Using the **parallel**:: Package
+# Using the **parallel** Package
 Load the package. This package should be part of the base packages installed when you first installed R.
 ```{r parallelPackLoad}
 library(parallel)
@@ -153,7 +155,7 @@ clusterExport(
 The data we need is just under 0.5Gb, so we are now up to 48.6Gb of RAM for the 12 workers, and just under 4Gb for the master (52.2Gb total).
 
 ## Computing the Co-Methylated Regions in Parallel
-Now that we have a master and 12 workers initialized, we can use a parallel apply function.
+Now that we have a master and 12 workers initialized, we can use the **parallel** apply function, `parLapply()`.
 ```{r parLapply, eval=FALSE}
 a <- Sys.time()
 coMethCpGsAllRegions_ls <- parLapply(
@@ -172,7 +174,7 @@ coMethCpGsAllRegions_ls <- parLapply(
 Sys.time() - a
 # 12.66661 min over 12 cores
 ```
-We have decreased the computing time by a factor of 6 because we used 12 cores. This is an important concept to understand: using 10 cores does not cut the computing time by a factor of 10. While the workers are very helpful, they need the time to start working, they require constant "guidance" and input from the master, and they also need to return their components of the finished product to the master. Then, the master has to compile all of the results from the workers. This takes time. In fact, linearly increasing the number of workers does not linearly decrease the computational time. In fact, increasing from 8 workers to 12 workers only decreased the time from 14.5 to 12.7 minutes (all while increasing the RAM required from 36.3Gb to 52.2Gb). If you only have 32Gb of RAM available, use 5-6 workers (this computation completes in **17.8** minutes for 6 workers).
+We have decreased the computing time by a factor of 6 because we used 12 cores. This is an important concept to understand: using 10 cores does not cut the computing time by a factor of 10. While the workers are very helpful, they need the time to start working, they require constant "guidance" and input from the master, and they also need to return their components of the finished product to the master. Then, the master has to compile all of the results from the workers. This takes time. In fact, linearly increasing the number of workers does not linearly decrease the computational time. In fact, increasing from 8 workers to 12 workers only decreased the time from 14.5 to 12.7 minutes (all while increasing the RAM required from 36.3Gb to 52.2Gb). If you only have 32Gb of RAM available, use 5-6 workers (this computation completes in 17.8 minutes for 6 workers).
 
 ### Post Compute Wrangling
 The first element of this list is a list with the following components.
@@ -193,7 +195,7 @@ $CpGsSubregions$`chr10:100028320-100028499`
 ```
 
 
-Because the output of `CoMethSingleRegion()` is a nested list of lists of two elements, and we only care about the individual CpG subregions (the `CpGsSubregions` elements), we will extract these elements directly.
+Because the output of `CoMethSingleRegion()` is a nested list of lists of two elements, and we only care about the individual CpG sub-regions (the `CpGsSubregions` elements), we will extract these elements directly.
 ```{r post_parallel, eval=FALSE}
 pfc_cgi_ls <- unlist(
   lapply(coMethCpGsAllRegions_ls, `[[`, 2),
@@ -217,7 +219,7 @@ Sys.time() - a0
 # 2.492514 min in serial
 ```
 
-The first element is the data frame that matches the CpG subregion above (with rows ordered by their location):
+The first element is the data frame that matches the CpG sub-region above (with rows ordered by their location):
 ```{r inspect_subdata, eval=FALSE}
 coMethBetaDF_ls$`chr10:100028320-100028499`[, 1:5]
 ```
@@ -264,7 +266,7 @@ Sys.time() - a1
 # 3.735125 min over 12 cores
 ```
 
-A benefit to the **parallel**:: version is that if we want to repeat this computation with the simple linear mixed model, rather than the random coefficient version, we do not have to re-initialize the cluster.
+A benefit to the **parallel** version is that if we want to repeat this computation with the simple linear mixed model, rather than the random coefficient version, we do not have to re-initialize the cluster.
 
 ### Post-computation Wrangling
 Recall that the output for a single region is a one-row data frame, so we stack these data frames with `rbind()`.
@@ -275,20 +277,20 @@ row.names(res_cgi1_df) <- NULL
 ```
 
 
-# Using the **BiocParallel**:: Package
+# Using the **BiocParallel** Package
 
 ## Cluster Setup
-For **BiocParallel**::, the cluster setup is very easy.
+For **BiocParallel**, the cluster setup is very easy.
 ```{r BiocParallel_setup, eval=FALSE}
 library(BiocParallel)
 snow_cl <- SnowParam(workers = 12, type = "SOCK")
 ```
 
-## Finding the Comethylated Regions
+## Finding the Co-Methylated Regions
 While setting up the cluster is very easy, computing on it is more challenging.
 
 ### Creating the Wrapper Function
-In the **parallel**:: cluster setup, we created the clusters, loaded the packages on them, and then exported the data we need to each. The **BiocParallel**:: cluster computing requires that we create a wrapper function to load the packages for each worker, but it does not require that we export any data to these workers.
+In the **parallel** cluster setup, we created the clusters, loaded the packages on them, and then exported the data we need to each. The **BiocParallel** cluster computing requires that we create a wrapper function to load the packages for each worker, but it does not require that we export any data to these workers.
 ```{r BiocParallel_wrapper, eval=FALSE}
 worker_fun <- function(x, beta_mat){
 
@@ -314,9 +316,13 @@ This function requires us to understand exactly how the worker should act to com
 ```{r BiocParallel_bplapply, eval=FALSE}
 a <- Sys.time()
 coMethCpGsAllRegions_ls <- bplapply(
+  # The list of regions to apply over
   X = closeByGenomicRegion_ls,
+  # The worker function that calls CoMethSingleRegion()
   FUN = worker_fun,
+  # Specify the cluster of workers
   BPPARAM = snow_cl,
+  # Additional data passed through the worker function to CoMethSingleRegion()
   beta_mat = pfc_df
 )
 Sys.time() - a
@@ -325,7 +331,7 @@ Sys.time() - a
 Note that this function doesn't appear to be as fast, but that's because this call to `bplapply()` loads the packages and exports the data for each worker as part of the computation. One of the main benefits here is that we don't have to export the data to the clusters manually. The cost here is that we can't re-use these clusters with the same data or packages loaded.
 
 ### Post-computational Wrangling
-We have the same wrangling to do here, as the results haven't changed.
+The results haven't changed, only the computing setup. We still have the same wrangling to do here.
 ```{r BiocParallel_wrangling, eval=FALSE}
 pfc_cgi_rdrop0_4_ls <- unlist(
   lapply(coMethCpGsAllRegions_ls, `[[`, 2),
@@ -333,8 +339,8 @@ pfc_cgi_rdrop0_4_ls <- unlist(
 )
 ```
 
-## Testing the Comethylated Regions
-Once again, we have the results from `CoMethSingleRegion()` to pass along to a parallel version of `lmmTest()`.
+## Testing the Co-Methylated Regions
+Once again, we have the results from `CoMethSingleRegion()` to pass along to a parallel version of `lmmTest()`. In this case, however, we do not have to create a new cluster with the updated data. The `bplapply()` function handles distributing the data for us, so we only need to keep track of the Snow-style cluster of workers we created above.
 
 ### Create the Linear Mixed Model Wrapper
 As before, we need a worker function.
@@ -359,7 +365,7 @@ worker2_fun <- function(cgi, beta_mat, pheno_mat){
 
 }
 ```
-This function is a touch more complicated than before, simply because we now have three arguments: the vector of comethylated CpG locations, the data frame of methylation values, and the data frame of responses and covariates.
+This function is a touch more complicated than before, simply because we now have three arguments: the vector of co-methylated CpG locations, the data frame of methylation values, and the data frame of response and covariates.
 
 ### Apply the Wrapper
 Once again, the code to execute this function in parallel is rather simple. The difficult part was creating the wrapper function correctly.
@@ -375,9 +381,10 @@ results_ls <- bplapply(
 Sys.time() - a1
 # 6.800498 min over 12 cores
 ```
-This execution is a little slower than it should be, but that is most likely due to the fact that the **parallel**: version used a pre-computed list of data frames, while this version subsets the `pfc_df` data within the loop.
+This execution is a little slower than it should be, but that is most likely due to the fact that the **parallel** version used a pre-computed list of data frames, while this version subsets the `pfc_df` data within the loop. For the previous version, we spent 2.5 minutes splitting the data frame into a list of co-methylated, region-specific data frames before executing the parallel code. This version performs that step within the worker function.
 
 ### Post-compute Wrangling
+Because `lmmTest()` returns a one-row data frame, we still have to stack these results.
 ```{r BiocParallel_wangling2, eval=FALSE}
 res_cgi1_df <- do.call(rbind, results_ls)
 res_cgi1_df$FDR <- p.adjust(res_cgi1_df$pValue, method = "fdr")
@@ -392,8 +399,8 @@ Overall, these methods have similar computational and memory costs. Comparison:
     + The `BiocParallel::bplapply()` function initializes the pre-defined cluster setup and performs computation at the same time. This is much simpler to set up, but requires re-initialization before each new computational task.
 - **Speed**: Overall, the computational costs are very similar between the two methods.
 - **Executing Jobs**:
-    + For simple problems, the BiocParallel version is much nicer. You make a single call to create the cluster, and `bplapply()` handles all the setup as part of the execution.
+    + For simple problems, the **BiocParallel** version is much nicer. You make a single call to create the cluster, and `bplapply()` handles all the setup as part of the execution.
     + `parLapply()` requires the same type of setup no matter how easy or complicated the job.
     + Comparison: for easy jobs, this is a solid win for `bplapply()`; for more complicated parallel computing jobs, this is a solid win for `parLapply()`.
 
-In summary, I think it is easier to write package code to use **parallel**::. The package setup to allow users the **BiocParallel** option is more difficult. However, allowing users to create their own clusters with **BiocParallel**:: is a very strong bonus. Additionally, it will make the Bioconductor folks happy if we use their parallel routines.
+In summary, I think it is easier to write package code to use **parallel**. The package setup to allow users the **BiocParallel** option is more difficult. However, allowing users to create their own clusters with **BiocParallel** is a very strong bonus. Additionally, it will make the Bioconductor folks happy if we use their parallel routines. If you write code for your own use, I think that **parallel** is easier to use. If you write code for other people to sue from a package, **BiocParallel** will make your package easier for other people to use.
