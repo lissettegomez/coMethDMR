@@ -391,6 +391,129 @@ res_cgi1_df$FDR <- p.adjust(res_cgi1_df$pValue, method = "fdr")
 row.names(res_cgi1_df) <- NULL
 ```
 
+
+# Genome-Wide coMethDMR
+Now that we have described how to cluster the co-methylated regions within one region type and test these clusters, we can expand this framework to include all region types.
+
+```{r eval=FALSE}
+
+# ANALYSIS FOR ALL REGIONS, EXCEPT CGIs
+
+setwd("C:/Users/lxw391/Box Sync/METHODS-SHARED/METHOD-METHYL-GENE-TEST/coMethDMR_analysis_ADdata")
+
+data.dir <- "C:/Users/lxw391/Box Sync/METHODS-SHARED/METHOD-METHYL-GENE-TEST/AD/DATA/"
+
+####### first install package from gitlab
+
+ # devtools::install_git(
+ #     "https://gitlab.com/lissettegomez/coMethDMR.git",
+ #     credentials = git2r::cred_user_pass("lilyAtGitlab", getPass::getPass())
+ #  )
+
+library(coMethDMR)
+
+###########################################################
+
+#  analysis of PFC data form Lunnon et al. (2014)
+#  - using linear mixed model
+
+###########################################################
+
+## 1. import bmiq normalized data
+
+pfc_df <- readRDS (paste0(data.dir, "PFCbetas.bmiq.RDS"))
+
+
+# make pheno file
+pheno <- readRDS (paste0(data.dir, "pheno.pfc.RDS"))
+
+prop.neuron <-readRDS("pfc.prop.neurons.RDS")
+
+pfcPheno_df <- merge ( pheno, prop.neuron, by.x="sample.id", by.y="row.names")
+
+colnames(pfcPheno_df)[1] <- "Sample"
+
+## 2. load closeby regions that are in CGIs -> compute co-methylated regions
+
+test_ls <- readRDS(system.file(
+        "extdata", "NSHORE3_200.RDS",
+         package = 'coMethDMR', mustWork = TRUE
+      ))
+
+library(parallel)
+
+clust <- makeCluster(22)
+clusterEvalQ(cl = clust, library(coMethDMR))
+
+#clusterExport(cl = clust, varlist = c("fun.dir" ) )
+
+#clusterEvalQ ( cl= clust, source(paste0(fun.dir, "prediction.elastic.net.tryCatch.R")) )
+
+regions_char <- c("NSHORE", "NSHELF", "SSHORE", "SSHELF",
+                  "TSS1500", "TSS200", "UTR5", "EXON1", "GENEBODY",
+                  "UTR3")
+
+for (i in 1:10){
+
+  out_ls <- CoMethAllRegions (
+    betaMatrix = pfc_df,
+    regionType = regions_char[i],
+    arrayType = "450k",
+    returnAllCpGs = FALSE
+  )
+
+  saveRDS (out_ls, paste0("coMethRegions_", regions_char[i], ".RDS"))
+
+}
+
+# ## 3. Test one region
+#
+# pfc_cgi_ls <- readRDS ("pfc_cgi_ls.RDS")
+#
+# cpgs_char <- GetCpGsInRegion(
+#   regionName_char = "chr22:19709548-19709755",
+#   arrayType = "450k"
+# )
+#
+# coMethCpGs <- CoMethSingleRegion(CpGs_char = cpgs_char, betaMatrix = pfc_df)
+#
+# oneRegion_df <- pfc_df[coMethCpGs$CpGsSubregions[[1]] ,]
+#
+# lmmTest (betaOne_df = oneRegion_df,
+#          pheno_df = pfcPheno_df,
+#          contPheno_char = "stage",
+#          covariates_char = c("age.brain", "sex", "Mplate", "prop.neuron"),
+#          modelType = "randCoef",
+#          arrayType = "450k")
+
+## 4. test all regions
+
+for (i in 1:10) {
+
+  coMethRegions_ls <- readRDS(paste0("coMethRegions_", regions_char[i], ".RDS"))
+
+  results_df <- lmmTestAllRegions(
+                      beta_df = pfc_df,
+                      region_ls = coMethRegions_ls$CpGsSubregions,
+                      pheno_df = pfcPheno_df,
+                      contPheno_char = "stage",
+                      covariates_char = c("age.brain", "sex", "Mplate", "prop.neuron"),
+                      modelType = "randCoef",
+                      arrayType = "450k"
+                    )
+
+  AddFDRs (dat = results_df, fileName = paste0("coMethRegions_", regions_char[i]))
+
+}
+
+gc()
+stopCluster(clust)
+
+
+
+```
+
+
 # Comments
 Overall, these methods have similar computational and memory costs. Comparison:
 
