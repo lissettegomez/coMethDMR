@@ -4,7 +4,7 @@
 
 ######  Setup  ################################################################
 library(coMethDMR)
-library(DMRcate)
+# library(DMRcate)
 
 ###  Constant Data  ###
 projectPath_char <-
@@ -25,7 +25,7 @@ regions_char <- c(
 
 
 ######  Worker Function  ######################################################
-coMethDMR_worker <- function(cpgs, beta_mat, pheno_mat){
+coMethDMR_worker <- function(cpgs, beta_mat, pheno_mat, regionType_char){
   # browser()
 
   suppressPackageStartupMessages({
@@ -60,6 +60,7 @@ coMethDMR_worker <- function(cpgs, beta_mat, pheno_mat){
   })
 
   cgi_ls$modelFits_df <- do.call(rbind, mods_ls)
+  cgi_ls$modelFits_df$regionType <- regionType_char
   cgi_ls
 
 }
@@ -68,13 +69,14 @@ coMethDMR_worker <- function(cpgs, beta_mat, pheno_mat){
 coMethDMR_worker(
   cpgs = c("cg20214853", "cg04677227", "cg11632906", "cg07146435"),
   beta_mat = pfc_df,
-  pheno_mat = pfcPheno_df
+  pheno_mat = pfcPheno_df,
+  regionType_char = regions_char[1]
 )
 
 
 
 ######  Apply Worker over One Region Type  ####################################
-region <- regions_char[11]
+region <- regions_char[1]
 closeByGenomicRegion_ls <- readRDS(
   system.file(
     "extdata",
@@ -96,10 +98,12 @@ results_ls <- bplapply(
   FUN = coMethDMR_worker,
   BPPARAM = snow_cl,
   beta_mat = pfc_df,
-  pheno_mat = pfcPheno_df
+  pheno_mat = pfcPheno_df,
+  regionType_char = region
 )
 Sys.time() - a1
-# 18.8633 min over 12 cores
+# 18.8633 min over 12 cores for Islands; 7.312384 min over 12 cores for the
+#   north shelf (NSHELF)
 
 
 
@@ -131,8 +135,50 @@ for (region in regions_char) {
     FUN = coMethDMR_worker,
     BPPARAM = snow_cl,
     beta_mat = pfc_df,
-    pheno_mat = pfcPheno_df
+    pheno_mat = pfcPheno_df,
+    regionType_char = region
   )
 
 }
 Sys.time() - aAll
+# 97.44228 min over 12 cores.
+
+saveRDS(
+  resultsAll_ls,
+  file = paste0(projectPath_char, "EWAS_PFC_AllRegions_20190720.RDS")
+)
+
+
+
+######  Post-Compute Wrangling  ###############################################
+
+projectPath_char <-
+  "~/Dropbox (BBSR)/GabrielOdom/coMethDMR/vignette_parallel_computing/"
+resultsAll_ls <- readRDS(
+  paste0(projectPath_char, "EWAS_PFC_AllRegions_20190719.RDS")
+)
+
+# We have a giant list of lists of lists:
+length(resultsAll_ls)        # 11 region types
+length(resultsAll_ls$NSHORE) # 5103 North Shore Regions
+resultsAll_ls$NSHORE[[1]]    # 3 elements for the first region
+
+# Multi-layer Extraction
+lmmResults_ls <- lapply(resultsAll_ls, function(regionType){
+
+  out_ls <- lapply(regionType, `[[`, "modelFits_df")
+  do.call(rbind, out_ls)
+
+})
+
+lmmResults_df <- do.call(rbind, lmmResults_ls)
+
+lmmResults_df$regionType <- rep(
+  names(lmmResults_ls),
+  times = sapply(lmmResults_ls, nrow)
+)
+
+write.csv(
+  lmmResults_df,
+  file = paste0(projectPath_char, "EWAS_PFC_lmmOut_20190719.csv")
+)

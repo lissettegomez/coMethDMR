@@ -392,125 +392,157 @@ row.names(res_cgi1_df) <- NULL
 ```
 
 
-# Genome-Wide coMethDMR
+# Epigenome-Wide coMethDMR
 Now that we have described how to cluster the co-methylated regions within one region type and test these clusters, we can expand this framework to include all region types.
 
-```{r eval=FALSE}
-
-# ANALYSIS FOR ALL REGIONS, EXCEPT CGIs
-
-setwd("C:/Users/lxw391/Box Sync/METHODS-SHARED/METHOD-METHYL-GENE-TEST/coMethDMR_analysis_ADdata")
-
-data.dir <- "C:/Users/lxw391/Box Sync/METHODS-SHARED/METHOD-METHYL-GENE-TEST/AD/DATA/"
-
-####### first install package from gitlab
-
- # devtools::install_git(
- #     "https://gitlab.com/lissettegomez/coMethDMR.git",
- #     credentials = git2r::cred_user_pass("lilyAtGitlab", getPass::getPass())
- #  )
-
-library(coMethDMR)
-
-###########################################################
-
-#  analysis of PFC data form Lunnon et al. (2014)
-#  - using linear mixed model
-
-###########################################################
-
-## 1. import bmiq normalized data
-
-pfc_df <- readRDS (paste0(data.dir, "PFCbetas.bmiq.RDS"))
+## Setup
+If you want to apply the `coMethDMR` pipeline to all region types, you need a cluster and a list of all regions.
+```{r cluster3, eval=FALSE}
+# Create cluster of workers
+snow_cl <- SnowParam(workers = 12, type = "SOCK")
 
 
-# make pheno file
-pheno <- readRDS (paste0(data.dir, "pheno.pfc.RDS"))
+# Create vector of region types
+regions_char <- c(
+  "NSHORE", "NSHELF", "SSHORE", "SSHELF", "TSS1500", "TSS200", "UTR5", "EXON1",
+  "GENEBODY", "UTR3", "ISLAND"
+)
 
-prop.neuron <-readRDS("pfc.prop.neurons.RDS")
 
-pfcPheno_df <- merge ( pheno, prop.neuron, by.x="sample.id", by.y="row.names")
+# Create empty results list for region types
+resultsAll_ls <- vector(mode = "list", length = length(regions_char))
+names(resultsAll_ls) <- regions_char
+```
 
-colnames(pfcPheno_df)[1] <- "Sample"
+## Whole-Workflow Worker
+As before, we first create a worker function. This function wraps around both the co-methlyated clustering function and the linear mixed model function, so we combine the previous steps into one.
+```{r composed_worker, eval=FALSE}
+coMethDMR_worker <- function(cpgs, beta_mat, pheno_mat, regionType_char){
+  # browser()
 
-## 2. load closeby regions that are in CGIs -> compute co-methylated regions
+  suppressPackageStartupMessages({
+    library(coMethDMR)
+    library(DMRcate)
+  })
 
-test_ls <- readRDS(system.file(
-        "extdata", "NSHORE3_200.RDS",
-         package = 'coMethDMR', mustWork = TRUE
-      ))
 
-library(parallel)
-
-clust <- makeCluster(22)
-clusterEvalQ(cl = clust, library(coMethDMR))
-
-#clusterExport(cl = clust, varlist = c("fun.dir" ) )
-
-#clusterEvalQ ( cl= clust, source(paste0(fun.dir, "prediction.elastic.net.tryCatch.R")) )
-
-regions_char <- c("NSHORE", "NSHELF", "SSHORE", "SSHELF",
-                  "TSS1500", "TSS200", "UTR5", "EXON1", "GENEBODY",
-                  "UTR3")
-
-for (i in 1:10){
-
-  out_ls <- CoMethAllRegions (
-    betaMatrix = pfc_df,
-    regionType = regions_char[i],
+  cgi_ls <- CoMethSingleRegion(
+    CpGs_char = cpgs,
+    betaMatrix = beta_mat,
+    method = "pearson",
     arrayType = "450k",
     returnAllCpGs = FALSE
   )
+  # This second element could be a list itself
+  subregions_ls <- cgi_ls[[2]]
 
-  saveRDS (out_ls, paste0("coMethRegions_", regions_char[i], ".RDS"))
+  mods_ls <- lapply(subregions_ls, function(cgi){
 
-}
+    coMethBetaDF <- beta_mat[which(rownames(beta_mat) %in% cgi), ]
 
-# ## 3. Test one region
-#
-# pfc_cgi_ls <- readRDS ("pfc_cgi_ls.RDS")
-#
-# cpgs_char <- GetCpGsInRegion(
-#   regionName_char = "chr22:19709548-19709755",
-#   arrayType = "450k"
-# )
-#
-# coMethCpGs <- CoMethSingleRegion(CpGs_char = cpgs_char, betaMatrix = pfc_df)
-#
-# oneRegion_df <- pfc_df[coMethCpGs$CpGsSubregions[[1]] ,]
-#
-# lmmTest (betaOne_df = oneRegion_df,
-#          pheno_df = pfcPheno_df,
-#          contPheno_char = "stage",
-#          covariates_char = c("age.brain", "sex", "Mplate", "prop.neuron"),
-#          modelType = "randCoef",
-#          arrayType = "450k")
+    lmmTest(
+      betaOne_df = coMethBetaDF,
+      pheno_df = pheno_mat,
+      contPheno_char = "stage",
+      covariates_char = c("age.brain", "sex", "Mplate", "prop.neuron"),
+      modelType = "randCoef",
+      arrayType = "450k"
+    )
 
-## 4. test all regions
+  })
 
-for (i in 1:10) {
-
-  coMethRegions_ls <- readRDS(paste0("coMethRegions_", regions_char[i], ".RDS"))
-
-  results_df <- lmmTestAllRegions(
-                      beta_df = pfc_df,
-                      region_ls = coMethRegions_ls$CpGsSubregions,
-                      pheno_df = pfcPheno_df,
-                      contPheno_char = "stage",
-                      covariates_char = c("age.brain", "sex", "Mplate", "prop.neuron"),
-                      modelType = "randCoef",
-                      arrayType = "450k"
-                    )
-
-  AddFDRs (dat = results_df, fileName = paste0("coMethRegions_", regions_char[i]))
+  cgi_ls$modelFits_df <- do.call(rbind, mods_ls)
+  cgi_ls$modelFits_df$regionType <- regionType_char
+  cgi_ls
 
 }
+```
 
-gc()
-stopCluster(clust)
+## Apply the Worker over All Region Types
+Now that we have this function, we can apply it to all of the regions. This process may take a few hours, depending on your computer's resources and speed.
+```{r call_worker, eval=FALSE}
+aAll <- Sys.time()
+for (region in regions_char) {
+
+  print(region)
+
+  closeByGenomicRegion_ls <- readRDS(
+    system.file(
+      "extdata",
+      paste0(region, "3_200.rds"),
+      package = 'coMethDMR',
+      mustWork = TRUE
+    )
+  )
+  closeByGenomicRegion_ls <- unname(closeByGenomicRegion_ls)
+
+  resultsAll_ls[[region]] <- bplapply(
+    X = closeByGenomicRegion_ls,
+    FUN = coMethDMR_worker,
+    BPPARAM = snow_cl,
+    beta_mat = pfc_df,
+    pheno_mat = pfcPheno_df,
+    regionType_char = region
+  )
+
+}
+Sys.time() - aAll
+# 97.44228 min over 12 cores.
+```
+
+Before we move on, let's save these results.
+```{r save_master_results, eval=FALSE}
+saveRDS(
+  resultsAll_ls,
+  file = paste0(projectPath_char, "EWAS_PFC_AllRegions.RDS")
+)
+```
+
+## Wrangle and Save the Results
+This results list is rather complex:
+
+- `length(resultsAll_ls)`: 11 region types
+- `length(resultsAll_ls$NSHORE)`: 5103 North Shore Regions
+- `resultsAll_ls$NSHORE[[1]]`: 3 elements for the first region
+
+```{r inspect_resultsAll, eval=FALSE}
+resultsAll_ls$NSHORE[[1]]
+```
+```
+$contiguousRegions
+                     Region        CpG   Chr   MAPINFO    r_drop keep keep_contiguous
+1 chr10:100991959-100992149 cg02800607 chr10 100991959 0.6587985    1               1
+2 chr10:100991959-100992149 cg17868515 chr10 100992068 0.7339801    1               1
+3 chr10:100991959-100992149 cg24134845 chr10 100992149 0.5568591    1               1
+
+$CpGsSubregions
+$CpGsSubregions$`chr10:100991959-100992149`
+[1] "cg02800607" "cg17868515" "cg24134845"
 
 
+$modelFits_df
+                          chrom     start       end nCpGs     Estimate      StdErr       Stat    pValue regionType
+chr10:100991959-100992149 chr10 100991959 100992149     3 -0.001244083 0.005479532 -0.2270419 0.8203912     NSHORE
+```
 
+We want to extract the `modelFits_df` data frames from each region within each region type. This requires nested `lapply()` calls (or we could use the `purrr` package, which is very nice).
+```{r extract_sublists, eval=FALSE}
+lmmResults_ls <- lapply(resultsAll_ls, function(regionType){
+
+  out_ls <- lapply(regionType, `[[`, "modelFits_df")
+  do.call(rbind, out_ls)
+
+})
+
+lmmResults_df <- do.call(rbind, lmmResults_ls)
+```
+
+And now we save this data frame.
+```{r save_results_table, eval=FALSE}
+write.csv(
+  lmmResults_df,
+  file = paste0(projectPath_char, "EWAS_PFC_lmmOut.csv")
+)
 ```
 
 
