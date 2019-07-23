@@ -1,0 +1,116 @@
+# Annotate Results Function
+# Gabriel Odom
+# 2019-07-23
+
+
+###  Linear Mixed Model Output  ###
+# Given the lmmTest() results list in coMethDMR/vignettes/, extract and bind
+#   the results into a data frame
+
+resultsAll_ls <- readRDS("vignettes/BiocParallel_AllRegions_Out.RDS")
+
+lmmResults_ls <- lapply(resultsAll_ls, function(regionType){
+
+  out_ls <- lapply(regionType, `[[`, "modelFits_df")
+  do.call(rbind, out_ls)
+
+})
+
+lmmResults_df <- do.call(rbind, lmmResults_ls)
+row.names(lmmResults_df) <- NULL
+
+
+###  Illumina Annotation and "Other" Info  ###
+# 450k
+anno_df <- IlluminaHumanMethylation450kanno.ilmn12.hg19::Locations
+otherInfo_df <- IlluminaHumanMethylation450kanno.ilmn12.hg19::Other
+# EPIC
+# anno_df <- IlluminaHumanMethylationEPICanno.ilm10b2.hg19::Locations
+# otherInfo_df <- IlluminaHumanMethylationEPICanno.ilm10b2.hg19::Other
+
+anno_df <- as.data.frame(anno_df)
+anno_df$cpg <- row.names(anno_df)
+
+###  Add Location Rows to Ranges from Results  ###
+# For each row in lmmResults_df, we want to find the location of the probes in
+#   that region. Also, we want to add the UCSC information.
+AnnotateRow <- function(row_df, loc_df, other_df){
+  # browser()
+
+  ###  Filter Data Frames  ###
+  # Extract Row Region
+  chr   <- row_df$chrom
+  start <- as.integer(row_df$start)
+  end   <- as.integer(row_df$end)
+
+  # Find Probes in that Region
+  chr_df  <- loc_df[which(loc_df$chr == chr), ]
+  rownames(chr_df) <- NULL
+  inRegion_idx <- which(chr_df$pos >= start & chr_df$pos <= end)
+  out_df <- chr_df[inRegion_idx, ]
+
+  # Transform Probe IDs
+  # Add leading 0s until the number is 8 characters wide; append leading "cg"
+  probes_char <- sprintf("%08d", sort(out_df$pos))
+  probes_char <- paste0("cg", probes_char)
+
+  # Find UCSC Annotation Information for those Probes
+  interestingColumns_char <- c(
+    "UCSC_RefGene_Name",
+    "UCSC_RefGene_Accession",
+    "UCSC_RefGene_Group"
+  )
+  otherOut_df <- other_df[probes_char, interestingColumns_char]
+
+
+  ###  Wrangle UCSC Annotation  ###
+  refGeneGroup_char <- unlist(
+    sapply(
+      otherOut_df$UCSC_RefGene_Group,
+      strsplit, ";",
+      USE.NAMES = FALSE
+    )
+  )
+  refGeneGroup_char <- sort(unique(refGeneGroup_char))
+
+  refGeneName_char <- unlist(
+    sapply(
+      otherOut_df$UCSC_RefGene_Name,
+      strsplit, ";",
+      USE.NAMES = FALSE
+    )
+  )
+  refGeneName_char <- sort(unique(refGeneName_char))
+
+
+  ###  Return Annotated 1-Row Data Frame  ###
+  row_df$UCSC_RefGene_Group <- paste0(unique(refGeneGroup_char), collapse = ";")
+  row_df$UCSC_RefGene_Name <- paste0(unique(refGeneName_char), collapse = ";")
+  row_df$probes <- paste0(unique(probes_char), collapse = ";")
+
+  row_df
+
+}
+
+# Test
+AnnotateRow(
+  row_df = lmmResults_df[1, ],
+  loc_df = anno_df,
+  other_df = otherInfo_df
+)
+
+
+###  Apply over Results  ###
+resultsAnno_ls <- lapply(seq_len(nrow(lmmResults_df)), function(row){
+
+  AnnotateRow(
+    row_df = lmmResults_df[row, ],
+    loc_df = anno_df,
+    other_df = otherInfo_df
+  )
+
+})
+
+resultsAnno_df <- do.call(rbind, resultsAnno_ls)
+
+write.csv(resultsAnno_df, )

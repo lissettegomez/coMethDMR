@@ -49,13 +49,13 @@ As mentioned previously in “Introduction to **coMethDMR**”, there are severa
 2. Identify co-methylated regions, and
 3. Test co-methylated regions against the outcome variable (AD stage).
 
-Suppose we are interested in analyzing CpG islands. In the following, `closeByCGI_ls` is a list, where each item includes CpGs within a particular CpG island. 
+Suppose we are interested in analyzing CpG islands. In the following, `closeByCGI_ls` is a list, where each item includes CpGs from the Exon 1 regions. 
 
 ```{r list_of_cgis}
 closeByCGI_ls <- readRDS(
   system.file(
     "extdata",
-    "ISLAND3_200.rds",
+    "EXON13_200.rds",
     package = 'coMethDMR',
     mustWork = TRUE
   )
@@ -98,7 +98,7 @@ coMeth_worker <- function(x, beta_mat){
 }
 ```
 
-Finally, we execute the wrapper function `coMeth_worker()` over each worker in the cluster (this takes 7.3 minutes over 12 cores with 48Gb of RAM).
+Finally, we execute the wrapper function `coMeth_worker()` over each worker in the cluster (this takes about 3 minutes over 12 cores with 50Gb of RAM).
 ```{r BiocParallel_Islands}
 a0 <- Sys.time()
 coMethIslandCpGs_ls <- bplapply(
@@ -150,7 +150,7 @@ TestRegions_worker <- function(cgi, beta_mat, pheno_mat){
 
 ```
 
-Next, we execute this function in parallel (this takes 1.8 minutes over 12 cores with 58Gb of RAM; computing the linear mixed model takes more memory than clustering the co-methylated CpGs):
+Next, we execute this function in parallel (this takes 1.7 minutes over 12 cores with 52Gb of RAM; computing the linear mixed model takes more memory than clustering the co-methylated CpGs):
 ```{r BiocParallel_lmmTest, warning=FALSE, message=FALSE}
 a1 <- Sys.time()
 results_ls <- bplapply(
@@ -170,19 +170,17 @@ For a single region, this will return a one row of model fit statistics as shown
 |-------|----------|----------|-------|----------|--------|---------|--------|
 | chr22 | 18268062 | 18268249 |     3 |  -0.0732 | 0.0394 | -1.8564 | 0.0634 |
 
-Because `lmmTest()` returns a one-row data frame, we will stack these results into a data frame and add FDR:
+Because `lmmTest()` returns a one-row data frame, we will stack these results into a data frame and add the false discovery rate (FDR):
 ```{r doCall_rbind_1}
 res_cgi1_df <- do.call(rbind, results_ls)
 res_cgi1_df$FDR <- p.adjust(res_cgi1_df$pValue, method = "fdr")
 row.names(res_cgi1_df) <- NULL 
 
-knitr::kable(
-  head(res_cgi1_df)
-)
+res_cgi1_df
 ```
 
 # Analyzing All Types of Genomic Regions via BiocParallel
-Genomic regions on the Illumina arrays can be defined based on their relations to genes or CpG Islands. Genomic regions related to genes include TSS1500, TSS200, UTR5, EXON1, GENEBODY and UTR3. Genomic regions related to CGIs are NSHORE, NSHELF, ISLAND, SSHORE and SSHELF. In this section, we describe analyzing all these 11 types of genomic regions using coMethDMR. 
+Genomic regions on the Illumina arrays can be defined based on their relations to genes or CpG Islands. Genomic regions related to genes include TSS1500, TSS200, UTR5, EXON1, GENEBODY and UTR3. Genomic regions related to CGIs are NSHORE, NSHELF, ISLAND, SSHORE and SSHELF. In this section, we describe analyzing three of these 11 types of genomic regions using coMethDMR. 
 
 Same as before, first, we create the clusters of workers. If you still have the clusters defined, you can reuse them; if not, create them again.
 ```{r cluster_2, eval=FALSE}
@@ -237,12 +235,15 @@ coMethDMR_worker <- function(cpgs, beta_mat, pheno_mat, regionType_char){
 }
 ```
 
-Because we will loop over each of the 11 region types, we set up the static data.
+Because we will loop over each of the 11 region types, we set up the static data. If you would like to analyse all region types, use the first `regions_char` vector. For time, we will use a subset of regions near the islands.
 ```{r setup_for_loop}
 # Create vector of region types
+# regions_char <- c(
+#   "NSHORE", "NSHELF", "SSHORE", "SSHELF", "TSS1500", "TSS200", "UTR5", "EXON1",
+#   "GENEBODY", "UTR3", "ISLAND"
+# )
 regions_char <- c(
-  "NSHORE", "NSHELF", "SSHORE", "SSHELF", "TSS1500", "TSS200", "UTR5", "EXON1",
-  "GENEBODY", "UTR3", "ISLAND"
+  "NSHORE", "SSHORE", "ISLAND"
 )
 
 # Create empty results list for region types
@@ -250,14 +251,12 @@ resultsAll_ls <- vector(mode = "list", length = length(regions_char))
 names(resultsAll_ls) <- regions_char
 ```
 
-Finally, we execute the wrapper function over each worker on the cluster (this completes in 40.6 minutes using 12 cores and 58Gb of RAM):
-```{r loop_over_region_types, message=FALSE}
+Finally, we execute the wrapper function over each worker on the cluster (this completes in roughly 15 minutes using 12 cores and 52Gb of RAM):
+```{r loop_over_region_types, eval=FALSE}
 aAll <- Sys.time()
-region <- "SSHELF"
-# region <- "ISLAND"
 for (region in regions_char) {
 
-  print(region)
+  # print(region) # Uncomment for progress updates
 
   closeByGenomicRegion_ls <- readRDS(
     system.file(
@@ -282,11 +281,13 @@ for (region in regions_char) {
 }
 Sys.time() - aAll
 ```
+```{r load_results, echo=FALSE}
+resultsAll_ls <- readRDS("BiocParallel_AllRegions_Out.RDS")
+```
 
 Now that we have the results, we need to extract the model fits for each region.
-```{r extract_results_2}
+```{r extract_results_2, warning=FALSE}
 lmmResults_ls <- lapply(resultsAll_ls, function(regionType){
-  browser()
 
   out_ls <- lapply(regionType, `[[`, "modelFits_df")
   do.call(rbind, out_ls)
@@ -294,6 +295,7 @@ lmmResults_ls <- lapply(resultsAll_ls, function(regionType){
 })
 
 lmmResults_df <- do.call(rbind, lmmResults_ls)
+row.names(lmmResults_df) <- NULL
 
 head(lmmResults_df)
 ```
@@ -311,5 +313,6 @@ write.csv(
 
 # Additional Comments on Required Computing Resources
 In this vignette, we have analyzed a small subset of a real EWAS dataset (i.e. only chromosome 22 data on 20 subjects). To give users a more realistic estimate of time for analyzing real EWAS datasets, we also measured time used for analyzing the entire Lunnon et al. (2014) dataset with 110 samples on all chromosomes. These computation times measured on a Dell Precision 5810 with 64Gb of RAM, an Intel Xeon E5-2640 CPU at 2.40Ghz, and using up to 20 cores. 
+
 More specifically, in Section 4, the entire coMethDMR for all 11 types of genomic regions took 97 minutes with 12 cores. In section 3.1, finding the comethylated clusters of CpGs in CpG islands took 12 minutes with 12 cores. In Section 3.2, fitting linear mixed models to co-methylated CpG clusters took 3.7 minutes with 12 cores. 
 We’re currently working improving the speed and reducing the size of coMethDMR, so please check back soon for updates.  
