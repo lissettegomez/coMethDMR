@@ -6,27 +6,39 @@
 #'
 #' @param lmmRes_df A data frame returned by \code{\link{lmmTest}} or a parallel
 #'    implementation thereof. This data frame must contain the following
-#'    columns: \code{chrom} = the chromosome the region is on; \code{start} =
-#'    the region start point; \code{end} = the region end point; and
-#'    \code{regionType} = a character string marking from which region type the
-#'    region came from. See \strong{Details} for more information.
+#'    columns:
+#'    \itemize{
+#'      \item{\code{chrom} : }{the chromosome the region is on, e.g. ``chr22''}
+#'      \item{\code{start} : }{the region start point}
+#'      \item{\code{end} : }{the region end point}
+#'      \item{\code{regionType} : }{(\emph{Optional}) a character string marking
+#'        from which region type the region came from. See \strong{Details} for
+#'        more information.}
+#'    }
 #' @param arrayType Type of array: 450k or EPIC
 #'
-#' @return a data frame with location of the genomic region's chromosome
-#'    (\code{chrom}), start (\code{start}), and end (\code{end}); the number of
-#'    CpGs in the region (\code{nCpGs}); results for testing association of
-#'    methylation in individual CpGs with continuous phenotype (\code{Estimate},
-#'    \code{StdErr}, \code{Stat}, and \code{pValue}); the type of region
-#'    (\code{regionType}) and its relationship to known CpG islands
-#'    (\code{Relation_to_UCSC_CpG_Island}); UCSC annotation information
-#'    (\code{UCSC_RefGene_Group}, \code{UCSC_RefGene_Accession}, and
-#'    \code{UCSC_RefGene_Name}); and a list of all of the probes in that region
-#'    (\code{probes}).
+#' @return A data frame with
+#'    \itemize{
+#'      \item the location of the genomic region's chromosome (\code{chrom}),
+#'        start (\code{start}), and end (\code{end});
+#'      \item the number of CpGs in the region (\code{nCpGs});
+#'      \item results for testing association of methylation in individual CpGs
+#'        with continuous phenotype (\code{Estimate}, \code{StdErr},
+#'        \code{Stat}, and \code{pValue});
+#'      \item the type of region (\code{regionType}) and its relationship to
+#'        known CpG islands (\code{Relation_to_UCSC_CpG_Island});
+#'        (\emph{Optional}, included if \code{regionType} is included in the
+#'        input for \code{lmmRes_df});
+#'      \item UCSC annotation information (\code{UCSC_RefGene_Group},
+#'        \code{UCSC_RefGene_Accession}, and \code{UCSC_RefGene_Name}); and
+#'      \item a list of all of the probes in that region (\code{probes}).
+#'    }
 #'
 #' @details The region types include \code{"NSHORE"}, \code{"NSHELF"},
 #'    \code{"SSHORE"}, \code{"SSHELF"}, \code{"TSS1500"}, \code{"TSS200"},
 #'    \code{"UTR5"}, \code{"EXON1"}, \code{"GENEBODY"}, \code{"UTR3"}, and
-#'    \code{"ISLAND"}.
+#'    \code{"ISLAND"}. These character strings must match \strong{exactly}, and
+#'    case matters (\code{"Sshelf"} is not the same as \code{"SSHELF"}).
 #'
 #' @export
 #'
@@ -50,7 +62,7 @@ AnnotateResults <- function(lmmRes_df, arrayType = c("450k","EPIC")){
   ###  Check Inputs  ###
   stopifnot(
     "data.frame" %in% class(lmmRes_df),
-    all(c("chrom", "start", "end", "regionType") %in% colnames(lmmRes_df))
+    all(c("chrom", "start", "end") %in% colnames(lmmRes_df))
   )
   arrayType <- match.arg(arrayType)
 
@@ -92,7 +104,7 @@ AnnotateResults <- function(lmmRes_df, arrayType = c("450k","EPIC")){
 
 
   ###  Define Wrapper Function  ###
-  AnnotateRow <- function(row_df, loc_df, info_df){
+  AnnotateRow <- function(row_df, loc_df, info_df, includeType){
     # browser()
 
     ###  Filter Data Frames  ###
@@ -141,12 +153,14 @@ AnnotateResults <- function(lmmRes_df, arrayType = c("450k","EPIC")){
 
 
     ###  Return Annotated 1-Row Data Frame  ###
-    row_df$Relation_to_UCSC_CpG_Island <- ifelse(
-      test = row_df$regionType %in%
-        c("NSHELF", "NSHORE", "ISLAND", "SSHORE", "SSHELF"),
-      yes  = row_df$regionType,
-      no   = ""
-    )
+    if(includeType){
+      row_df$Relation_to_UCSC_CpG_Island <- ifelse(
+        test = row_df$regionType %in%
+          c("NSHELF", "NSHORE", "ISLAND", "SSHORE", "SSHELF"),
+        yes  = row_df$regionType,
+        no   = ""
+      )
+    }
     row_df$UCSC_RefGene_Group <-
       paste0(unique(refGeneGroup_char), collapse = ";")
     row_df$UCSC_RefGene_Accession <-
@@ -160,12 +174,14 @@ AnnotateResults <- function(lmmRes_df, arrayType = c("450k","EPIC")){
 
   }
 
+  inclType_logi <- !is.null(lmmRes_df$regionType)
   resultsAnno_ls <- lapply(seq_len(nrow(lmmRes_df)), function(row){
 
     AnnotateRow(
       row_df = lmmRes_df[row, ],
       loc_df = locations_df,
-      info_df = UCSCinfo_df
+      info_df = UCSCinfo_df,
+      includeType = inclType_logi
     )
 
   })
