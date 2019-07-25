@@ -58,6 +58,7 @@ AnnotateRow <- function(row_df, loc_df, other_df){
   probes_int  <- as.integer(gsub("cg", "", out_df$cpg))
   probes_char <- sprintf("%08d", sort(probes_int))
   probes_char <- paste0("cg", probes_char)
+  # EDIT 2: Lily said that we don't need to order the probe IDs
 
 
   # Find UCSC Annotation Information for those Probes
@@ -133,7 +134,7 @@ resultsAnno_ls <- lapply(seq_len(nrow(lmmResults_df)), function(row){
 
 resultsAnno_df <- do.call(rbind, resultsAnno_ls)
 
-res_dir <- "~/Box Sync/Rpackage-coMethDMR/Manuscript Supplement/"
+res_dir <- "~/Dropbox (BBSR)/GabrielOdom/coMethDMR/vignette_parallel_computing/"
 write.csv(
   resultsAnno_df,
   paste0(res_dir, "test_annotated_results_20190724.csv")
