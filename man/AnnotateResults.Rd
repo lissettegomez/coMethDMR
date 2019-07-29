@@ -30,10 +30,10 @@ A data frame with
      \item results for testing association of methylation in individual CpGs
        with continuous phenotype (\code{Estimate}, \code{StdErr},
        \code{Stat}, and \code{pValue});
-     \item (\emph{Optional}, included if \code{regionType} is included in
-       the input for \code{lmmRes_df}) the type of region (\code{regionType})
-       and its relationship to known CpG islands
-       (\code{Relation_to_UCSC_CpG_Island});
+     \item the type of region (\code{regionType}) and its relationship to
+       known CpG islands (\code{Relation_to_UCSC_CpG_Island});
+       (\emph{Optional}, included if \code{regionType} is included in the
+       input for \code{lmmRes_df});
      \item UCSC annotation information (\code{UCSC_RefGene_Group},
        \code{UCSC_RefGene_Accession}, and \code{UCSC_RefGene_Name}); and
      \item a list of all of the probes in that region (\code{probes}).
