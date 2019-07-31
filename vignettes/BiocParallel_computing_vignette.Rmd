@@ -103,7 +103,7 @@ coMeth_worker <- function(x, beta_mat){
 ```
 
 Finally, we execute the wrapper function `coMeth_worker()` over each worker in the cluster (this takes about 3 minutes over 12 cores with 50Gb of RAM).
-```{r BiocParallel_Islands}
+```{r BiocParallel_Islands, message=FALSE}
 a0 <- Sys.time()
 coMethIslandCpGs_ls <- bplapply(
   # The list of regions to apply over

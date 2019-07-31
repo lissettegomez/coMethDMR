@@ -61,6 +61,7 @@
 lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
                     modelType = c("randCoef", "simple"),
                     arrayType = c("450k","EPIC"))  {
+  # browser()
 
   modelType <- match.arg(modelType)
   arrayType <- match.arg(arrayType)
@@ -86,11 +87,19 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
 
 
   ### Run the mixed model ###
+  # lmerControl(
+  #   check.conv.grad     = .makeCC("message", tol = 1e-3, relTol = NULL),
+  #   check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4),
+  #   check.conv.hess     = .makeCC(action = "message", tol = 1e-6)
+  # )
+  # # This doesn't do anything. The warning (message?) still appears
 
   modelFormula_char <- .MakeLmmFormula(contPheno_char, covariates_char, modelType)
 
-   tryCatch({
-    f <- lmer(as.formula(modelFormula_char), betaOnePheno_df)
+  tryCatch({
+    f <- suppressMessages(
+      lmer(as.formula(modelFormula_char), betaOnePheno_df)
+    )
   }, error = function(e){ NULL })
 
   if(is.null(f)){
@@ -108,7 +117,13 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
     colnames(ps_df) <- c("Estimate", "StdErr", "Stat")
     rownames(ps_df) <- NULL
 
-    ps_df$pValue <- 2 * ( 1- pnorm (abs(ps_df$Stat)))
+    # If the optimization routine converged, calculate the p-value. See:
+    #   https://rdrr.io/cran/lme4/man/convergence.html
+    if(f@optinfo$conv$opt == 0){
+      ps_df$pValue <- 2 * (1 - pnorm(abs(ps_df$Stat)))
+    } else {
+      ps_df$pValue <- 1
+    }
 
   }
 
