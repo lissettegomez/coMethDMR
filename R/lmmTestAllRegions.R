@@ -63,20 +63,24 @@
 #'
 #'    coMeth_ls <- CoMethAllRegions(
 #'                    betaMatrix = betaMatrixChr22_df,
+#'                    betaToM = TRUE,
 #'                    CpGs_ls = CpGisland_ls,
 #'                    arrayType = "450k",
 #'                    rDropThresh_num = 0.4,
 #'                    returnAllCpGs = FALSE
 #'    )
 #'
-#'    lmmTestAllRegions(
+#'
+#'    results <- lmmTestAllRegions(
 #'      beta_df = betaMatrixChr22_df,
 #'      region_ls = coMeth_ls,
 #'      pheno_df,
 #'      contPheno_char = "stage",
 #'      covariates_char = "age.brain",
 #'      modelType = "randCoef",
-#'      arrayType = "450k"
+#'      arrayType = "450k",
+#'      outFile = "C:/Users/lxw391/TEMP/testResults",
+#'      outLogFile = "C:/Users/lxw391/TEMP/testLog"
 #'    )
 #'
 
@@ -84,7 +88,8 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
                               contPheno_char, covariates_char,
                               modelType = c("randCoef", "simple"),
                               arrayType = c("450k","EPIC"),
-                              outFile = NULL){
+                              outFile = NULL,
+                              outLogFile = NULL){
 
   modelType <- match.arg(modelType)
   arrayType <- match.arg(arrayType)
@@ -98,11 +103,27 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
 
   ### Run mixed model for all the contiguous comethylated regions ###
 
-  results_ls <- lapply(
-    coMethBetaDF_ls,
-    FUN = lmmTest,
-    pheno_df, contPheno_char, covariates_char, modelType, arrayType
-  )
+  if (!is.null(outLogFile)){
+
+    message(paste0("messages for mixed model fittings are in file ", outLogFile))
+
+    results_ls <- lapply(
+      coMethBetaDF_ls,
+      FUN = lmmTest,
+      pheno_df, contPheno_char, covariates_char, modelType, arrayType, outLogFile
+    )
+
+  } else {
+
+    results_ls <- lapply(
+      coMethBetaDF_ls,
+      FUN = lmmTest,
+      pheno_df, contPheno_char, covariates_char, modelType, arrayType, outLogFile
+    )
+
+  }
+
+
 
   ### Output results ###
 
@@ -123,8 +144,8 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
 
   } else {
 
-    message(paste0("writing results to ", outFile))
-    write.csv(outDF, outFile, quote = FALSE, row.names = FALSE)
+    message(paste0("writing results to ", paste0(outFile,".csv")))
+    write.csv(outDF, paste0(outFile,".csv"), quote = FALSE, row.names = FALSE)
 
   }
 

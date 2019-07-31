@@ -5,7 +5,8 @@
 \title{Fit mixed model to methylation values in one genomic region}
 \usage{
 lmmTest(betaOne_df, pheno_df, contPheno_char, covariates_char,
-  modelType = c("randCoef", "simple"), arrayType = c("450k", "EPIC"))
+  modelType = c("randCoef", "simple"), arrayType = c("450k", "EPIC",
+  outLogFile = NULL))
 }
 \arguments{
 \item{betaOne_df}{matrix of beta values for one genomic region,
@@ -68,6 +69,7 @@ This function implements a mixed model to test association between
            contPheno_char = "stage",
            covariates_char = c("age.brain", "sex"),
            modelType = "randCoef",
-           arrayType = "450k")
+           arrayType = "450k",
+           outLogFile = "C:/Users/lxw391/TEMP/testLog")
 
 }

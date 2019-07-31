@@ -55,13 +55,14 @@
 #'            contPheno_char = "stage",
 #'            covariates_char = c("age.brain", "sex"),
 #'            modelType = "randCoef",
-#'            arrayType = "450k")
+#'            arrayType = "450k",
+#'            outLogFile = "C:/Users/lxw391/TEMP/testLog")
 #'
 
 lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
                     modelType = c("randCoef", "simple"),
-                    arrayType = c("450k","EPIC"))  {
-  # browser()
+                    arrayType = c("450k","EPIC",
+                    outLogFile = NULL))  {
 
   modelType <- match.arg(modelType)
   arrayType <- match.arg(arrayType)
@@ -85,6 +86,12 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
   ### Merge transposed beta matrix with phenotype ###
   betaOnePheno_df <- merge(betaOneTransp_df, pheno_df, by = "Sample")
 
+  # regionNames
+  regionName <- NameRegion(
+    OrderCpGsByLocation(
+      betaOne_df$ProbeID, arrayType, output = "dataframe"
+    )
+  )
 
   ### Run the mixed model ###
   # lmerControl(
@@ -96,11 +103,28 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
 
   modelFormula_char <- .MakeLmmFormula(contPheno_char, covariates_char, modelType)
 
-  tryCatch({
-    f <- suppressMessages(
-      lmer(as.formula(modelFormula_char), betaOnePheno_df)
-    )
-  }, error = function(e){ NULL })
+  if (!is.null(outLogFile)){
+
+    sink (file = paste0(outLogFile, ".txt"))
+
+    print (paste0("Analyzing region ", regionName))
+
+    tryCatch({
+      f <- suppressMessages(
+        lmer(as.formula(modelFormula_char), betaOnePheno_df)
+      )
+    }, error = function(e){ NULL })
+
+  } else {
+
+    tryCatch({
+      f <- suppressMessages(
+        lmer(as.formula(modelFormula_char), betaOnePheno_df)
+      )
+    }, error = function(e){ NULL })
+
+  }
+
 
   if(is.null(f)){
 
@@ -127,12 +151,6 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
 
   }
 
-  regionName <- NameRegion(
-    OrderCpGsByLocation(
-      betaOne_df$ProbeID, arrayType, output = "dataframe"
-    )
-  )
-
   ### split regionName into chrom, start, end
   chrom <- sub(":.*",  "",  regionName)
 
@@ -141,7 +159,6 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
   start <- sub ("-\\d*", "", range)
 
   end <- sub ("\\d*.-", "", range)
-
 
   ### Return results ###
 
@@ -153,6 +170,8 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
     stringsAsFactors = FALSE
   )
   result
+
+
 }
 
 
