@@ -5,7 +5,8 @@
 \title{Fit mixed model to methylation values in one genomic region}
 \usage{
 lmmTest(betaOne_df, pheno_df, contPheno_char, covariates_char,
-  modelType = c("randCoef", "simple"), arrayType = c("450k", "EPIC"))
+  modelType = c("randCoef", "simple"), arrayType = c("450k", "EPIC"),
+  outLogFile = NULL)
 }
 \arguments{
 \item{betaOne_df}{matrix of beta values for one genomic region,
@@ -52,9 +53,11 @@ This function implements a mixed model to test association between
 \examples{
   data(betaMatrixChr22_df)
 
-  CpGsChr22_char<-c("cg02953382", "cg12419862", "cg24565820", "cg04234412",
-      "cg04824771", "cg09033563", "cg10150615", "cg18538332", "cg20007245",
-      "cg23131131", "cg25703541" )
+  CpGsChr22_char <- c(
+    "cg02953382", "cg12419862", "cg24565820", "cg04234412", "cg04824771",
+    "cg09033563", "cg10150615", "cg18538332", "cg20007245", "cg23131131",
+    "cg25703541"
+  )
 
   coMethCpGs <- CoMethSingleRegion(CpGsChr22_char, betaMatrixChr22_df)
 
@@ -63,11 +66,14 @@ This function implements a mixed model to test association between
 
   data(pheno_df)
 
-  res <- lmmTest (betaOne_df = coMethBeta_df,
-           pheno_df,
-           contPheno_char = "stage",
-           covariates_char = c("age.brain", "sex"),
-           modelType = "randCoef",
-           arrayType = "450k")
+  res <- lmmTest(
+    betaOne_df = coMethBeta_df,
+    pheno_df,
+    contPheno_char = "stage",
+    covariates_char = c("age.brain", "sex"),
+    modelType = "randCoef",
+    arrayType = "450k",
+    outLogFile = "testLog.txt"
+  )
 
 }

@@ -39,9 +39,11 @@
 #' @examples
 #'   data(betaMatrixChr22_df)
 #'
-#'   CpGsChr22_char<-c("cg02953382", "cg12419862", "cg24565820", "cg04234412",
-#'       "cg04824771", "cg09033563", "cg10150615", "cg18538332", "cg20007245",
-#'       "cg23131131", "cg25703541" )
+#'   CpGsChr22_char <- c(
+#'     "cg02953382", "cg12419862", "cg24565820", "cg04234412", "cg04824771",
+#'     "cg09033563", "cg10150615", "cg18538332", "cg20007245", "cg23131131",
+#'     "cg25703541"
+#'   )
 #'
 #'   coMethCpGs <- CoMethSingleRegion(CpGsChr22_char, betaMatrixChr22_df)
 #'
@@ -50,17 +52,21 @@
 #'
 #'   data(pheno_df)
 #'
-#'   res <- lmmTest (betaOne_df = coMethBeta_df,
-#'            pheno_df,
-#'            contPheno_char = "stage",
-#'            covariates_char = c("age.brain", "sex"),
-#'            modelType = "randCoef",
-#'            arrayType = "450k")
+#'   res <- lmmTest(
+#'     betaOne_df = coMethBeta_df,
+#'     pheno_df,
+#'     contPheno_char = "stage",
+#'     covariates_char = c("age.brain", "sex"),
+#'     modelType = "randCoef",
+#'     arrayType = "450k",
+#'     outLogFile = "testLog.txt"
+#'   )
 #'
 
 lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
                     modelType = c("randCoef", "simple"),
-                    arrayType = c("450k","EPIC"))  {
+                    arrayType = c("450k","EPIC"),
+                    outLogFile = NULL){
 
   modelType <- match.arg(modelType)
   arrayType <- match.arg(arrayType)
@@ -84,14 +90,33 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
   ### Merge transposed beta matrix with phenotype ###
   betaOnePheno_df <- merge(betaOneTransp_df, pheno_df, by = "Sample")
 
+  # regionNames
+  regionName <- NameRegion(
+    OrderCpGsByLocation(
+      betaOne_df$ProbeID, arrayType, output = "dataframe"
+    )
+  )
 
   ### Run the mixed model ###
+  # lmerControl(
+  #   check.conv.grad     = .makeCC("message", tol = 1e-3, relTol = NULL),
+  #   check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4),
+  #   check.conv.hess     = .makeCC(action = "message", tol = 1e-6)
+  # )
+  # # This doesn't do anything. The warning (message?) still appears
 
   modelFormula_char <- .MakeLmmFormula(contPheno_char, covariates_char, modelType)
 
-   tryCatch({
-    f <- lmer(as.formula(modelFormula_char), betaOnePheno_df)
+  if (!is.null(outLogFile)){
+    cat(paste0("Analyzing region ", regionName, ". \n"))
+  }
+
+  tryCatch({
+    f <- suppressMessages(
+      lmer(as.formula(modelFormula_char), betaOnePheno_df)
+    )
   }, error = function(e){ NULL })
+
 
   if(is.null(f)){
 
@@ -108,15 +133,15 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
     colnames(ps_df) <- c("Estimate", "StdErr", "Stat")
     rownames(ps_df) <- NULL
 
-    ps_df$pValue <- 2 * ( 1- pnorm (abs(ps_df$Stat)))
+    # If the optimization routine converged, calculate the p-value. See:
+    #   https://rdrr.io/cran/lme4/man/convergence.html
+    if(f@optinfo$conv$opt == 0){
+      ps_df$pValue <- 2 * (1 - pnorm(abs(ps_df$Stat)))
+    } else {
+      ps_df$pValue <- 1
+    }
 
   }
-
-  regionName <- NameRegion(
-    OrderCpGsByLocation(
-      betaOne_df$ProbeID, arrayType, output = "dataframe"
-    )
-  )
 
   ### split regionName into chrom, start, end
   chrom <- sub(":.*",  "",  regionName)
@@ -126,7 +151,6 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
   start <- sub ("-\\d*", "", range)
 
   end <- sub ("\\d*.-", "", range)
-
 
   ### Return results ###
 
@@ -138,6 +162,8 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
     stringsAsFactors = FALSE
   )
   result
+
+
 }
 
 

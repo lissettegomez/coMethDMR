@@ -54,29 +54,33 @@
 #'    data(pheno_df)
 #'
 #'    CpGisland_ls <- readRDS(
-#'                      system.file ("extdata",
-#'                                   "CpGislandsChr22_ex.RDS",
-#'                                    package = 'coMethDMR',
-#'                                    mustWork = TRUE
-#'                                    )
+#'      system.file(
+#'        "extdata",
+#'        "CpGislandsChr22_ex.RDS",
+#'        package = 'coMethDMR',
+#'        mustWork = TRUE
+#'      )
 #'    )
 #'
 #'    coMeth_ls <- CoMethAllRegions(
-#'                    betaMatrix = betaMatrixChr22_df,
-#'                    CpGs_ls = CpGisland_ls,
-#'                    arrayType = "450k",
-#'                    rDropThresh_num = 0.4,
-#'                    returnAllCpGs = FALSE
+#'      betaMatrix = betaMatrixChr22_df,
+#'      betaToM = TRUE,
+#'      CpGs_ls = CpGisland_ls,
+#'      arrayType = "450k",
+#'      rDropThresh_num = 0.4,
+#'      returnAllCpGs = FALSE
 #'    )
 #'
-#'    lmmTestAllRegions(
+#'
+#'    results <- lmmTestAllRegions(
 #'      beta_df = betaMatrixChr22_df,
 #'      region_ls = coMeth_ls,
 #'      pheno_df,
 #'      contPheno_char = "stage",
 #'      covariates_char = "age.brain",
 #'      modelType = "randCoef",
-#'      arrayType = "450k"
+#'      arrayType = "450k",
+#'      outLogFile = paste0("lmmLog_", Sys.Date(), ".txt")
 #'    )
 #'
 
@@ -84,36 +88,65 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
                               contPheno_char, covariates_char,
                               modelType = c("randCoef", "simple"),
                               arrayType = c("450k","EPIC"),
-                              outFile = NULL){
+                              outFile = NULL,
+                              outLogFile = NULL){
 
+  ###  Setup  ###
   modelType <- match.arg(modelType)
   arrayType <- match.arg(arrayType)
 
   CpGnames <- rownames(beta_df)
 
+  writeLog_logi <- !is.null(outLogFile)
+  if(writeLog_logi){
+
+    message(
+      paste0("messages for mixed model fittings are in file ", outLogFile)
+    )
+    sink(file = outLogFile)
+    cat("Fitting linear mixed model to all genomic regions... \n")
+    cat(paste0("Computation started at ", Sys.time(), ". \n \n"))
+
+  }
+
+
+  ###  Split Data by Region  ###
   coMethBetaDF_ls <- lapply(
     region_ls,
     function(x) beta_df[which(CpGnames %in% x), ]
   )
 
-  ### Run mixed model for all the contiguous comethylated regions ###
 
+  ###  Run mixed model for all the contiguous comethylated regions  ###
   results_ls <- lapply(
     coMethBetaDF_ls,
     FUN = lmmTest,
-    pheno_df, contPheno_char, covariates_char, modelType, arrayType
+    pheno_df,
+    contPheno_char,
+    covariates_char,
+    modelType,
+    arrayType,
+    outLogFile
   )
+
+  if(writeLog_logi){
+
+    cat("\n")
+    cat(paste0("Computation completed at ", Sys.time(), ". \n"))
+    sink()
+
+  }
+
+
 
   ### Output results ###
 
-  if (length(results_ls) >0 ){
+  if (length(results_ls) > 0 ){
 
     outDF <- do.call (rbind, results_ls)
-
     outDF$FDR <- p.adjust(outDF$pValue, method = "fdr")
-
-
     row.names(outDF) <- NULL
+
   }
 
 
@@ -123,8 +156,8 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
 
   } else {
 
-    message(paste0("writing results to ", outFile))
-    write.csv(outDF, outFile, quote = FALSE, row.names = FALSE)
+    message(paste0("writing results to ", paste0(outFile,".csv")))
+    write.csv(outDF, paste0(outFile,".csv"), quote = FALSE, row.names = FALSE)
 
   }
 

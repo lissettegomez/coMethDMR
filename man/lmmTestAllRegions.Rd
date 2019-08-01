@@ -7,7 +7,7 @@ methylation values in a list of genomic regions}
 \usage{
 lmmTestAllRegions(beta_df, region_ls, pheno_df, contPheno_char,
   covariates_char, modelType = c("randCoef", "simple"),
-  arrayType = c("450k", "EPIC"), outFile = NULL)
+  arrayType = c("450k", "EPIC"), outFile = NULL, outLogFile = NULL)
 }
 \arguments{
 \item{beta_df}{data frame of beta values for all genomic regions,
@@ -65,29 +65,33 @@ This function implements a mixed model to test association between
    data(pheno_df)
 
    CpGisland_ls <- readRDS(
-                     system.file ("extdata",
-                                  "CpGislandsChr22_ex.RDS",
-                                   package = 'coMethDMR',
-                                   mustWork = TRUE
-                                   )
+     system.file(
+       "extdata",
+       "CpGislandsChr22_ex.RDS",
+       package = 'coMethDMR',
+       mustWork = TRUE
+     )
    )
 
    coMeth_ls <- CoMethAllRegions(
-                   betaMatrix = betaMatrixChr22_df,
-                   CpGs_ls = CpGisland_ls,
-                   arrayType = "450k",
-                   rDropThresh_num = 0.4,
-                   returnAllCpGs = FALSE
+     betaMatrix = betaMatrixChr22_df,
+     betaToM = TRUE,
+     CpGs_ls = CpGisland_ls,
+     arrayType = "450k",
+     rDropThresh_num = 0.4,
+     returnAllCpGs = FALSE
    )
 
-   lmmTestAllRegions(
+
+   results <- lmmTestAllRegions(
      beta_df = betaMatrixChr22_df,
      region_ls = coMeth_ls,
      pheno_df,
      contPheno_char = "stage",
      covariates_char = "age.brain",
      modelType = "randCoef",
-     arrayType = "450k"
+     arrayType = "450k",
+     outLogFile = paste0("lmmLog_", Sys.Date(), ".txt")
    )
 
 }

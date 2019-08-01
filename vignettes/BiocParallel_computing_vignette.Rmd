@@ -17,13 +17,16 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Introduction
-In Section 2 of previous vignette “Introduction to **coMethDMR**”, we discussed components of the **coMethDMR** pipeline and presented example R scripts for running an analysis with **coMethDMR** serially. However, because identifying co-methylated clusters and fitting mixed effects models on large numbers of genomic regions can be computationally expensive, we illustrate implementation of parallel computing via the **BiocParallel** R package in this vignette. To this end, we load these two packages.
+In the previous vignette “Introduction to **coMethDMR**”, we discussed components of the **coMethDMR** pipeline and presented example R scripts for running an analysis with **coMethDMR** serially. However, because identifying co-methylated clusters and fitting mixed effects models on large numbers of genomic regions can be computationally expensive, we illustrate implementation of parallel computing via the **BiocParallel** R package in this vignette. 
+
+
+First, we load these two packages.
 ```{r packLoad, message=FALSE}
 library(coMethDMR)
 library(BiocParallel)
 ```
 
-In Section 2, we give a brief re-introduction to the example data. In Section 3, we present example scripts for analyzing all genomic regions of a single type (e.g. CpG islands) using parallel computing. In Section 4, we present example scripts for analyzing genomic regions from all eleven types included on the Illumina arrays also using parallel computing. 
+In Section 2, we give a brief re-introduction to the example data. In Section 3, we present example scripts for analyzing all genomic regions of a single type (e.g. CpG islands) using parallel computing. In Section 4, we present example scripts for analyzing genomic regions from all eleven types on the Illumina arrays (TSS1500, TSS200, UTR5, EXON1, GENEBODY, UTR3, NSHORE, NSHELF, ISLAND, SSHORE and SSHELF) using parallel computing. 
 
 
 
@@ -34,12 +37,13 @@ data(betaMatrixChr22_df)
 betaMatrixChr22_df[1:5, 1:5]
 ```
 
-The corresponding phenotype dataset included variables `stage` (Braak AD stage), `subject.id`, `Mplate` (batch effect), `sex`, `Sample` and `age.brain` (age of the brain donor).
+The corresponding phenotype dataset included variables `stage` (Braak AD stage), `subject.id`, `Mplate` (batch effect), `sex`, `Sample` and `age.brain` (age of the brain donor). 
 ```{r ex_pheno_data}
 data(pheno_df)
 head(pheno_df)
 ```
 
+Note that only samples with both methylation data and non-missing phenotype data are analyzed by **coMethDMR**. 
 
 
 # Analyzing One Type of Genomic Region via BiocParallel
@@ -99,7 +103,7 @@ coMeth_worker <- function(x, beta_mat){
 ```
 
 Finally, we execute the wrapper function `coMeth_worker()` over each worker in the cluster (this takes about 3 minutes over 12 cores with 50Gb of RAM).
-```{r BiocParallel_Islands}
+```{r BiocParallel_Islands, message=FALSE}
 a0 <- Sys.time()
 coMethIslandCpGs_ls <- bplapply(
   # The list of regions to apply over
@@ -187,6 +191,7 @@ Same as before, first, we create the clusters of workers. If you still have the 
 snow_cl <- SnowParam(workers = 12, type = "SOCK")
 ```
 
+## Create the worker function
 Next, we create the wrapper function for the entire workflow, here we wrap around both the co-methlyated clustering function and the linear mixed model function. If you plan to modify this function, we recommend that you test it extensively on one of the smaller region types, such as the South Shelf.
 ```{r whole_pipeline_worker}
 coMethDMR_worker <- function(cpgs, beta_mat, pheno_mat, regionType_char){
@@ -235,10 +240,12 @@ coMethDMR_worker <- function(cpgs, beta_mat, pheno_mat, regionType_char){
 }
 ```
 
-Because we will loop over each of the 11 region types, we set up the static data. If you would like to analyse all region types, use the first `regions_char` vector. For time, we will use a subset of regions near the islands.
+## Analyzing multiple region types
+For illustration, we will only analyze CpG islands and shores. If you would like to analyse all region types, use the `AllRegions_char` vector instead of `regions_char`.
+
 ```{r setup_for_loop}
 # Create vector of region types
-# regions_char <- c(
+# AllRegions_char <- c(
 #   "NSHORE", "NSHELF", "SSHORE", "SSHELF", "TSS1500", "TSS200", "UTR5", "EXON1",
 #   "GENEBODY", "UTR3", "ISLAND"
 # )
@@ -301,10 +308,20 @@ head(lmmResults_df)
 ```
 We can see this output is similar to the previous output, with the additional column identifying the region type of each region.
 
+## Annotate results
+Finally, we may be interested in the specific probes in these regions, or which genes overlap with these regions. We can thus use the `AnnotateResults()` function, which takes in the results data frame above (or a data frame of the results returned by `lmmTest()` or `lmmTestAllRegions()`).
+```{r annotate_results}
+lmmResAnnotated_df <- AnnotateResults(
+  lmmRes_df = lmmResults_df,
+  arrayType = "450k"
+)
+head(lmmResAnnotated_df)
+```
+
 We can save our results by:
 ```{r save_results, eval=FALSE}
 write.csv(
-  lmmResults_df,
+  lmmResAnnotated_df,
   file = "EWAS_PFC_lmmOut.csv"
 )
 ```
