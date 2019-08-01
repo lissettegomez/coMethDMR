@@ -54,7 +54,7 @@ This function implements a mixed model to test association between
 
   CpGsChr22_char<-c("cg02953382", "cg12419862", "cg24565820", "cg04234412",
       "cg04824771", "cg09033563", "cg10150615", "cg18538332", "cg20007245",
-      "cg23131131", "cg25703541")
+      "cg23131131", "cg25703541" )
 
   coMethCpGs <- CoMethSingleRegion(CpGsChr22_char, betaMatrixChr22_df)
 
