@@ -65,20 +65,21 @@ This function implements a mixed model to test association between
    data(pheno_df)
 
    CpGisland_ls <- readRDS(
-                     system.file ("extdata",
-                                  "CpGislandsChr22_ex.RDS",
-                                   package = 'coMethDMR',
-                                   mustWork = TRUE
-                                   )
+     system.file(
+       "extdata",
+       "CpGislandsChr22_ex.RDS",
+       package = 'coMethDMR',
+       mustWork = TRUE
+     )
    )
 
    coMeth_ls <- CoMethAllRegions(
-                   betaMatrix = betaMatrixChr22_df,
-                   betaToM = TRUE,
-                   CpGs_ls = CpGisland_ls,
-                   arrayType = "450k",
-                   rDropThresh_num = 0.4,
-                   returnAllCpGs = FALSE
+     betaMatrix = betaMatrixChr22_df,
+     betaToM = TRUE,
+     CpGs_ls = CpGisland_ls,
+     arrayType = "450k",
+     rDropThresh_num = 0.4,
+     returnAllCpGs = FALSE
    )
 
 
@@ -90,8 +91,7 @@ This function implements a mixed model to test association between
      covariates_char = "age.brain",
      modelType = "randCoef",
      arrayType = "450k",
-     outFile = "C:/Users/lxw391/TEMP/testResults",
-     outLogFile = "C:/Users/lxw391/TEMP/testLog"
+     outLogFile = paste0("lmmLog_", Sys.Date(), ".txt")
    )
 
 }

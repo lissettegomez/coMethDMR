@@ -39,9 +39,11 @@
 #' @examples
 #'   data(betaMatrixChr22_df)
 #'
-#'   CpGsChr22_char<-c("cg02953382", "cg12419862", "cg24565820", "cg04234412",
-#'       "cg04824771", "cg09033563", "cg10150615", "cg18538332", "cg20007245",
-#'       "cg23131131", "cg25703541" )
+#'   CpGsChr22_char <- c(
+#'     "cg02953382", "cg12419862", "cg24565820", "cg04234412", "cg04824771",
+#'     "cg09033563", "cg10150615", "cg18538332", "cg20007245", "cg23131131",
+#'     "cg25703541"
+#'   )
 #'
 #'   coMethCpGs <- CoMethSingleRegion(CpGsChr22_char, betaMatrixChr22_df)
 #'
@@ -50,19 +52,21 @@
 #'
 #'   data(pheno_df)
 #'
-#'   res <- lmmTest (betaOne_df = coMethBeta_df,
-#'            pheno_df,
-#'            contPheno_char = "stage",
-#'            covariates_char = c("age.brain", "sex"),
-#'            modelType = "randCoef",
-#'            arrayType = "450k",
-#'            outLogFile = "C:/Users/lxw391/TEMP/testLog")
+#'   res <- lmmTest(
+#'     betaOne_df = coMethBeta_df,
+#'     pheno_df,
+#'     contPheno_char = "stage",
+#'     covariates_char = c("age.brain", "sex"),
+#'     modelType = "randCoef",
+#'     arrayType = "450k",
+#'     outLogFile = "testLog.txt"
+#'   )
 #'
 
 lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
                     modelType = c("randCoef", "simple"),
-                    arrayType = c("450k","EPIC",
-                    outLogFile = NULL))  {
+                    arrayType = c("450k","EPIC"),
+                    outLogFile = NULL){
 
   modelType <- match.arg(modelType)
   arrayType <- match.arg(arrayType)
@@ -104,26 +108,14 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
   modelFormula_char <- .MakeLmmFormula(contPheno_char, covariates_char, modelType)
 
   if (!is.null(outLogFile)){
-
-    sink (file = paste0(outLogFile, ".txt"))
-
-    print (paste0("Analyzing region ", regionName))
-
-    tryCatch({
-      f <- suppressMessages(
-        lmer(as.formula(modelFormula_char), betaOnePheno_df)
-      )
-    }, error = function(e){ NULL })
-
-  } else {
-
-    tryCatch({
-      f <- suppressMessages(
-        lmer(as.formula(modelFormula_char), betaOnePheno_df)
-      )
-    }, error = function(e){ NULL })
-
+    cat(paste0("Analyzing region ", regionName, ". \n"))
   }
+
+  tryCatch({
+    f <- suppressMessages(
+      lmer(as.formula(modelFormula_char), betaOnePheno_df)
+    )
+  }, error = function(e){ NULL })
 
 
   if(is.null(f)){
