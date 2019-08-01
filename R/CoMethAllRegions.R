@@ -42,16 +42,19 @@
 #'
 #' @export
 #'
+#' @importFrom BiocParallel bplapply
+#'
 #' @examples
 #'    data(betaMatrixChr22_df)
 #'
 #'
-#'    CpGisland_ls <- readRDS (
-#'        system.file ("extdata",
-#'                     "CpGislandsChr22_ex.RDS",
-#'                      package = 'coMethDMR',
-#'                      mustWork = TRUE
-#'        )
+#'    CpGisland_ls <- readRDS(
+#'      system.file(
+#'        "extdata",
+#'        "CpGislandsChr22_ex.RDS",
+#'        package = 'coMethDMR',
+#'        mustWork = TRUE
+#'      )
 #'    )
 #'
 #'    coMeth_ls <- CoMethAllRegions (
@@ -66,12 +69,12 @@
 #'
 #'\dontrun{
 #'
-#'CoMethAllRegions (
-#'      betaMatrix = betaMatrixChr22_df,
-#'      regionType = "ISLAND",
-#'      arrayType = "450k",
-#'      returnAllCpGs = FALSE
-#')
+#'  CoMethAllRegions (
+#'    betaMatrix = betaMatrixChr22_df,
+#'    regionType = "ISLAND",
+#'    arrayType = "450k",
+#'    returnAllCpGs = FALSE
+#'  )
 #'
 #'}
 #'
@@ -90,7 +93,9 @@ CoMethAllRegions <- function(betaMatrix,
                              ),
                              returnAllCpGs = FALSE,
                              output = c("CpGs", "dataframe"),
+                             cluster = NULL,
                              ...){
+  # browser()
 
   regionType <- match.arg(regionType)
   method <- match.arg(method)
@@ -100,8 +105,11 @@ CoMethAllRegions <- function(betaMatrix,
 
   ### Read file of close by CpGs ###
   if(!is.null(CpGs_ls)){
+
     closeByGenomicRegion_ls <- CreateCpGsRegions(CpGs_ls)$regions
+
   } else if(!is.null(file)) {
+
     switch(
       fileType,
       "RDS" = {
@@ -113,44 +121,69 @@ CoMethAllRegions <- function(betaMatrix,
         closeByGenomicRegion_ls <- gmtFile$regions
       }
     )
+
   } else {
-    closeByGenomicRegion_ls <- readRDS(system.file("extdata",
-                     paste0(regionType, "3_200.rds"),
-                     package = 'coMethDMR',
-                     mustWork = TRUE)
+
+    closeByGenomicRegion_ls <- readRDS(
+      system.file(
+        "extdata",
+        paste0(regionType, "3_200.rds"),
+        package = 'coMethDMR',
+        mustWork = TRUE
+      )
     )
 
   }
 
 
   ### Extract contiguous comethylated region(s) from each close by region ###
-  coMethCpGsAllREgions_ls <- lapply(
-    unname(closeByGenomicRegion_ls),
-    FUN = CoMethSingleRegion,
-    betaMatrix = betaMatrix,
-    betaToM = betaToM,
-    rDropThresh_num = rDropThresh_num,
-    method = method,
-    arrayType = arrayType,
-    returnAllCpGs = returnAllCpGs
-  )
+  if(is.null(cluster)){
 
-  ### Return list of contiguous comethylated CpGs by Regions ###
-  out_ContigRegions <- lapply(coMethCpGsAllREgions_ls, `[[`, 1)
-  out_ContigRegions[sapply(out_ContigRegions, is.null)] <- NULL
-  names(out_ContigRegions) <- unlist(lapply(out_ContigRegions, `[[`, 1,1))
+    coMethCpGsAllREgions_ls <- lapply(
+      unname(closeByGenomicRegion_ls),
+      FUN = CoMethSingleRegion,
+      betaMatrix = betaMatrix,
+      betaToM = betaToM,
+      rDropThresh_num = rDropThresh_num,
+      method = method,
+      arrayType = arrayType,
+      returnAllCpGs = returnAllCpGs
+    )
 
-  out_coMethCpGsAll <- unlist(
-    lapply(coMethCpGsAllREgions_ls, `[[`, 2),
-    recursive = FALSE
-  )
+  } else {
+
+    coMethCpGsAllREgions_ls <- bplapply(
+      unname(closeByGenomicRegion_ls),
+      FUN = CoMethSingleRegion,
+      BPPARAM = cluster,
+      betaMatrix = betaMatrix,
+      betaToM = betaToM,
+      rDropThresh_num = rDropThresh_num,
+      method = method,
+      arrayType = arrayType,
+      returnAllCpGs = returnAllCpGs
+    )
+
+  }
 
 
   ### return output ###
+  # Return list of contiguous comethylated CpGs by Regions
   if(output == "CpGs"){
-    out_coMethCpGsAll
+
+    unlist(
+      lapply(coMethCpGsAllREgions_ls, `[[`, 2),
+      recursive = FALSE
+    )
+
   } else {
+
+    out_ContigRegions <- lapply(coMethCpGsAllREgions_ls, `[[`, 1)
+    out_ContigRegions[sapply(out_ContigRegions, is.null)] <- NULL
+    names(out_ContigRegions) <- unlist(lapply(out_ContigRegions, `[[`, 1, 1))
+
     out_ContigRegions
+
   }
 
 

@@ -42,6 +42,7 @@
 #'
 #' @export
 #'
+#' @importFrom BiocParallel bplapply
 #' @importFrom stats as.formula
 #' @importFrom stats coef
 #' @importFrom stats reshape
@@ -88,8 +89,10 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
                               contPheno_char, covariates_char,
                               modelType = c("randCoef", "simple"),
                               arrayType = c("450k","EPIC"),
+                              cluster = NULL,
                               outFile = NULL,
                               outLogFile = NULL){
+  # browser()
 
   ###  Setup  ###
   modelType <- match.arg(modelType)
@@ -118,16 +121,35 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
 
 
   ###  Run mixed model for all the contiguous comethylated regions  ###
-  results_ls <- lapply(
-    coMethBetaDF_ls,
-    FUN = lmmTest,
-    pheno_df,
-    contPheno_char,
-    covariates_char,
-    modelType,
-    arrayType,
-    outLogFile
-  )
+  if(is.null(cluster)){
+
+    results_ls <- lapply(
+      coMethBetaDF_ls,
+      FUN = lmmTest,
+      pheno_df,
+      contPheno_char,
+      covariates_char,
+      modelType,
+      arrayType,
+      outLogFile
+    )
+
+  } else {
+
+    results_ls <- bplapply(
+      coMethBetaDF_ls,
+      FUN = lmmTest,
+      BPPARAM = cluster,
+      pheno_df,
+      contPheno_char,
+      covariates_char,
+      modelType,
+      arrayType,
+      outLogFile
+    )
+
+  }
+
 
   if(writeLog_logi){
 
@@ -141,7 +163,7 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
 
   ### Output results ###
 
-  if (length(results_ls) > 0 ){
+  if (length(results_ls) > 0){
 
     outDF <- do.call (rbind, results_ls)
     outDF$FDR <- p.adjust(outDF$pValue, method = "fdr")
