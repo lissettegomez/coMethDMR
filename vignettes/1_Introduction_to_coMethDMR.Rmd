@@ -1,11 +1,11 @@
 ---
-title: coMethDMR's User Guide
+title: Introduction to coMethDMR
 author: "Lissette Gomez, Gabriel Odom, Lily Wang"
-date: "June 1, 2019"
+date: "August 2, 2019"
 output:
-  word_document: default
-  html_document: default
   pdf_document: default
+  html_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -118,7 +118,7 @@ betas_df <- subset(
 WriteCorrPlot (betas_df)
 ```
 
-Next, we test these co-methylated regions against `stage` using a random coefficient model (more details in section 2.3 below), adjusting for `age.brain`.  
+Next, we test these co-methylated regions against `stage` using a random coefficient model (more details in section 2.3 below), adjusting for `age.brain`. Note that a log file "lmmLog.txt" that contains messages from mixed model fitting is generated in the current directory.   
 
 ```{r message=FALSE}
 out_df <- lmmTestAllRegions(
@@ -128,13 +128,27 @@ out_df <- lmmTestAllRegions(
    contPheno_char = "stage",
    covariates_char = "age.brain",
    modelType = "randCoef",
-   arrayType = "450k"
+   arrayType = "450k", 
+   outLogFile = paste0("lmmLog.txt")
  )
 
 out_df
 
 ```
 Here `out_df` is a data frame of genomic regions, with corresponding p-values and false discovery rate (FDRs) from the random coefficient mixed model. 
+
+We can annotate these results by adding corresponding genes and probes mapped to the genomic regions. 
+
+```{r message = FALSE}
+
+outAnno_df <- AnnotateResults(
+  lmmRes_df = out_df,
+  arrayType = "450k"
+)
+
+outAnno_df
+
+```
 
 To further examine the significant regions, we can also extract individual CpG p-values within these significant regions. For example, for the most significant region `chr22:18268062-18268249`, 
 ```{r}
@@ -283,7 +297,7 @@ The random coefficient mixed model includes both a systematic component that mod
 
 More specifically, the random coefficient model is
 `methylation M value ~ contPheno_char + covariates_char + (1|Sample) + (contPheno_char|CpG).`
-The last two terms are random intercepts and slopes for each CpG.
+The last term `(contPheno_char|CpG)` specifies both random intercepts and slopes for each CpG.
 
 The simple linear mixed model includes all the terms in the random coefficient model except random probe effects.
 
@@ -318,7 +332,18 @@ lmmTestAllRegions(
 )
 ```
 
-# 3. Reference
+# 3. Frequently Asked Questions
+
+(1) When fitting mixed models with `lmmTestAllRegions` function, What does the message "boundary (singular) fit" mean? 
+- When mixed model is singular, at least one of the estimated variance components for intercepts or slopes random effects is 0, because there isn't enough variabilities
+    in data to estimate the random effects. In this case, mixed model reduces to a fixed effects model. However, as our simulation studies have shown, the p-values 
+    obtained for these regions are still valid.
+
+(2) What happens when mixed model fails to coverge (i.e. the warning "Model failed to converge with..." is resulted for a particular genomic region)?
+- In this case, the p-value for mixed model is set to 1. In our experiences with methylation datasets, genomic regions with strong signals typically converge. Convergence issues typically occurs when the amount of noise in data is high. 
+
+
+# 4. Reference
 
 Lunnon K, Smith R, Hannon E, De Jager PL, Srivastava G, Volta M, Troakes C, Al-Sarraj S, Burrage J, Macdonald R, et al (2014) Methylomic profiling implicates cortical deregulation of ANK1 in Alzheimer's disease. Nat Neurosci 17:1164-1170.
 
