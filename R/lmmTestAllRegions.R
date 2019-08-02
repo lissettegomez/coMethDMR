@@ -18,11 +18,13 @@
 #'    coefficient mixed model, or \code{simple} for simple linear mixed model.
 #' @param arrayType Type of array, can be "450k" or "EPIC"
 #' @param outFile output .csv file with the results for the mixed model analysis
+#' @param outLogFile log file for mixed models analysis messages
 #'
-#' @return csv file with location of the genomic region (\code{chrom, start, end}), number of CpGs (\code{nCpGs}),
+#' @return (1) output file: a .csv file with location of the genomic region (\code{chrom, start, end}), number of CpGs (\code{nCpGs}),
 #' \code{Estimate}, Standard error (\code{StdErr}) of the test statistic, p-value and False Discovery
-#' Rate (FDR)
-#' for association between methylation values in each genomic region with phenotype (\code{pValue}).
+#' Rate (FDR) for association between methylation values in each genomic region with phenotype (\code{pValue}).
+#'
+#' (2) log file: a .txt file that includes messages for mixed model fitting
 #'
 #' @details This function implements a mixed model to test association between
 #'    methylation values in a genomic region with a continuous phenotype.
@@ -39,6 +41,15 @@
 #'    In our simulation studies, we found both models are conservative, so p-values are estimated from
 #'    normal distributions instead of t-distributions.
 #'
+#'    For the results of mixed models, note that
+#'
+#'    (1) When mixed model failed to converge, p-value for mixed model is set to 1.
+#'
+#'    (2) When mixed model is singular, at least one of the estimated variance
+#'    components for intercepts or slopes random effects is 0, because there
+#'    isn't enough variabilities in data to estimate the random effects. In this
+#'    case, mixed model reduces to a fixed effects model. The p-values for these
+#'    regions are still valid.
 #'
 #' @export
 #'
@@ -81,8 +92,11 @@
 #'      covariates_char = "age.brain",
 #'      modelType = "randCoef",
 #'      arrayType = "450k",
+#'
+#'      # generates a log file in the current directory
 #'      outLogFile = paste0("lmmLog_", Sys.Date(), ".txt")
 #'    )
+#'
 #'
 
 lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
@@ -155,6 +169,13 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
 
     cat("\n")
     cat(paste0("Computation completed at ", Sys.time(), ". \n"))
+    cat("Note: \n")
+    cat("(1) When mixed model failed to converge, p-value for mixed model is set to 1. \n")
+    cat("(2) When mixed model is singular, at least one of the estimated variance components
+    for intercepts or slopes random effects is 0, because there isn't enough variabilities
+    in data to estimate the random effects. In this case, mixed model reduces to a
+    fixed effects model. The p-values for these regions are still valid.\n")
+
     sink()
 
   }

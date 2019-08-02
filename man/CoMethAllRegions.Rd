@@ -10,7 +10,8 @@ CoMethAllRegions(betaMatrix, betaToM = TRUE, method = c("pearson",
   CpGs_ls = NULL, file = NULL, fileType = c("gmt", "RDS"),
   regionType = c("ISLAND", "NSHORE", "NSHELF", "SSHORE", "SSHELF",
   "TSS1500", "TSS200", "UTR5", "EXON1", "GENEBODY", "UTR3"),
-  returnAllCpGs = FALSE, output = c("CpGs", "dataframe"), ...)
+  returnAllCpGs = FALSE, output = c("CpGs", "dataframe"),
+  cluster = NULL, ...)
 }
 \arguments{
 \item{betaMatrix}{matrix (or data frame) of beta values, with row names = CpG IDs,
@@ -69,12 +70,13 @@ examples of these files are at https://github.com/lissettegomez/coMethDMRdata
    data(betaMatrixChr22_df)
 
 
-   CpGisland_ls <- readRDS (
-       system.file ("extdata",
-                    "CpGislandsChr22_ex.RDS",
-                     package = 'coMethDMR',
-                     mustWork = TRUE
-       )
+   CpGisland_ls <- readRDS(
+     system.file(
+       "extdata",
+       "CpGislandsChr22_ex.RDS",
+       package = 'coMethDMR',
+       mustWork = TRUE
+     )
    )
 
    coMeth_ls <- CoMethAllRegions (
@@ -89,12 +91,12 @@ examples of these files are at https://github.com/lissettegomez/coMethDMRdata
 
 \dontrun{
 
-CoMethAllRegions (
-     betaMatrix = betaMatrixChr22_df,
-     regionType = "ISLAND",
-     arrayType = "450k",
-     returnAllCpGs = FALSE
-)
+ CoMethAllRegions (
+   betaMatrix = betaMatrixChr22_df,
+   regionType = "ISLAND",
+   arrayType = "450k",
+   returnAllCpGs = FALSE
+ )
 
 }
 

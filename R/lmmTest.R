@@ -11,6 +11,7 @@
 #' @param modelType type of mixed model, can be \code{randCoef} for random
 #'    coefficient mixed model, or \code{simple} for simple linear mixed model.
 #' @param arrayType Type of array, can be "450k" or "EPIC"
+#' @param outLogFile Name of log file for messages of mixed model analysis
 #'
 #' @return  A dataframe with one row for association result of one region: \code{Estimate}, \code{StdErr}, and
 #'    \code{pvalue} for the association of methylation values in the genomic
