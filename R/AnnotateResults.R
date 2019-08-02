@@ -14,6 +14,7 @@
 #'
 #' Optionally, the data frame can also has
 #'   \code{regionType}, which is a character string marking the type of genomic region tested.
+#'   See details below.
 #'
 #' @param arrayType Type of array: 450k or EPIC
 #'

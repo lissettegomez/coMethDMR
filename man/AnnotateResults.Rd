@@ -16,7 +16,8 @@ frame must contain the following columns:
      }
 
 Optionally, the data frame can also has
-  \code{regionType} : a character string marking the type of genomic region tested.}
+  \code{regionType}, which is a character string marking the type of genomic region tested.
+  See details below.}
 
 \item{arrayType}{Type of array: 450k or EPIC}
 }
