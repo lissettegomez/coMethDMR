@@ -53,13 +53,13 @@ As mentioned previously in “Introduction to **coMethDMR**”, there are severa
 2. Identify co-methylated regions, and
 3. Test co-methylated regions against the outcome variable (AD stage).
 
-Suppose we are interested in analyzing CpG islands. In the following, `closeByCGI_ls` is a list, where each item includes CpGs from the Exon 1 regions. 
+Suppose we are interested in analyzing CpG islands. In the following, `closeByCGI_ls` is a list, where each item includes CpGs from the Islands regions. 
 
 ```{r list_of_cgis}
 closeByCGI_ls <- readRDS(
   system.file(
     "extdata",
-    "EXON13_200.rds",
+    "ISLAND3_200.rds",
     package = 'coMethDMR',
     mustWork = TRUE
   )
@@ -82,10 +82,10 @@ First, we set up the cluster:
 snow_cl <- SnowParam(workers = 8, type = "SOCK")
 ```
 
-Now we execute the `CoMethAllRegions()` function using each worker in the cluster (this takes about 3 minutes over 8 cores with 16Gb of RAM).
+Now we execute the `CoMethAllRegions()` function using each worker in the cluster (this takes about 3 minutes over 8 cores with 16Gb of RAM). We select the first Exon regions.
 ```{r BiocParallel_Exon1, message=FALSE}
 # a0 <- Sys.time()
-pfcCGIs_ls <- CoMethAllRegions(
+pfcExons_ls <- CoMethAllRegions(
   betaMatrix = betaMatrixChr22_df,
   method = "pearson",
   arrayType = "450k",
@@ -94,18 +94,31 @@ pfcCGIs_ls <- CoMethAllRegions(
 )
 # Sys.time() - a0
 ```
-The object `pfcCGIs_ls` is a list, with each item containing the list of CpGs within an identified co-methylated region. 
+The object `pfcExons_ls` is a list, with each item containing the list of CpGs within an identified co-methylated region. 
 
 
 ## Testing the co-methylated regions
 Next we test these co-methylated regions against continuous phenotype stage, adjusting for covariates age and sex.
 
-We now execute the `lmmTestAllRegions()` function in parallel (this takes about 30 seconds over 8 cores with 16Gb of RAM; however, computing the linear mixed model can often take more memory than clustering the co-methylated CpGs):
-```{r BiocParallel_lmmTest, warning=FALSE, message=FALSE}
+Because the linear mixed model may fail to converge in some cases, we want to record the computational logs from the parallel workers. To do this, we add additional information to the clusters.
+```{r add_BP_log, eval=FALSE}
+snow_cl <- SnowParam(workers = 8, type = "SOCK")
+register(snow_cl)
+
+bplog(snow_cl) <- TRUE
+
+dirName <- paste0("lmm_results_log_", Sys.Date(), "/")
+dir.create(dirName)
+bplogdir(snow_cl) <- dirName
+```
+
+
+We now execute the `lmmTestAllRegions()` function in parallel. This takes about 30 seconds over 8 cores with 16Gb of RAM; however, computing the linear mixed model can often take more memory than clustering the co-methylated CpGs.
+```{r BiocParallel_lmmTest, warning=FALSE, results='hide'}
 # a1 <- Sys.time()
 res_cgi1_df <- lmmTestAllRegions(
   beta_df = betaMatrixChr22_df,
-  region_ls = pfcCGIs_ls,
+  region_ls = pfcExons_ls,
   pheno_df = pheno_df,
   contPheno_char = "stage",
   covariates_char = c("age.brain", "sex"),
@@ -151,7 +164,7 @@ names(resultsAll_ls) <- regions_char
 ```
 
 Finally, we execute the wrapper function over each worker on the cluster (this completes in roughly 17 minutes using 8 cores and 24Gb of RAM):
-```{r loop_over_region_types, message=FALSE, eval=FALSE}
+```{r loop_over_region_types, eval=FALSE}
 # aAll <- Sys.time()
 for (region in regions_char) {
 
