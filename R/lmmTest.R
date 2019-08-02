@@ -98,14 +98,6 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
     )
   )
 
-  ### Run the mixed model ###
-  # lmerControl(
-  #   check.conv.grad     = .makeCC("message", tol = 1e-3, relTol = NULL),
-  #   check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4),
-  #   check.conv.hess     = .makeCC(action = "message", tol = 1e-6)
-  # )
-  # # This doesn't do anything. The warning (message?) still appears
-
   modelFormula_char <- .MakeLmmFormula(contPheno_char, covariates_char, modelType)
 
   if (!is.null(outLogFile)){
