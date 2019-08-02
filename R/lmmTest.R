@@ -68,6 +68,7 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
                     modelType = c("randCoef", "simple"),
                     arrayType = c("450k","EPIC"),
                     outLogFile = NULL){
+  # browser()
 
   modelType <- match.arg(modelType)
   arrayType <- match.arg(arrayType)
@@ -100,8 +101,10 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
 
   modelFormula_char <- .MakeLmmFormula(contPheno_char, covariates_char, modelType)
 
-  if (!is.null(outLogFile)){
+  if(!is.null(outLogFile)){
     cat(paste0("Analyzing region ", regionName, ". \n"))
+  } else {
+    message(paste0("Analyzing region ", regionName, ". \n"))
   }
 
   tryCatch({
@@ -128,10 +131,19 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
 
     # If the optimization routine converged, calculate the p-value. See:
     #   https://rdrr.io/cran/lme4/man/convergence.html
-    if(f@optinfo$conv$opt == 0){
-      ps_df$pValue <- 2 * (1 - pnorm(abs(ps_df$Stat)))
-    } else {
+    conv_ls <- f@optinfo$conv
+    if(conv_ls$opt != 0){
       ps_df$pValue <- 1
+    } else if(!is.null(conv_ls$lme4$messages)) {
+
+      if(grepl("failed to converge", conv_ls$lme4$messages)){
+        ps_df$pValue <- 1
+      } else {
+        ps_df$pValue <- 2 * (1 - pnorm(abs(ps_df$Stat)))
+      }
+
+    } else {
+      ps_df$pValue <- 2 * (1 - pnorm(abs(ps_df$Stat)))
     }
 
   }

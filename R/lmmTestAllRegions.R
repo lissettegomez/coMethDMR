@@ -32,7 +32,7 @@
 #'    When \code{randCoef} is selected, the model is
 #'
 #'    \code{methylation M value ~ contPheno_char + covariates_char + (1|Sample) + (contPheno_char|CpG)}.
-#'    The last term specifies random intercept and slope for each CpG.
+#'    The last term specifies both random intercept and slope for each CpG.
 #'
 #'    When \code{simple} is selected, the model is
 #'
@@ -107,6 +107,9 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
                               outFile = NULL,
                               outLogFile = NULL){
   # browser()
+
+  warnLvl <- options()$warn
+  options(warn = 1)
 
   ###  Setup  ###
   modelType <- match.arg(modelType)
@@ -192,6 +195,8 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
 
   }
 
+
+  options(warn = warnLvl)
 
   if (is.null(outFile)){
 

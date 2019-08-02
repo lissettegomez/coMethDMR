@@ -54,7 +54,7 @@ This function implements a mixed model to test association between
    When \code{randCoef} is selected, the model is
 
    \code{methylation M value ~ contPheno_char + covariates_char + (1|Sample) + (contPheno_char|CpG)}.
-   The last term specifies random intercept and slope for each CpG.
+   The last term specifies both random intercept and slope for each CpG.
 
    When \code{simple} is selected, the model is
 
