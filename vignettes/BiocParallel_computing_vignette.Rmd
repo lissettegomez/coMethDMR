@@ -68,7 +68,7 @@ closeByCGI_ls <- readRDS(
 closeByCGI_ls[1]
 ```
 
-In order to use this list of locations, we can either pass in the `closeByCGI_ls` object, or call for the region type `"ISLAND"` in the co-methylation function below. If you are interested in analyzing other types of genomic regions, see “Introduction to **coMethDMR**”, Section 2.1 for necessary modifications to this code. 
+If you are interested in analyzing other types of genomic regions, see “Introduction to **coMethDMR**”, Section 2.1 for necessary modifications to this code. 
 
 
 ## Finding co-methylated regions
@@ -89,12 +89,14 @@ pfcExons_ls <- CoMethAllRegions(
   betaMatrix = betaMatrixChr22_df,
   method = "pearson",
   arrayType = "450k",
-  regionType = "EXON1",
+  regionType = "ISLAND",
   cluster = snow_cl
 )
 # Sys.time() - a0
 ```
 The object `pfcExons_ls` is a list, with each item containing the list of CpGs within an identified co-methylated region. 
+
+Note that to analyze CpG islands, we can pass `closeByCGI_ls` to the `CoMethAllRegions` function, or call for the region type `"ISLAND"` in the co-methylation function below.
 
 
 ## Testing the co-methylated regions
@@ -124,6 +126,7 @@ res_cgi1_df <- lmmTestAllRegions(
   covariates_char = c("age.brain", "sex"),
   modelType = "randCoef",
   arrayType = "450k",
+  outLogFile = "test.txt", 
   cluster = snow_cl
 )
 # Sys.time() - a1
@@ -229,5 +232,5 @@ write.csv(
 
 
 
-# Additional Comments on Required Computing Resources
+# Additional Comments on Computational Time and Resources
 In this vignette, we have analyzed a small subset of a real EWAS dataset (i.e. only chromosome 22 data on 20 subjects). To give users a more realistic estimate of time for analyzing real EWAS datasets, we also measured time used for analyzing the entire Lunnon et al. (2014) dataset with 110 samples on all chromosomes. These computation times measured on a Dell Precision 5810 with 64Gb of RAM, an Intel Xeon E5-2640 CPU at 2.40Ghz, and using up to 20 cores. More specifically, in Section 4, the entire **coMethDMR** workflow for all 11 types of genomic regions took 50 minutes with 12 cores and used 24Gb of RAM. We’re currently working improving the speed and reducing the size of **coMethDMR**, so please check back soon for updates.  

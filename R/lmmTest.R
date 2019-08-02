@@ -11,6 +11,7 @@
 #' @param modelType type of mixed model, can be \code{randCoef} for random
 #'    coefficient mixed model, or \code{simple} for simple linear mixed model.
 #' @param arrayType Type of array, can be "450k" or "EPIC"
+#' @param outLogFile Name of log file for messages of mixed model analysis
 #'
 #' @return  A dataframe with one row for association result of one region: \code{Estimate}, \code{StdErr}, and
 #'    \code{pvalue} for the association of methylation values in the genomic
@@ -96,14 +97,6 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
       betaOne_df$ProbeID, arrayType, output = "dataframe"
     )
   )
-
-  ### Run the mixed model ###
-  # lmerControl(
-  #   check.conv.grad     = .makeCC("message", tol = 1e-3, relTol = NULL),
-  #   check.conv.singular = .makeCC(action = "ignore",  tol = 1e-4),
-  #   check.conv.hess     = .makeCC(action = "message", tol = 1e-6)
-  # )
-  # # This doesn't do anything. The warning (message?) still appears
 
   modelFormula_char <- .MakeLmmFormula(contPheno_char, covariates_char, modelType)
 
