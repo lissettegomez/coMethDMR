@@ -118,9 +118,12 @@ betas_df <- subset(
 WriteCorrPlot (betas_df)
 ```
 
-Next, we test these co-methylated regions against `stage` using a random coefficient model (more details in section 2.3 below), adjusting for `age.brain`. Note that a log file "lmmLog.txt" that contains messages from mixed model fitting is generated in the current directory.   
+Next, we test these co-methylated regions against `stage` using a random coefficient model (more details in section 2.3 below), adjusting for `age.brain`. 
 
-```{r message=FALSE}
+Some messages are generated during mixed models fitting. The interpretations of these messages can be found in the FAQs at the end of this document (see Section 3, item (1) and (2)).    
+
+```{r}
+
 out_df <- lmmTestAllRegions(
    beta_df = betaMatrixChr22_df,
    region_ls = coMeth_ls,
@@ -128,9 +131,8 @@ out_df <- lmmTestAllRegions(
    contPheno_char = "stage",
    covariates_char = "age.brain",
    modelType = "randCoef",
-   arrayType = "450k", 
-   outLogFile = paste0("lmmLog.txt")
- )
+   arrayType = "450k" 
+)
 
 out_df
 
@@ -334,13 +336,12 @@ lmmTestAllRegions(
 
 # 3. Frequently Asked Questions
 
-(1) When fitting mixed models with `lmmTestAllRegions` function, What does the message "boundary (singular) fit" mean? 
-- When mixed model is singular, at least one of the estimated variance components for intercepts or slopes random effects is 0, because there isn't enough variabilities
-    in data to estimate the random effects. In this case, mixed model reduces to a fixed effects model. However, as our simulation studies have shown, the p-values 
-    obtained for these regions are still valid.
-
-(2) What happens when mixed model fails to coverge (i.e. the warning "Model failed to converge with..." is resulted for a particular genomic region)?
+(1) What happens when mixed model fails to coverge (i.e. the warning "Model failed to converge with..." is resulted for a particular genomic region)?
 - In this case, the p-value for mixed model is set to 1. In our experiences with methylation datasets, genomic regions with strong signals typically converge. Convergence issues typically occurs when the amount of noise in data is high. 
+
+(2) When fitting mixed models with `lmmTestAllRegions` function, What does the message "boundary (singular) fit" mean? 
+- When mixed model is singular, at least one of the estimated variance components for intercepts or slopes random effects is 0, because there isn't enough variabilities in data to estimate the random effects. In this case, mixed model reduces to a fixed effects model. However, as our simulation studies have shown, the p-values obtained for these regions are still valid.
+
 
 
 # 4. Reference

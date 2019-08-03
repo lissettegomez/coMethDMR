@@ -81,7 +81,6 @@
 #'      returnAllCpGs = FALSE
 #'    )
 #'
-#'
 #'    results <- lmmTestAllRegions(
 #'      beta_df = betaMatrixChr22_df,
 #'      region_ls = coMeth_ls,
@@ -91,7 +90,6 @@
 #'      modelType = "randCoef",
 #'      arrayType = "450k",
 #'    )
-#'
 #'
 
 lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,

@@ -100,7 +100,7 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
 
   modelFormula_char <- .MakeLmmFormula(contPheno_char, covariates_char, modelType)
 
-  cat(paste0("Analyzing region ", regionName, ". \n"))
+  print(paste0("Analyzing region ", regionName))
 
   tryCatch({
     f <- suppressMessages(

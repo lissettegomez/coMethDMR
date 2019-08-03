@@ -91,7 +91,6 @@ This function implements a mixed model to test association between
      returnAllCpGs = FALSE
    )
 
-
    results <- lmmTestAllRegions(
      beta_df = betaMatrixChr22_df,
      region_ls = coMeth_ls,
@@ -101,6 +100,5 @@ This function implements a mixed model to test association between
      modelType = "randCoef",
      arrayType = "450k",
    )
-
 
 }
