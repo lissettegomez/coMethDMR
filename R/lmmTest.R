@@ -11,7 +11,6 @@
 #' @param modelType type of mixed model, can be \code{randCoef} for random
 #'    coefficient mixed model, or \code{simple} for simple linear mixed model.
 #' @param arrayType Type of array, can be "450k" or "EPIC"
-#' @param outLogFile Name of log file for messages of mixed model analysis
 #'
 #' @return  A dataframe with one row for association result of one region: \code{Estimate}, \code{StdErr}, and
 #'    \code{pvalue} for the association of methylation values in the genomic
@@ -59,16 +58,16 @@
 #'     contPheno_char = "stage",
 #'     covariates_char = c("age.brain", "sex"),
 #'     modelType = "randCoef",
-#'     arrayType = "450k",
-#'     outLogFile = "testLog.txt"
+#'     arrayType = "450k"
 #'   )
 #'
 
 lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
                     modelType = c("randCoef", "simple"),
-                    arrayType = c("450k","EPIC"),
-                    outLogFile = NULL){
+                    arrayType = c("450k","EPIC")){
+
   # browser()
+  options(warn = 1)
 
   modelType <- match.arg(modelType)
   arrayType <- match.arg(arrayType)
@@ -101,11 +100,7 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
 
   modelFormula_char <- .MakeLmmFormula(contPheno_char, covariates_char, modelType)
 
-  if(!is.null(outLogFile)){
-    cat(paste0("Analyzing region ", regionName, ". \n"))
-  } else {
-    message(paste0("Analyzing region ", regionName, ". \n"))
-  }
+  cat(paste0("Analyzing region ", regionName, ". \n"))
 
   tryCatch({
     f <- suppressMessages(

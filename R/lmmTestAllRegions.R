@@ -18,13 +18,11 @@
 #'    coefficient mixed model, or \code{simple} for simple linear mixed model.
 #' @param arrayType Type of array, can be "450k" or "EPIC"
 #' @param outFile output .csv file with the results for the mixed model analysis
-#' @param outLogFile log file for mixed models analysis messages
 #'
-#' @return (1) output file: a .csv file with location of the genomic region (\code{chrom, start, end}), number of CpGs (\code{nCpGs}),
+#' @return output file: a .csv file with location of the genomic region (\code{chrom, start, end}), number of CpGs (\code{nCpGs}),
 #' \code{Estimate}, Standard error (\code{StdErr}) of the test statistic, p-value and False Discovery
 #' Rate (FDR) for association between methylation values in each genomic region with phenotype (\code{pValue}).
 #'
-#' (2) log file: a .txt file that includes messages for mixed model fitting
 #'
 #' @details This function implements a mixed model to test association between
 #'    methylation values in a genomic region with a continuous phenotype.
@@ -92,9 +90,6 @@
 #'      covariates_char = "age.brain",
 #'      modelType = "randCoef",
 #'      arrayType = "450k",
-#'
-#'      # generates a log file in the current directory
-#'      outLogFile = paste0("lmmLog_", Sys.Date(), ".txt")
 #'    )
 #'
 #'
@@ -104,8 +99,7 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
                               modelType = c("randCoef", "simple"),
                               arrayType = c("450k","EPIC"),
                               cluster = NULL,
-                              outFile = NULL,
-                              outLogFile = NULL){
+                              outFile = NULL){
   # browser()
 
   warnLvl <- options()$warn
@@ -117,18 +111,9 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
 
   CpGnames <- rownames(beta_df)
 
-  writeLog_logi <- !is.null(outLogFile)
-  if(writeLog_logi){
 
-    message(
-      paste0("messages for mixed model fittings are in file ", outLogFile)
-    )
-    sink(file = outLogFile)
-    cat("Fitting linear mixed model to all genomic regions... \n")
-    cat(paste0("Computation started at ", Sys.time(), ". \n \n"))
-
-  }
-
+  cat("Fitting linear mixed model to all genomic regions... \n")
+  cat(paste0("Computation started at ", Sys.time(), ". \n \n"))
 
   ###  Split Data by Region  ###
   coMethBetaDF_ls <- lapply(
@@ -147,8 +132,8 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
       contPheno_char,
       covariates_char,
       modelType,
-      arrayType,
-      outLogFile
+      arrayType
+
     )
 
   } else {
@@ -161,29 +146,17 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
       contPheno_char,
       covariates_char,
       modelType,
-      arrayType,
-      outLogFile
+      arrayType
+
     )
 
   }
 
 
-  if(writeLog_logi){
-
     cat("\n")
     cat(paste0("Computation completed at ", Sys.time(), ". \n"))
     cat("Note: \n")
-    cat("(1) When mixed model failed to converge, p-value for mixed model is set to 1. \n")
-    cat("(2) When mixed model is singular, at least one of the estimated variance components
-    for intercepts or slopes random effects is 0, because there isn't enough variabilities
-    in data to estimate the random effects. In this case, mixed model reduces to a
-    fixed effects model. The p-values for these regions are still valid.\n")
-
-    sink()
-
-  }
-
-
+    cat("When mixed model failed to converge, p-value for mixed model is set to 1. \n")
 
   ### Output results ###
 

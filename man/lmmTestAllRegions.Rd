@@ -7,8 +7,7 @@ methylation values in a list of genomic regions}
 \usage{
 lmmTestAllRegions(beta_df, region_ls, pheno_df, contPheno_char,
   covariates_char, modelType = c("randCoef", "simple"),
-  arrayType = c("450k", "EPIC"), cluster = NULL, outFile = NULL,
-  outLogFile = NULL)
+  arrayType = c("450k", "EPIC"), cluster = NULL, outFile = NULL)
 }
 \arguments{
 \item{beta_df}{data frame of beta values for all genomic regions,
@@ -33,15 +32,11 @@ coefficient mixed model, or \code{simple} for simple linear mixed model.}
 \item{arrayType}{Type of array, can be "450k" or "EPIC"}
 
 \item{outFile}{output .csv file with the results for the mixed model analysis}
-
-\item{outLogFile}{log file for mixed models analysis messages}
 }
 \value{
-(1) output file: a .csv file with location of the genomic region (\code{chrom, start, end}), number of CpGs (\code{nCpGs}),
+output file: a .csv file with location of the genomic region (\code{chrom, start, end}), number of CpGs (\code{nCpGs}),
 \code{Estimate}, Standard error (\code{StdErr}) of the test statistic, p-value and False Discovery
 Rate (FDR) for association between methylation values in each genomic region with phenotype (\code{pValue}).
-
-(2) log file: a .txt file that includes messages for mixed model fitting
 }
 \description{
 Fit mixed model to test association between a continuous phenotype and
@@ -105,9 +100,6 @@ This function implements a mixed model to test association between
      covariates_char = "age.brain",
      modelType = "randCoef",
      arrayType = "450k",
-
-     # generates a log file in the current directory
-     outLogFile = paste0("lmmLog_", Sys.Date(), ".txt")
    )
 
 
