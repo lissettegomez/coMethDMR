@@ -1,8 +1,7 @@
 #' Annotate \code{coMethDMR} Pipeline Results
 #'
 #' @description Given a data frame with regions in the genome, add gene symbols,
-#'   UCSC reference gene accession, IDs of probes in the region, and relationship
-#'   to known CpG islands.
+#'   UCSC reference gene accession, and IDs of probes in the region.
 #'
 #' @param lmmRes_df A data frame returned by \code{\link{lmmTestAllRegions}}. This data
 #' frame must contain the following columns:
