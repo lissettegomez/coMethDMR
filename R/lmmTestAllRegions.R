@@ -51,7 +51,6 @@
 #'
 #' @export
 #'
-#' @importFrom BiocParallel bplapply
 #' @importFrom stats as.formula
 #' @importFrom stats coef
 #' @importFrom stats reshape
@@ -96,78 +95,38 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
                               contPheno_char, covariates_char,
                               modelType = c("randCoef", "simple"),
                               arrayType = c("450k","EPIC"),
-                              cluster = NULL,
                               outFile = NULL){
-  # browser()
 
-  warnLvl <- options()$warn
-  options(warn = 1)
-
-  ###  Setup  ###
   modelType <- match.arg(modelType)
   arrayType <- match.arg(arrayType)
 
   CpGnames <- rownames(beta_df)
 
-
-  cat("Fitting linear mixed model to all genomic regions... \n")
-  cat(paste0("Computation started at ", Sys.time(), ". \n \n"))
-
-  ###  Split Data by Region  ###
   coMethBetaDF_ls <- lapply(
     region_ls,
     function(x) beta_df[which(CpGnames %in% x), ]
   )
 
+  ### Run mixed model for all the contiguous comethylated regions ###
 
-  ###  Run mixed model for all the contiguous comethylated regions  ###
-  if(is.null(cluster)){
-
-    results_ls <- lapply(
-      coMethBetaDF_ls,
-      FUN = lmmTest,
-      pheno_df,
-      contPheno_char,
-      covariates_char,
-      modelType,
-      arrayType
-
-    )
-
-  } else {
-
-    results_ls <- bplapply(
-      coMethBetaDF_ls,
-      FUN = lmmTest,
-      BPPARAM = cluster,
-      pheno_df,
-      contPheno_char,
-      covariates_char,
-      modelType,
-      arrayType
-
-    )
-
-  }
-
-
-    cat("\n")
-    cat(paste0("Computation completed at ", Sys.time(), ". \n"))
-    cat("Note: \n")
-    cat("When mixed model failed to converge, p-value for mixed model is set to 1. \n")
+  results_ls <- lapply(
+    coMethBetaDF_ls,
+    FUN = lmmTest,
+    pheno_df, contPheno_char, covariates_char, modelType, arrayType
+  )
 
   ### Output results ###
 
-  if (length(results_ls) > 0){
+  if (length(results_ls) >0 ){
 
     outDF <- do.call (rbind, results_ls)
-    outDF$FDR <- p.adjust(outDF$pValue, method = "fdr")
-    row.names(outDF) <- NULL
 
+    outDF$FDR <- p.adjust(outDF$pValue, method = "fdr")
+
+
+    row.names(outDF) <- NULL
   }
 
-
-  options(warn = warnLvl)
 
   if (is.null(outFile)){
 
@@ -175,8 +134,8 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
 
   } else {
 
-    message(paste0("writing results to ", paste0(outFile,".csv")))
-    write.csv(outDF, paste0(outFile,".csv"), quote = FALSE, row.names = FALSE)
+    message(paste0("writing results to ", outFile))
+    write.csv(outDF, outFile, quote = FALSE, row.names = FALSE)
 
   }
 

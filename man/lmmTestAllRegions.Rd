@@ -7,7 +7,7 @@ methylation values in a list of genomic regions}
 \usage{
 lmmTestAllRegions(beta_df, region_ls, pheno_df, contPheno_char,
   covariates_char, modelType = c("randCoef", "simple"),
-  arrayType = c("450k", "EPIC"), cluster = NULL, outFile = NULL)
+  arrayType = c("450k", "EPIC"), outFile = NULL)
 }
 \arguments{
 \item{beta_df}{data frame of beta values for all genomic regions,

@@ -10,8 +10,7 @@ CoMethAllRegions(betaMatrix, betaToM = TRUE, method = c("pearson",
   CpGs_ls = NULL, file = NULL, fileType = c("gmt", "RDS"),
   regionType = c("ISLAND", "NSHORE", "NSHELF", "SSHORE", "SSHELF",
   "TSS1500", "TSS200", "UTR5", "EXON1", "GENEBODY", "UTR3"),
-  returnAllCpGs = FALSE, output = c("CpGs", "dataframe"),
-  cluster = NULL, ...)
+  returnAllCpGs = FALSE, output = c("CpGs", "dataframe"), ...)
 }
 \arguments{
 \item{betaMatrix}{matrix (or data frame) of beta values, with row names = CpG IDs,
@@ -99,5 +98,6 @@ examples of these files are at https://github.com/lissettegomez/coMethDMRdata
  )
 
 }
+
 
 }
