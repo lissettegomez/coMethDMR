@@ -6,7 +6,8 @@
 #' @param beta_df data frame of beta values for all genomic regions,
 #'    with row names = CpG IDs, column names = sample IDs. This is often the
 #'    genome-wide array data.
-#' @param region_ls a list of genomic regions, each item is a vector of CpG IDs within a genomic region. The co-methylated
+#' @param region_ls a list of genomic regions, each item is a vector of CpG IDs
+#'    within a genomic region. The co-methylated
 #' regions can be obtained by function \code{CoMethAllRegions}.
 #' @param pheno_df a data frame with phenotype and covariates, with variable
 #'    \code{Sample} indicating sample IDs.
@@ -18,11 +19,15 @@
 #'    coefficient mixed model, or \code{simple} for simple linear mixed model.
 #' @param arrayType Type of array, can be "450k" or "EPIC"
 #' @param outFile output .csv file with the results for the mixed model analysis
+#' @param outLogFile log file for mixed models analysis messages
 #'
-#' @return output file: a .csv file with location of the genomic region (\code{chrom, start, end}), number of CpGs (\code{nCpGs}),
-#' \code{Estimate}, Standard error (\code{StdErr}) of the test statistic, p-value and False Discovery
-#' Rate (FDR) for association between methylation values in each genomic region with phenotype (\code{pValue}).
+#' @return (1) output file: a .csv file with location of the genomic region
+#'   (\code{chrom, start, end}), number of CpGs (\code{nCpGs}), \code{Estimate},
+#'   Standard error (\code{StdErr}) of the test statistic, p-value and False
+#'   Discovery Rate (FDR) for association between methylation values in each
+#'   genomic region with phenotype (\code{pValue}).
 #'
+#' (2) log file: a .txt file that includes messages for mixed model fitting
 #'
 #' @details This function implements a mixed model to test association between
 #'    methylation values in a genomic region with a continuous phenotype.
@@ -51,6 +56,7 @@
 #'
 #' @export
 #'
+#' @importFrom BiocParallel bplapply
 #' @importFrom stats as.formula
 #' @importFrom stats coef
 #' @importFrom stats reshape
@@ -80,6 +86,7 @@
 #'      returnAllCpGs = FALSE
 #'    )
 #'
+#'
 #'    results <- lmmTestAllRegions(
 #'      beta_df = betaMatrixChr22_df,
 #'      region_ls = coMeth_ls,
@@ -88,45 +95,123 @@
 #'      covariates_char = "age.brain",
 #'      modelType = "randCoef",
 #'      arrayType = "450k",
+#'
+#'      # generates a log file in the current directory
+#'      outLogFile = paste0("lmmLog_", Sys.Date(), ".txt")
 #'    )
+#'
 #'
 
 lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
                               contPheno_char, covariates_char,
                               modelType = c("randCoef", "simple"),
                               arrayType = c("450k","EPIC"),
-                              outFile = NULL){
+                              outFile = NULL,
+                              outLogFile = NULL){
+  # browser()
 
+  warnLvl <- options()$warn
+  options(warn = 1)
+
+  ###  Setup  ###
   modelType <- match.arg(modelType)
   arrayType <- match.arg(arrayType)
 
   CpGnames <- rownames(beta_df)
 
+  writeLog_logi <- !is.null(outLogFile)
+  if(writeLog_logi){
+
+    message(
+      paste0("messages for mixed model fittings are in file ", outLogFile)
+    )
+    # for why we need the direct file creation, two sinks opened, and two sinks
+    #   closed, see the following two Stack Overflow questions:
+    # 48173020/r-function-sink-isnt-redirecting-messages-or-warnings-to-a-file
+    # 25948774/how-to-capture-warnings-with-the-console-output
+    log_con <- file(outLogFile, open = "wt")
+    sink(file = log_con)
+    sink(file = log_con, type = "message")
+    cat("Fitting linear mixed model to all genomic regions... \n")
+    cat(paste0("Computation started at ", Sys.time(), ". \n \n"))
+
+  }
+
+
+  ###  Split Data by Region  ###
   coMethBetaDF_ls <- lapply(
     region_ls,
     function(x) beta_df[which(CpGnames %in% x), ]
   )
 
-  ### Run mixed model for all the contiguous comethylated regions ###
+
+  ###  Run mixed model for all the contiguous comethylated regions  ###
+  # if(is.null(cluster)){
 
   results_ls <- lapply(
     coMethBetaDF_ls,
     FUN = lmmTest,
-    pheno_df, contPheno_char, covariates_char, modelType, arrayType
+    pheno_df,
+    contPheno_char,
+    covariates_char,
+    modelType,
+    arrayType,
+    outLogFile
   )
+
+  # } else {
+  #
+  #   results_ls <- bplapply(
+  #     coMethBetaDF_ls,
+  #     FUN = lmmTest,
+  #     BPPARAM = cluster,
+  #     pheno_df,
+  #     contPheno_char,
+  #     covariates_char,
+  #     modelType,
+  #     arrayType,
+  #     outLogFile
+  #   )
+  #
+  # }
+
+
+  if(writeLog_logi){
+
+    cat("\n")
+    cat(paste0("Computation completed at ", Sys.time(), ". \n"))
+    cat("Note: \n")
+    cat("(1) When mixed model failed to converge, p-value for mixed model is set to 1. \n")
+    cat("(2) When mixed model is singular, at least one of the estimated variance
+    components for intercepts or slopes random effects is 0, because there isn't
+    enough variability in data to estimate the random effects. In this case, the
+    mixed model reduces to a fixed effects model. The p-values for these regions
+    are still valid.\n")
+
+    sink(type = "message")
+    sink()
+    close(log_con)
+    # for why we need two closing sinks, see the comments above; however, even
+    #   with two sink calls to close the connection, the connection is still
+    #   open (it shows up with showConnections()). Thus, we also use the close()
+    #   function directly.
+
+  }
+
+
 
   ### Output results ###
 
-  if (length(results_ls) >0 ){
+  if (length(results_ls) > 0){
 
     outDF <- do.call (rbind, results_ls)
-
     outDF$FDR <- p.adjust(outDF$pValue, method = "fdr")
-
-
     row.names(outDF) <- NULL
+
   }
 
+
+  options(warn = warnLvl)
 
   if (is.null(outFile)){
 
@@ -134,8 +219,8 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
 
   } else {
 
-    message(paste0("writing results to ", outFile))
-    write.csv(outDF, outFile, quote = FALSE, row.names = FALSE)
+    message(paste0("writing results to ", paste0(outFile,".csv")))
+    write.csv(outDF, paste0(outFile,".csv"), quote = FALSE, row.names = FALSE)
 
   }
 

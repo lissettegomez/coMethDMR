@@ -11,6 +11,7 @@
 #' @param modelType type of mixed model, can be \code{randCoef} for random
 #'    coefficient mixed model, or \code{simple} for simple linear mixed model.
 #' @param arrayType Type of array, can be "450k" or "EPIC"
+#' @param outLogFile Name of log file for messages of mixed model analysis
 #'
 #' @return  A dataframe with one row for association result of one region: \code{Estimate}, \code{StdErr}, and
 #'    \code{pvalue} for the association of methylation values in the genomic
@@ -64,10 +65,9 @@
 
 lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
                     modelType = c("randCoef", "simple"),
-                    arrayType = c("450k","EPIC")){
-
+                    arrayType = c("450k","EPIC"),
+                    outLogFile = NULL){
   # browser()
-  options(warn = 1)
 
   modelType <- match.arg(modelType)
   arrayType <- match.arg(arrayType)
@@ -100,7 +100,11 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
 
   modelFormula_char <- .MakeLmmFormula(contPheno_char, covariates_char, modelType)
 
-  print(paste0("Analyzing region ", regionName))
+  if(!is.null(outLogFile)){
+    cat(paste0("Analyzing region ", regionName, ". \n"))
+  } else {
+    message(paste0("Analyzing region ", regionName, ". \n"))
+  }
 
   tryCatch({
     f <- suppressMessages(
@@ -131,7 +135,7 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
       ps_df$pValue <- 1
     } else if(!is.null(conv_ls$lme4$messages)) {
 
-      if(grepl("failed to converge", conv_ls$lme4$messages)){
+      if(any(grepl("failed to converge", conv_ls$lme4$messages))){
         ps_df$pValue <- 1
       } else {
         ps_df$pValue <- 2 * (1 - pnorm(abs(ps_df$Stat)))
@@ -144,23 +148,19 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
   }
 
   ### split regionName into chrom, start, end
-  chrom <- sub(":.*",  "",  regionName)
-
-  range <- sub ("c.*:", "",  regionName )
-
-  start <- sub ("-\\d*", "", range)
-
-  end <- sub ("\\d*.-", "", range)
+  chrom <- sub(":.*",    "", regionName)
+  range <- sub("c.*:",   "", regionName)
+  start <- sub("-\\d*",  "", range)
+  end   <- sub("\\d*.-", "", range)
 
   ### Return results ###
-
   nCpGs <- nrow(betaOne_df)
-
   result <- cbind (
     chrom, start, end, nCpGs,
     ps_df,
     stringsAsFactors = FALSE
   )
+
   result
 
 
@@ -179,7 +179,7 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
 
   if (!is.null(covariates_char)){
     cov_char <- paste(covariates_char, collapse = " + ")
-    }
+  }
 
   ######
   if(modelType == "randCoef"){

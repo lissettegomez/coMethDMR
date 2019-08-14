@@ -33,8 +33,7 @@ A data frame with
 }
 \description{
 Given a data frame with regions in the genome, add gene symbols,
-  UCSC reference gene accession, IDs of probes in the region, and relationship
-  to known CpG islands.
+  UCSC reference gene accession, and IDs of probes in the region.
 }
 \details{
 The region types include \code{"NSHORE"}, \code{"NSHELF"},
