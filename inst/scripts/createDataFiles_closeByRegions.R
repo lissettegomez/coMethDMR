@@ -13,7 +13,7 @@ for (g in 2:length(annotData)){
   region3_200 <- lapply(region3,
                        CloseBySingleRegion,
                        arrayType = "450k",
-                       maxGap = 100,
+                       maxGap = 200,
                        minCpGs = 3)
   region3_200 <- unlist(region3_200, recursive=F)
   region3_200_df <- lapply(region3_200,
