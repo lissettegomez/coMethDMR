@@ -21,7 +21,7 @@ for (g in 2:length(annotData)){
                             arrayType = c("450k"),
                             output = "dataframe")
   names(region3_200) <- lapply(region3_200_df, NameRegion)
-  saveRDS(region3_200, paste0(gsub("Ind","",regionName),"_3_200"))
+  saveRDS(region3_200, paste0(gsub("Ind","",regionName),"_3_200.rds"))
 
 }
 
