@@ -120,7 +120,7 @@ WriteCorrPlot (betas_df)
 
 Next, we test these co-methylated regions against `stage` using a random coefficient model (more details in section 2.3 below), adjusting for `age.brain`. 
 
-Some messages are generated during mixed models fitting. The interpretations of these messages can be found in the FAQs at the end of this document (see Section 3, item (1) and (2)).    
+Some messages are generated during mixed models fitting, which are saved to the file specified by `outLogFile`. The interpretations of these messages can be found in the FAQs at the end of this document (see Section 3, item (1) and (2)).  
 
 ```{r}
 
@@ -131,7 +131,10 @@ out_df <- lmmTestAllRegions(
    contPheno_char = "stage",
    covariates_char = "age.brain",
    modelType = "randCoef",
-   arrayType = "450k" 
+   arrayType = "450k", 
+
+   # generates a log file in the current directory
+   outLogFile = paste0("lmmLog_", Sys.Date(), ".txt")
 )
 
 out_df
