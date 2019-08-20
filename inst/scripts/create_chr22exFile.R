@@ -1,8 +1,4 @@
 
-## https://github.com/rforge/ima/blob/master/www/fullannotInd.rda
-load("fullannotInd.rda")
-annot <- as.data.frame(fullannot)
-
 islands <- readRDS("ISLAND_3_200.rds")
 
 islandName <- names(islands)
