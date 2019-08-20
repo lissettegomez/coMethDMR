@@ -55,7 +55,7 @@ WriteCloseByAllRegions <- function(
     warning(
       paste("A file of close by CpGs for maxGap = 200 and minCpGs = 3
             already exist at /inst/extdata/",
-            regionType, "3_200.rda", sep = "")
+            regionType, "_3_200.rds", sep = "")
       )
 
   } else {

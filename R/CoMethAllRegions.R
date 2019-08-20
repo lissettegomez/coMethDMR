@@ -127,7 +127,7 @@ CoMethAllRegions <- function(betaMatrix,
     closeByGenomicRegion_ls <- readRDS(
       system.file(
         "extdata",
-        paste0(regionType, "3_200.rds"),
+        paste0(regionType, "_3_200.rds"),
         package = 'coMethDMR',
         mustWork = TRUE
       )
