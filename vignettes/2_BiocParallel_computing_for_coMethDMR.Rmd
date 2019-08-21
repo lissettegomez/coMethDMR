@@ -1,15 +1,18 @@
 ---
 title: "Genome-wide methylation analysis using coMethDMR via parallel computing"
 author: "Gabriel J. Odom, Lissette Gomez, and Lily Wang"
-date: "8/1/2019"
+date: "8/20/2019"
 output:
   html_document:
-    toc: true
-    toc_float: true
+    number_sections: yes
+    toc: yes
     toc_depth: 2
-    number_sections: true
+    toc_float: false
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
   word_document:
-    toc: true
+    toc: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -17,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Introduction
-In the previous vignette “Introduction to **coMethDMR**”, we discussed components of the **coMethDMR** pipeline and presented example R scripts for running an analysis with **coMethDMR** serially. However, because identifying co-methylated clusters and fitting mixed effects models on large numbers of genomic regions can be computationally expensive, we illustrate implementation of parallel computing via the **BiocParallel** R package in this vignette. 
+In the previous vignette “Introduction to **coMethDMR**”, we discussed components of the **coMethDMR** pipeline and presented example R scripts for running an analysis with **coMethDMR** serially. However, because identifying co-methylated clusters and fitting mixed effects models on large numbers of genomic regions can be computationally expensive, we illustrate implementation of parallel computing for **coMethDMR** via the **BiocParallel** R package in this vignette. 
 
 
 First, we load these two packages.
@@ -26,9 +29,7 @@ library(coMethDMR)
 library(BiocParallel)
 ```
 
-In Section 2, we give a brief re-introduction to the example data. In Section 3, we present example scripts for analyzing all genomic regions of a single type (e.g. CpG islands) using parallel computing. In Section 4, we present example scripts for analyzing genomic regions from all eleven types on the Illumina arrays (TSS1500, TSS200, UTR5, EXON1, GENEBODY, UTR3, NSHORE, NSHELF, ISLAND, SSHORE and SSHELF) using parallel computing. 
-
-
+In Section 2, we give a brief re-introduction to the example data. In Section 3, we present example scripts for analyzing a single type (e.g. CpG islands) of genomic regions using parallel computing. In Section 4, we present example scripts for analyzing genomic regions from all eleven types on the Illumina arrays (TSS1500, TSS200, UTR5, EXON1, GENEBODY, UTR3, NSHORE, NSHELF, ISLAND, SSHORE and SSHELF) using parallel computing. 
 
 # Example Dataset
 For illustration, we use a subset of prefrontal cortex methylation data (GEO GSE59685) described in Lunnon et al. (2014). This example dataset includes beta values for 8552 CpGs on chromosome 22 for a random selection of 20 subjects. We assume quality control and normalization of the methylation dataset have been performed by R packages such as **minfi** or **RnBeads**.
@@ -43,7 +44,7 @@ data(pheno_df)
 head(pheno_df)
 ```
 
-Note that only samples with both methylation data and non-missing phenotype data are analyzed by **coMethDMR**. 
+Note that only samples with both methylation data and non-missing phenotype data are analyzed by **coMethDMR**. So in this example, the sample with `subject.id = 3` which lacks AD stage information will be excluded from analysis. 
 
 
 # Analyzing One Type of Genomic Region via BiocParallel
@@ -53,19 +54,19 @@ As mentioned previously in “Introduction to **coMethDMR**”, there are severa
 2. Identify co-methylated regions, and
 3. Test co-methylated regions against the outcome variable (AD stage).
 
-Suppose we are interested in analyzing CpG islands. In the following, `closeByCGI_ls` is a list, where each item includes CpGs from the Islands regions. 
+Suppose we are interested in analyzing genomic regions corresponding to the gene promoter regions, specifically the `TSS200` regions. In the following, `closeByTSS200_ls` is a list, where each item includes CpGs located closely (max distance between 2 CpGs is 200bp by default) in the `TSS200` regions. 
 
 ```{r list_of_cgis}
-closeByCGI_ls <- readRDS(
+closeByTSS200_ls <- readRDS(
   system.file(
     "extdata",
-    "ISLAND3_200.rds",
+    "TSS200_3_200.rds",
     package = 'coMethDMR',
     mustWork = TRUE
   )
 )
 
-closeByCGI_ls[1]
+closeByTSS200_ls[1]
 ```
 
 If you are interested in analyzing other types of genomic regions, see “Introduction to **coMethDMR**”, Section 2.1 for necessary modifications to this code. 
@@ -79,44 +80,63 @@ The cluster computing with the **BiocParallel** package involves two steps:
 
 First, we set up the cluster: 
 ```{r create_cluster}
-snow_cl <- SnowParam(workers = 8, type = "SOCK")
+snow_cl <- SnowParam(workers = 20, type = "SOCK")
 ```
 
-Now we execute the `CoMethAllRegions()` function using each worker in the cluster (this takes about 3 minutes over 8 cores with 16Gb of RAM). We select the first Exon regions. Note that to analyze CpG islands, we set the region type to `"ISLAND"` in the co-methylation function below.
-```{r BiocParallel_Exon1, message=FALSE}
+Now we execute the `CoMethAllRegions()` function using each worker in the cluster, to find co-methylated clusters in the TSS200 regions. 
+
+Note that for demonstration, the following script evaluates only the first 500 regions by setting `CpGs_ls = closeByTSS200_ls[1:500]`, to identify co-methylated clusters in all 10907 TSS200 regions, change to `CpGs_ls = closeByTSS200_ls`. This would take about 6 minutes over 20 cores with 64Gb of RAM.    
+
+```{r BiocParallel_TSS200, message=FALSE}
 a0 <- Sys.time()
-pfcExons_ls <- CoMethAllRegions(
+coMeth_ls <- CoMethAllRegions(
   betaMatrix = betaMatrixChr22_df,
-  method = "pearson",
+  method = "spearman",
   arrayType = "450k",
-  regionType = "EXON1",
+  CpGs_ls = closeByTSS200_ls[1:500],
   cluster = snow_cl
 )
 Sys.time() - a0
 ```
-The object `pfcExons_ls` is a list, with each item containing the list of CpGs within an identified co-methylated region. 
+
+Note that argument `regionType = "TSS200"` can also be used to obtain the co-methyalted regions. The following scripts are equivalent to the block of scripts above. 
+
+
+```{r BiocParallel_TSS200_1, message=FALSE, eval=FALSE}
+a0 <- Sys.time()
+coMeth_ls <- CoMethAllRegions(
+  betaMatrix = betaMatrixChr22_df,
+  method = "spearman",
+  arrayType = "450k",
+  regionType = "TSS200",
+  cluster = snow_cl
+)
+Sys.time() - a0
+```
+The object `coMeth_ls` is a list, with each item containing the list of CpGs within an identified co-methylated region. 
 
 
 ## Testing the co-methylated regions
-Next we test these co-methylated regions against continuous phenotype stage, adjusting for covariates age and sex. We now execute the `lmmTestAllRegions()` function. This completes in a few seconds for the first exon regions. Note that computing the linear mixed model can often take more memory than clustering the co-methylated CpGs.
+Next we test these co-methylated regions against continuous phenotype stage, adjusting for covariates age and sex. We now execute the `lmmTestAllRegions()` function. This completes in a few seconds for the TSS200 regions. Note that computing the linear mixed model can often take more memory than identifying co-methylated regions.
+
 ```{r singleRegionType_lmmTest, warning=FALSE, results='hide'}
-resExon1_df <- lmmTestAllRegions(
+res_df <- lmmTestAllRegions(
   beta_df = betaMatrixChr22_df,
-  region_ls = pfcExons_ls,
+  region_ls = coMeth_ls,
   pheno_df = pheno_df,
   contPheno_char = "stage",
   covariates_char = c("age.brain", "sex"),
   modelType = "randCoef",
   arrayType = "450k",
-  outLogFile = "exon_lmm_log.txt"
+  outLogFile = "res_lmm_log.txt"
 )
 ```
 
-Model fit messages and diagnostics for each region will be saved to the log file specified with the `outLogFile` argument. For a single region, this will return a one row of model fit statistics as shown:
+Model fit messages and diagnostics for each region will be saved to the log file specified with the `outLogFile` argument. For a single region, this will return a one row of model fit statistics similar to the following:
 
 | chrom |    start |      end | nCpGs | Estimate | StdErr |    Stat | pValue |
 |-------|----------|----------|-------|----------|--------|---------|--------|
-| chr22 | 18268062 | 18268249 |     3 |  -0.0732 | 0.0394 | -1.8564 | 0.0634 |
+| chr22 | 24823455 | 24823519 |      4|  -0.0702 | 0.0290 | -2.4184 | 0.0155 |
 
 <!-- Because the linear mixed model may fail to converge in some cases, we want to record the computational logs from the parallel workers. To do this, we add additional information to the clusters. -->
 <!-- ```{r add_BP_log, eval=FALSE} -->
@@ -133,11 +153,11 @@ Model fit messages and diagnostics for each region will be saved to the log file
 
 
 # Analyzing All Types of Genomic Regions via BiocParallel
-Genomic regions on the Illumina arrays can be defined based on their relations to genes or CpG Islands. Genomic regions related to genes include TSS1500, TSS200, UTR5, EXON1, GENEBODY and UTR3. Genomic regions related to CGIs are NSHORE, NSHELF, ISLAND, SSHORE and SSHELF. In this section, we describe analyzing three of these 11 types of genomic regions using coMethDMR. 
+Genomic regions on the Illumina arrays can be defined based on their relations to genes or CpG Islands. Genomic regions annotated to genes include TSS1500, TSS200, UTR5, EXON1, GENEBODY and UTR3. Genomic regions annotated to CGIs are NSHORE, NSHELF, ISLAND, SSHORE and SSHELF. In this section, we describe analyzing three of these 11 types of genomic regions using coMethDMR. 
 
 Same as before, first, we create the clusters of workers. If you still have the clusters defined, you can reuse them; if not, create them again.
 ```{r cluster_2, eval=FALSE}
-snow_cl <- SnowParam(workers = 8, type = "SOCK")
+snow_cl <- SnowParam(workers = 20, type = "SOCK")
 ```
 
 ## Analyzing multiple region types
@@ -158,15 +178,16 @@ resultsAll_ls <- vector(mode = "list", length = length(regions_char))
 names(resultsAll_ls) <- regions_char
 ```
 
-Finally, we execute the `CoMethAllRegions()` function over each worker on the cluster (this completes in roughly 17 minutes using 8 cores and 24Gb of RAM), then pass these results to `lmmTestAllRegions()`:
+Finally, we execute the `CoMethAllRegions()` function over each worker on the cluster (this completes in roughly 17 minutes using 20 cores and 64Gb of RAM), then pass these results to `lmmTestAllRegions()`:
 ```{r loop_over_region_types, eval=FALSE}
-# aAll <- Sys.time()
+aAll <- Sys.time()
+
 for (region in regions_char) {
 
   print(region) # Uncomment for progress updates
   pfcRegions_ls <- CoMethAllRegions(
     betaMatrix = betaMatrixChr22_df,
-    method = "pearson",
+    method = "spearman",
     arrayType = "450k",
     regionType = region,
     cluster = snow_cl
@@ -188,7 +209,8 @@ for (region in regions_char) {
   resultsAll_ls[[region]] <- res_df
  
 }
-# Sys.time() - aAll
+
+Sys.time() - aAll
 ```
 
 ```{r load_results, echo=FALSE}
@@ -202,10 +224,10 @@ row.names(lmmResults_df) <- NULL
 
 head(lmmResults_df)
 ```
-We can see this output is similar to the previous output, with the additional column identifying the region type of each region.
+We can see this output is similar to the previous output, with the additional column annotating the type of genomic region corresponding to each co-methylated region.
 
 ## Annotate results
-Finally, we may be interested in the specific probes in these regions, or which genes overlap with these regions. We can thus use the `AnnotateResults()` function, which takes in the results data frame above (or a data frame of the results returned by `lmmTest()` or `lmmTestAllRegions()`).
+Finally, we may be interested in the specific probes in these regions, or which genes overlap with these regions. We can use the `AnnotateResults()` function.
 ```{r annotate_results}
 lmmResAnnotated_df <- AnnotateResults(
   lmmRes_df = lmmResults_df,
@@ -214,7 +236,7 @@ lmmResAnnotated_df <- AnnotateResults(
 head(lmmResAnnotated_df)
 ```
 
-We can save our results by:
+Finally. we can save our results:
 ```{r save_results, eval=FALSE}
 write.csv(
   lmmResAnnotated_df,
