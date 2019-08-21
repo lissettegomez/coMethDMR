@@ -25,6 +25,8 @@
 #'    \code{returnAllCpGs = 0} indicates not returning any CpG.
 #' @param output a character vector of CpGs or a dataframe of CpGs along with
 #'    rDrop info
+#' @param cluster computing clusters created when using parallel computing
+#'
 #' @param ... Dots for internal arguments. Currently unused.
 #'
 #' @return  When \code{output = "dataframe"} is selected, returns a list of data frames, each with \code{CpG}
