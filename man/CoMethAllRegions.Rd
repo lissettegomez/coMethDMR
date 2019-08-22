@@ -45,6 +45,8 @@ outputting all the CpGs in the input regions, while
 \item{output}{a character vector of CpGs or a dataframe of CpGs along with
 rDrop info}
 
+\item{cluster}{computing clusters created when using parallel computing}
+
 \item{...}{Dots for internal arguments. Currently unused.}
 }
 \value{
