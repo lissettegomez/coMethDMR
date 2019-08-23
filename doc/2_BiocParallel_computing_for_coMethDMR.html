@@ -213,7 +213,7 @@ $(document).ready(function () {
 
 <div id="introduction" class="section level1">
 <h1><span class="header-section-number">1</span> Introduction</h1>
-<p>In the previous vignette â€œIntroduction to <strong>coMethDMR</strong>â€, we discussed components of the <strong>coMethDMR</strong> pipeline and presented example R scripts for running an analysis with <strong>coMethDMR</strong> serially. However, because identifying co-methylated clusters and fitting mixed effects models on large numbers of genomic regions can be computationally expensive, we illustrate implementation of parallel computing for <strong>coMethDMR</strong> via the <strong>BiocParallel</strong> R package in this vignette.</p>
+<p>In the previous vignette “Introduction to <strong>coMethDMR</strong>”, we discussed components of the <strong>coMethDMR</strong> pipeline and presented example R scripts for running an analysis with <strong>coMethDMR</strong> serially. However, because identifying co-methylated clusters and fitting mixed effects models on large numbers of genomic regions can be computationally expensive, we illustrate implementation of parallel computing for <strong>coMethDMR</strong> via the <strong>BiocParallel</strong> R package in this vignette.</p>
 <p>First, we load these two packages.</p>
 <pre class="r"><code>library(coMethDMR)
 library(BiocParallel)</code></pre>
@@ -244,7 +244,7 @@ head(pheno_df)</code></pre>
 </div>
 <div id="analyzing-one-type-of-genomic-region-via-biocparallel" class="section level1">
 <h1><span class="header-section-number">3</span> Analyzing One Type of Genomic Region via BiocParallel</h1>
-<p>As mentioned previously in â€œIntroduction to <strong>coMethDMR</strong>â€, there are several steps in the <strong>coMethDMR</strong> pipeline:</p>
+<p>As mentioned previously in “Introduction to <strong>coMethDMR</strong>”, there are several steps in the <strong>coMethDMR</strong> pipeline:</p>
 <ol style="list-style-type: decimal">
 <li>Obtain CpGs located closely in pre-defined genomic regions (e.g. CpG islands),</li>
 <li>Identify co-methylated regions, and</li>
@@ -264,7 +264,7 @@ closeByTSS200_ls[1]</code></pre>
 <pre><code>## $`Chr5:16180033-16180076`
 ## [1] &quot;cg25092681&quot; &quot;cg00339556&quot; &quot;cg01791874&quot; &quot;cg17030173&quot; &quot;cg17712694&quot;
 ## [6] &quot;cg16150752&quot; &quot;cg21901718&quot;</code></pre>
-<p>If you are interested in analyzing other types of genomic regions, see â€œIntroduction to <strong>coMethDMR</strong>â€, Section 2.1 for necessary modifications to this code.</p>
+<p>If you are interested in analyzing other types of genomic regions, see “Introduction to <strong>coMethDMR</strong>”, Section 2.1 for necessary modifications to this code.</p>
 <div id="finding-co-methylated-regions" class="section level2">
 <h2><span class="header-section-number">3.1</span> Finding co-methylated regions</h2>
 <p>The cluster computing with the <strong>BiocParallel</strong> package involves two steps:</p>
@@ -283,68 +283,9 @@ coMeth_ls &lt;- CoMethAllRegions(
   arrayType = &quot;450k&quot;,
   CpGs_ls = closeByTSS200_ls[1:500],
   cluster = snow_cl
-)</code></pre>
-<pre><code>## Warning in serialize(data, node$con): 'package:stats' may not be available
-## when loading
-
-## Warning in serialize(data, node$con): 'package:stats' may not be available
-## when loading
-
-## Warning in serialize(data, node$con): 'package:stats' may not be available
-## when loading
-
-## Warning in serialize(data, node$con): 'package:stats' may not be available
-## when loading
-
-## Warning in serialize(data, node$con): 'package:stats' may not be available
-## when loading
-
-## Warning in serialize(data, node$con): 'package:stats' may not be available
-## when loading
-
-## Warning in serialize(data, node$con): 'package:stats' may not be available
-## when loading
-
-## Warning in serialize(data, node$con): 'package:stats' may not be available
-## when loading
-
-## Warning in serialize(data, node$con): 'package:stats' may not be available
-## when loading
-
-## Warning in serialize(data, node$con): 'package:stats' may not be available
-## when loading
-
-## Warning in serialize(data, node$con): 'package:stats' may not be available
-## when loading
-
-## Warning in serialize(data, node$con): 'package:stats' may not be available
-## when loading
-
-## Warning in serialize(data, node$con): 'package:stats' may not be available
-## when loading
-
-## Warning in serialize(data, node$con): 'package:stats' may not be available
-## when loading
-
-## Warning in serialize(data, node$con): 'package:stats' may not be available
-## when loading
-
-## Warning in serialize(data, node$con): 'package:stats' may not be available
-## when loading
-
-## Warning in serialize(data, node$con): 'package:stats' may not be available
-## when loading
-
-## Warning in serialize(data, node$con): 'package:stats' may not be available
-## when loading
-
-## Warning in serialize(data, node$con): 'package:stats' may not be available
-## when loading
-
-## Warning in serialize(data, node$con): 'package:stats' may not be available
-## when loading</code></pre>
-<pre class="r"><code>Sys.time() - a0</code></pre>
-<pre><code>## Time difference of 3.732267 mins</code></pre>
+)
+Sys.time() - a0</code></pre>
+<pre><code>## Time difference of 43.449 secs</code></pre>
 <p>Note that argument <code>regionType = &quot;TSS200&quot;</code> can also be used to obtain the co-methyalted regions. The following scripts are equivalent to the block of scripts above.</p>
 <pre class="r"><code>a0 &lt;- Sys.time()
 coMeth_ls &lt;- CoMethAllRegions(
@@ -527,7 +468,7 @@ head(lmmResAnnotated_df)</code></pre>
 </div>
 <div id="additional-comments-on-computational-time-and-resources" class="section level1">
 <h1><span class="header-section-number">5</span> Additional Comments on Computational Time and Resources</h1>
-<p>In this vignette, we have analyzed a small subset of a real EWAS dataset (i.e. only chromosome 22 data on 20 subjects). To give users a more realistic estimate of time for analyzing real EWAS datasets, we also measured time used for analyzing the entire Lunnon et al. (2014) dataset with 110 samples on all chromosomes. These computation times measured on a Dell Precision 5810 with 64Gb of RAM, an Intel Xeon E5-2640 CPU at 2.40Ghz, and using up to 20 cores. More specifically, in Section 4, the entire <strong>coMethDMR</strong> workflow for all 11 types of genomic regions took 50 minutes with 12 cores and used 24Gb of RAM. Weâ€™re currently working improving the speed and reducing the size of <strong>coMethDMR</strong>, so please check back soon for updates.</p>
+<p>In this vignette, we have analyzed a small subset of a real EWAS dataset (i.e. only chromosome 22 data on 20 subjects). To give users a more realistic estimate of time for analyzing real EWAS datasets, we also measured time used for analyzing the entire Lunnon et al. (2014) dataset with 110 samples on all chromosomes. These computation times measured on a Dell Precision 5810 with 64Gb of RAM, an Intel Xeon E5-2640 CPU at 2.40Ghz, and using up to 20 cores. More specifically, in Section 4, the entire <strong>coMethDMR</strong> workflow for all 11 types of genomic regions took 50 minutes with 12 cores and used 24Gb of RAM. We’re currently working improving the speed and reducing the size of <strong>coMethDMR</strong>, so please check back soon for updates.</p>
 </div>
 
 
