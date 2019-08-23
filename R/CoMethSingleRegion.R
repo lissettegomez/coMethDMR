@@ -89,6 +89,7 @@ CoMethSingleRegion <- function(CpGs_char,
       keepCpGs_df <- MarkComethylatedCpGs(
         betaCluster_mat = betaClusterTransp_mat,
         method = method,
+        betaToM = betaToM,
         rDropThresh_num
       )
 
