@@ -95,7 +95,6 @@
 #'      covariates_char = "age.brain",
 #'      modelType = "randCoef",
 #'      arrayType = "450k",
-#'
 #'      # generates a log file in the current directory
 #'      outLogFile = paste0("lmmLog_", Sys.Date(), ".txt")
 #'    )
@@ -106,6 +105,7 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
                               contPheno_char, covariates_char,
                               modelType = c("randCoef", "simple"),
                               arrayType = c("450k","EPIC"),
+                              cluster = NULL,
                               outFile = NULL,
                               outLogFile = NULL){
   # browser()
@@ -146,34 +146,34 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
 
 
   ###  Run mixed model for all the contiguous comethylated regions  ###
-  # if(is.null(cluster)){
+  if(is.null(cluster)){
 
-  results_ls <- lapply(
-    coMethBetaDF_ls,
-    FUN = lmmTest,
-    pheno_df,
-    contPheno_char,
-    covariates_char,
-    modelType,
-    arrayType,
-    outLogFile
-  )
+    results_ls <- lapply(
+      coMethBetaDF_ls,
+      FUN = lmmTest,
+      pheno_df,
+      contPheno_char,
+      covariates_char,
+      modelType,
+      arrayType,
+      outLogFile
+    )
 
-  # } else {
-  #
-  #   results_ls <- bplapply(
-  #     coMethBetaDF_ls,
-  #     FUN = lmmTest,
-  #     BPPARAM = cluster,
-  #     pheno_df,
-  #     contPheno_char,
-  #     covariates_char,
-  #     modelType,
-  #     arrayType,
-  #     outLogFile
-  #   )
-  #
-  # }
+  } else {
+
+    results_ls <- bplapply(
+      coMethBetaDF_ls,
+      FUN = lmmTest,
+      BPPARAM = cluster,
+      pheno_df,
+      contPheno_char,
+      covariates_char,
+      modelType,
+      arrayType,
+      outLogFile
+    )
+
+  }
 
 
   if(writeLog_logi){
@@ -196,6 +196,10 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
     #   open (it shows up with showConnections()). Thus, we also use the close()
     #   function directly.
 
+  } else {
+    message(
+      "For future calls to this function, perhaps specify a log file.
+      Set the file name of the log file with the outLogFile argument.")
   }
 
 
