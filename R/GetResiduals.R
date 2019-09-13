@@ -1,77 +1,79 @@
 
 #' Get Residuals
 #'
-#' @param beta_df data frame of beta values for all genomic regions,
+#' @param dnam_df data frame of beta values for all genomic regions,
 #'    with row names = CpG IDs, column names = sample IDs. This is often the
 #'    genome-wide array data.
+#' @param betaToM indicates if converting methylation beta values to mvalues
 #' @param pheno_df a data frame with phenotype and covariates, with variable
 #'    \code{Sample} indicating sample IDs.
 #' @param covariates_char character vector for names of the covariate variables
-#' @param na.action see details in na.action argument in function lm
 #'
-#' @return output a matrix of residual values same size as \code{beta_mat}
+#' @return output a matrix of residual values same size as \code{dnam_df}
 #'
 #' @export
-#'
-#' @importFrom stats residuals
 #'
 #' @examples
 #'    data(betaMatrixChr22_df)
 #'    data(pheno_df)
 #'
 #'    GetResiduals(
-#'      beta_df = betaMatrixChr22_df[1:10, 1:10],
+#'      dnam_df = betaMatrixChr22_df[1:10, 1:10],
+#'      betaToM = TRUE,
 #'      pheno_df = pheno_df,
 #'      covariates_char = c("age.brain", "sex", "Mplate")
 #'    )
 #'
-GetResiduals <- function(dnam_df, betaToM,
+GetResiduals <- function(dnam_df, betaToM = TRUE,
                          pheno_df,
-                         covariates_char,
-                         na.action = na.exclude){
+                         covariates_char){
 
-  ### Compute M values
-  mvalue_df <- log2(beta_df / (1 - beta_df))
+  if (betaToM){
+    ### Compute M values
+    value_df <- log2(dnam_df / (1 - dnam_df))
+  } else {
+    value_df <- dnam_df
+  }
 
-  ### Select samples in both mvalue_df and pheno_df
+  ### Select samples in both value_df and pheno_df
 
   ## Make sure Sample is character but not factor
   pheno_df$Sample <- as.character(pheno_df$Sample)
 
-  ## Check if samples in mvalue_df and pheno_df are identical
-  idt <- identical(colnames(mvalue_df), pheno_df$Sample)
+  ## Check if samples in value_df and pheno_df are identical
+  idt <- identical(colnames(value_df), pheno_df$Sample)
 
   if (idt){
 
-    mvalue_df <- mvalue_df
+    value_df <- value_df
     pheno_df <- pheno_df
 
   } else {
 
-    intersectSample <- intersect(colnames(mvalue_df), pheno_df$Sample)
+    intersectSample <- intersect(colnames(value_df), pheno_df$Sample)
 
     ### Select samples of pheno_df based on intersect samples
     pheno_df <- pheno_df[pheno_df$Sample %in% intersectSample, ]
 
-    ### Select samples of mvalue_df in pheno_df
-    mvalue_df <- mvalue_df[ , pheno_df$Sample]
+    ### Select samples of value_df in pheno_df
+    value_df <- value_df[ , pheno_df$Sample]
 
   }
 
   ### Create the formula
   cov_char <- paste(covariates_char, collapse = " + ")
-  formula_char <- paste0("mval ~ ", cov_char)
+  formula_char <- paste0("val ~ ", cov_char)
 
   ### Take residuals
-  resid_ls <- lapply(seq_len(nrow(mvalue_df)), function(row){
+  resid_ls <- lapply(seq_len(nrow(value_df)), function(row){
 
-    mval <- t(mvalue_df[row, ])
-    colnames(mval) <- "mval"
+    val <- t(value_df[row, ])
+    colnames(val) <- "val"
 
-    dat <- cbind(mval, pheno_df)
-    dat$mval <- as.numeric(dat$mval)
+    dat <- cbind(val, pheno_df)
+    dat$val <- as.numeric(dat$val)
 
-    fitE <- lm(formula_char, data = dat, na.action = na.action)
+    fitE <- lm(formula_char, data = dat, na.action = na.exclude)
 
     residuals(fitE)
 
@@ -79,7 +81,7 @@ GetResiduals <- function(dnam_df, betaToM,
 
   resid_df <- do.call(rbind, resid_ls)
 
-  row.names(resid_df) <- row.names(mvalue_df)
+  row.names(resid_df) <- row.names(value_df)
 
   resid_df
 

@@ -4,22 +4,22 @@
 \alias{GetResiduals}
 \title{Get Residuals}
 \usage{
-GetResiduals(beta_df, pheno_df, covariates_char, na.action = na.exclude)
+GetResiduals(dnam_df, betaToM = TRUE, pheno_df, covariates_char)
 }
 \arguments{
-\item{beta_df}{data frame of beta values for all genomic regions,
+\item{dnam_df}{data frame of beta values for all genomic regions,
 with row names = CpG IDs, column names = sample IDs. This is often the
 genome-wide array data.}
+
+\item{betaToM}{indicates if converting methylation beta values to mvalues}
 
 \item{pheno_df}{a data frame with phenotype and covariates, with variable
 \code{Sample} indicating sample IDs.}
 
 \item{covariates_char}{character vector for names of the covariate variables}
-
-\item{na.action}{see details in na.action argument in function lm}
 }
 \value{
-output a matrix of residual values same size as \code{beta_mat}
+output a matrix of residual values same size as \code{dnam_df}
 }
 \description{
 Get Residuals
@@ -29,7 +29,8 @@ Get Residuals
    data(pheno_df)
 
    GetResiduals(
-     beta_df = betaMatrixChr22_df[1:10, 1:10],
+     dnam_df = betaMatrixChr22_df[1:10, 1:10],
+     betaToM = TRUE,
      pheno_df = pheno_df,
      covariates_char = c("age.brain", "sex", "Mplate")
    )
