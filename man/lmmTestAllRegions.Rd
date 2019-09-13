@@ -5,8 +5,8 @@
 \title{Fit mixed model to test association between a continuous phenotype and
 methylation values in a list of genomic regions}
 \usage{
-lmmTestAllRegions(beta_df, region_ls, pheno_df, contPheno_char,
-  covariates_char, modelType = c("randCoef", "simple"),
+lmmTestAllRegions(beta_df, region_ls, pheno_df, minProbes = 3,
+  contPheno_char, covariates_char, modelType = c("randCoef", "simple"),
   arrayType = c("450k", "EPIC"), cluster = NULL, outFile = NULL,
   outLogFile = NULL)
 }
@@ -21,6 +21,9 @@ regions can be obtained by function \code{CoMethAllRegions}.}
 
 \item{pheno_df}{a data frame with phenotype and covariates, with variable
 \code{Sample} indicating sample IDs.}
+
+\item{minProbes}{mininum number of probes in a co-methylated region to be
+analyzed. Only regions with more than \code{minProbes} will be returned.}
 
 \item{contPheno_char}{character string of the main effect (a continuous
 phenotype) to be tested for association with methylation values in each

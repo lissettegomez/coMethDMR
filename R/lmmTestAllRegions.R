@@ -11,6 +11,8 @@
 #' regions can be obtained by function \code{CoMethAllRegions}.
 #' @param pheno_df a data frame with phenotype and covariates, with variable
 #'    \code{Sample} indicating sample IDs.
+#' @param minProbes mininum number of probes in a co-methylated region to be
+#'    analyzed. Only regions with more than \code{minProbes} will be returned.
 #' @param contPheno_char character string of the main effect (a continuous
 #'    phenotype) to be tested for association with methylation values in each
 #'    region
@@ -102,6 +104,7 @@
 #'
 
 lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
+                              minProbes = 3,
                               contPheno_char, covariates_char,
                               modelType = c("randCoef", "simple"),
                               arrayType = c("450k","EPIC"),
@@ -144,12 +147,16 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
     function(x) beta_df[which(CpGnames %in% x), ]
   )
 
+  ### Only include regions with probes >= minProbes
+  coMethBetaDF_geMin_ls <- coMethBetaDF_ls[
+    lapply(coMethBetaDF_ls, nrow) >= minProbes
+  ]
 
   ###  Run mixed model for all the contiguous comethylated regions  ###
   if(is.null(cluster)){
 
     results_ls <- lapply(
-      coMethBetaDF_ls,
+      coMethBetaDF_geMin_ls,
       FUN = lmmTest,
       pheno_df,
       contPheno_char,
@@ -162,7 +169,7 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
   } else {
 
     results_ls <- bplapply(
-      coMethBetaDF_ls,
+      coMethBetaDF_geMin_ls,
       FUN = lmmTest,
       BPPARAM = cluster,
       pheno_df,
