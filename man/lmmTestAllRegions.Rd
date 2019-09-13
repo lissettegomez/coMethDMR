@@ -7,7 +7,8 @@ methylation values in a list of genomic regions}
 \usage{
 lmmTestAllRegions(beta_df, region_ls, pheno_df, contPheno_char,
   covariates_char, modelType = c("randCoef", "simple"),
-  arrayType = c("450k", "EPIC"), outFile = NULL, outLogFile = NULL)
+  arrayType = c("450k", "EPIC"), cluster = NULL, outFile = NULL,
+  outLogFile = NULL)
 }
 \arguments{
 \item{beta_df}{data frame of beta values for all genomic regions,
@@ -90,7 +91,7 @@ This function implements a mixed model to test association between
    )
 
    coMeth_ls <- CoMethAllRegions(
-     betaMatrix = betaMatrixChr22_df,
+     dnam = betaMatrixChr22_df,
      betaToM = TRUE,
      CpGs_ls = CpGisland_ls,
      arrayType = "450k",
@@ -107,7 +108,6 @@ This function implements a mixed model to test association between
      covariates_char = "age.brain",
      modelType = "randCoef",
      arrayType = "450k",
-
      # generates a log file in the current directory
      outLogFile = paste0("lmmLog_", Sys.Date(), ".txt")
    )

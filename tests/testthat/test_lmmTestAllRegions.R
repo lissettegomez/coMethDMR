@@ -12,7 +12,7 @@ CpGisland_ls <- readRDS(
 )
 
 coMeth_ls <- CoMethAllRegions(
-  betaMatrix = betaMatrixChr22_df,
+  dnam = betaMatrixChr22_df,
   rDropThresh_num = 0.5,
   CpGs_ls = CpGisland_ls,
   arrayType = "450k",

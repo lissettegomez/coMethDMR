@@ -11,7 +11,7 @@ CpGsChr22_ls <- readRDS(
 )
 
 out_ls <- CoMethAllRegions(
-  betaMatrix = betaMatrixChr22_df,
+  dnam = betaMatrixChr22_df,
   CpGs_ls = CpGsChr22_ls,
   arrayType = "450k",
   returnAllCpGs = FALSE

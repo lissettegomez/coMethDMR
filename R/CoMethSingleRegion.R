@@ -2,7 +2,7 @@
 #'   pre-defined genomic region
 #'
 #' @param CpGs_char vector of CpGs in the inputting pre-defined genomic region.
-#' @param betaMatrix matrix (or data frame) of beta values, with row names = CpG ids,
+#' @param dnam matrix (or data frame) of beta values, with row names = CpG ids,
 #'    column names = sample ids. This should include the CpGs in \code{CpGs_char},
 #'    as well as additional CpGs.
 #' @param betaToM indicates if converting methylation beta values mvalues
@@ -44,7 +44,7 @@
 #'    )
 #'    CoMethSingleRegion(
 #'      CpGs_char = CpGsChr22_char,
-#'      betaMatrix = betaMatrixChr22_df
+#'      dnam = betaMatrixChr22_df
 #'    )
 #'
 #'    data(betaMatrix_ex3)
@@ -54,12 +54,12 @@
 #'    )
 #'    CoMethSingleRegion(
 #'      CpGs_char = CpGsEx3_char,
-#'      betaMatrix = t(betaMatrix_ex3),
+#'      dnam = t(betaMatrix_ex3),
 #'      returnAllCpGs = TRUE
 #'    )
 #'
 CoMethSingleRegion <- function(CpGs_char,
-                               betaMatrix, betaToM = TRUE,
+                               dnam, betaToM = TRUE,
                                rDropThresh_num = 0.4,
                                method = c("pearson", "spearman"),
                                minCpGs = 3,
@@ -76,11 +76,11 @@ CoMethSingleRegion <- function(CpGs_char,
 
   ### Extract beta matrix for the input CpGs ###
   # take common cpgs in beta matrix and the region first
-  commonCpGs_char <- intersect (CpGsOrdered_df$cpg, row.names(betaMatrix))
+  commonCpGs_char <- intersect (CpGsOrdered_df$cpg, row.names(dnam))
 
   if (length(commonCpGs_char) >= minCpGs){
 
-      betaCluster_mat <- betaMatrix[commonCpGs_char, ]
+      betaCluster_mat <- dnam[commonCpGs_char, ]
 
       ### Transpose beta matrix ###
       betaClusterTransp_mat <- t(betaCluster_mat)

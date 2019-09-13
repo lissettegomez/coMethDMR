@@ -90,7 +90,7 @@ Note that for demonstration, the following script evaluates only the first 500 r
 ```{r BiocParallel_TSS200, message=FALSE}
 a0 <- Sys.time()
 coMeth_ls <- CoMethAllRegions(
-  betaMatrix = betaMatrixChr22_df,
+  dnam = betaMatrixChr22_df,
   method = "spearman",
   arrayType = "450k",
   CpGs_ls = closeByTSS200_ls[1:500],
@@ -105,7 +105,7 @@ Note that argument `regionType = "TSS200"` can also be used to obtain the co-met
 ```{r BiocParallel_TSS200_1, message=FALSE, eval=FALSE}
 a0 <- Sys.time()
 coMeth_ls <- CoMethAllRegions(
-  betaMatrix = betaMatrixChr22_df,
+  dnam = betaMatrixChr22_df,
   method = "spearman",
   arrayType = "450k",
   regionType = "TSS200",
@@ -186,7 +186,7 @@ for (region in regions_char) {
 
   print(region) # Uncomment for progress updates
   pfcRegions_ls <- CoMethAllRegions(
-    betaMatrix = betaMatrixChr22_df,
+    dnam = betaMatrixChr22_df,
     method = "spearman",
     arrayType = "450k",
     regionType = region,

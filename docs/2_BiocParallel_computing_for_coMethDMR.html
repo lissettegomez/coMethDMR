@@ -278,7 +278,7 @@ closeByTSS200_ls[1]</code></pre>
 <p>Note that for demonstration, the following script evaluates only the first 500 regions by setting <code>CpGs_ls = closeByTSS200_ls[1:500]</code>, to identify co-methylated clusters in all 10907 TSS200 regions, change to <code>CpGs_ls = closeByTSS200_ls</code>. This would take about 6 minutes over 20 cores with 64Gb of RAM.</p>
 <pre class="r"><code>a0 &lt;- Sys.time()
 coMeth_ls &lt;- CoMethAllRegions(
-  betaMatrix = betaMatrixChr22_df,
+  dnam = betaMatrixChr22_df,
   method = &quot;spearman&quot;,
   arrayType = &quot;450k&quot;,
   CpGs_ls = closeByTSS200_ls[1:500],
@@ -289,7 +289,7 @@ Sys.time() - a0</code></pre>
 <p>Note that argument <code>regionType = &quot;TSS200&quot;</code> can also be used to obtain the co-methyalted regions. The following scripts are equivalent to the block of scripts above.</p>
 <pre class="r"><code>a0 &lt;- Sys.time()
 coMeth_ls &lt;- CoMethAllRegions(
-  betaMatrix = betaMatrixChr22_df,
+  dnam = betaMatrixChr22_df,
   method = &quot;spearman&quot;,
   arrayType = &quot;450k&quot;,
   regionType = &quot;TSS200&quot;,
@@ -377,13 +377,13 @@ for (region in regions_char) {
 
   print(region) # Uncomment for progress updates
   pfcRegions_ls &lt;- CoMethAllRegions(
-    betaMatrix = betaMatrixChr22_df,
+    dnam = betaMatrixChr22_df,
     method = &quot;spearman&quot;,
     arrayType = &quot;450k&quot;,
     regionType = region,
     cluster = snow_cl
   )
-  
+
   res_df &lt;- lmmTestAllRegions(
     beta_df = betaMatrixChr22_df,
     region_ls = pfcRegions_ls,
@@ -394,11 +394,11 @@ for (region in regions_char) {
     arrayType = &quot;450k&quot;,
     outLogFile = paste0(region, &quot;_lmm_log.txt&quot;)
   )
-  
+
   res_df$regionType &lt;- region
-  
+
   resultsAll_ls[[region]] &lt;- res_df
- 
+
 }
 
 Sys.time() - aAll</code></pre>

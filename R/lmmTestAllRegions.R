@@ -78,7 +78,7 @@
 #'    )
 #'
 #'    coMeth_ls <- CoMethAllRegions(
-#'      betaMatrix = betaMatrixChr22_df,
+#'      dnam = betaMatrixChr22_df,
 #'      betaToM = TRUE,
 #'      CpGs_ls = CpGisland_ls,
 #'      arrayType = "450k",

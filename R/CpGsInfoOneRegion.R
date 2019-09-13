@@ -63,7 +63,7 @@ CpGsInfoOneRegion <- function(regionName_char, betas_df, pheno_df,
   ### Extract individual CpGs in the region ###
   CpGsToTest_char <- GetCpGsInRegion(regionName_char, arrayType = "450k")
 
-  ### Transpose betaMatrix from wide to long ###
+  ### Transpose dnam from wide to long ###
   CpGsBeta_df <- betas_df[
     which(rownames(betas_df) %in% CpGsToTest_char),
   ]

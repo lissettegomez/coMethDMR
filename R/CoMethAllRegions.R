@@ -1,7 +1,7 @@
 #' Extract contiguous co-methylated genomic regions from a list of
 #'   pre-defined genomic regions
 #'
-#' @param betaMatrix matrix (or data frame) of beta values, with row names = CpG IDs,
+#' @param dnam matrix (or data frame) of beta values, with row names = CpG IDs,
 #'    column names = sample IDs. This is typically genome-wide methylation beta
 #'    values.
 #' @param betaToM indicates if converting methylation beta values to mvalues
@@ -60,7 +60,7 @@
 #'    )
 #'
 #'    coMeth_ls <- CoMethAllRegions (
-#'      betaMatrix = betaMatrixChr22_df,
+#'      dnam = betaMatrixChr22_df,
 #'      betaToM = TRUE,
 #'      method = "pearson",
 #'      CpGs_ls = CpGisland_ls,
@@ -72,7 +72,7 @@
 #'\dontrun{
 #'
 #'  CoMethAllRegions (
-#'    betaMatrix = betaMatrixChr22_df,
+#'    dnam = betaMatrixChr22_df,
 #'    regionType = "ISLAND",
 #'    arrayType = "450k",
 #'    returnAllCpGs = FALSE
@@ -80,7 +80,7 @@
 #'
 #'}
 #'
-CoMethAllRegions <- function(betaMatrix,
+CoMethAllRegions <- function(dnam,
                              betaToM = TRUE,
                              method = c("pearson", "spearman"),
                              rDropThresh_num = 0.4,
@@ -144,7 +144,7 @@ CoMethAllRegions <- function(betaMatrix,
     coMethCpGsAllREgions_ls <- lapply(
       unname(closeByGenomicRegion_ls),
       FUN = CoMethSingleRegion,
-      betaMatrix = betaMatrix,
+      dnam = dnam,
       betaToM = betaToM,
       rDropThresh_num = rDropThresh_num,
       method = method,
@@ -158,7 +158,7 @@ CoMethAllRegions <- function(betaMatrix,
       unname(closeByGenomicRegion_ls),
       FUN = CoMethSingleRegion,
       BPPARAM = cluster,
-      betaMatrix = betaMatrix,
+      dnam = dnam,
       betaToM = betaToM,
       rDropThresh_num = rDropThresh_num,
       method = method,

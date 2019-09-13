@@ -5,7 +5,7 @@
 \title{Extract contiguous co-methylated genomic regions from a list of
   pre-defined genomic regions}
 \usage{
-CoMethAllRegions(betaMatrix, betaToM = TRUE, method = c("pearson",
+CoMethAllRegions(dnam, betaToM = TRUE, method = c("pearson",
   "spearman"), rDropThresh_num = 0.4, arrayType = c("450k", "EPIC"),
   CpGs_ls = NULL, file = NULL, fileType = c("gmt", "RDS"),
   regionType = c("ISLAND", "NSHORE", "NSHELF", "SSHORE", "SSHELF",
@@ -14,7 +14,7 @@ CoMethAllRegions(betaMatrix, betaToM = TRUE, method = c("pearson",
   cluster = NULL, ...)
 }
 \arguments{
-\item{betaMatrix}{matrix (or data frame) of beta values, with row names = CpG IDs,
+\item{dnam}{matrix (or data frame) of beta values, with row names = CpG IDs,
 column names = sample IDs. This is typically genome-wide methylation beta
 values.}
 
@@ -82,7 +82,7 @@ examples of these files are at https://github.com/lissettegomez/coMethDMRdata
    )
 
    coMeth_ls <- CoMethAllRegions (
-     betaMatrix = betaMatrixChr22_df,
+     dnam = betaMatrixChr22_df,
      betaToM = TRUE,
      method = "pearson",
      CpGs_ls = CpGisland_ls,
@@ -94,7 +94,7 @@ examples of these files are at https://github.com/lissettegomez/coMethDMRdata
 \dontrun{
 
  CoMethAllRegions (
-   betaMatrix = betaMatrixChr22_df,
+   dnam = betaMatrixChr22_df,
    regionType = "ISLAND",
    arrayType = "450k",
    returnAllCpGs = FALSE

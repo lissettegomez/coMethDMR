@@ -5,14 +5,14 @@
 \title{Wrapper function to find contiguous and comethyalted sub-regions within a
   pre-defined genomic region}
 \usage{
-CoMethSingleRegion(CpGs_char, betaMatrix, betaToM = TRUE,
+CoMethSingleRegion(CpGs_char, dnam, betaToM = TRUE,
   rDropThresh_num = 0.4, method = c("pearson", "spearman"),
   minCpGs = 3, arrayType = c("450k", "EPIC"), returnAllCpGs = FALSE)
 }
 \arguments{
 \item{CpGs_char}{vector of CpGs in the inputting pre-defined genomic region.}
 
-\item{betaMatrix}{matrix (or data frame) of beta values, with row names = CpG ids,
+\item{dnam}{matrix (or data frame) of beta values, with row names = CpG ids,
 column names = sample ids. This should include the CpGs in \code{CpGs_char},
 as well as additional CpGs.}
 
@@ -61,7 +61,7 @@ Wrapper function to find contiguous and comethyalted sub-regions within a
    )
    CoMethSingleRegion(
      CpGs_char = CpGsChr22_char,
-     betaMatrix = betaMatrixChr22_df
+     dnam = betaMatrixChr22_df
    )
 
    data(betaMatrix_ex3)
@@ -71,7 +71,7 @@ Wrapper function to find contiguous and comethyalted sub-regions within a
    )
    CoMethSingleRegion(
      CpGs_char = CpGsEx3_char,
-     betaMatrix = t(betaMatrix_ex3),
+     dnam = t(betaMatrix_ex3),
      returnAllCpGs = TRUE
    )
 
