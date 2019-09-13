@@ -20,6 +20,7 @@
 #' @param modelType type of mixed model, can be \code{randCoef} for random
 #'    coefficient mixed model, or \code{simple} for simple linear mixed model.
 #' @param arrayType Type of array, can be "450k" or "EPIC"
+#' @param cluster computing clusters created when using parallel computing
 #' @param outFile output .csv file with the results for the mixed model analysis
 #' @param outLogFile log file for mixed models analysis messages
 #'
