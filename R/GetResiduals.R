@@ -25,7 +25,7 @@
 #'      covariates_char = c("age.brain", "sex", "Mplate")
 #'    )
 #'
-GetResiduals <- function(beta_df,
+GetResiduals <- function(dnam_df, betaToM,
                          pheno_df,
                          covariates_char,
                          na.action = na.exclude){
