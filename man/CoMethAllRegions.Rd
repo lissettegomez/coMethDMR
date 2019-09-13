@@ -6,12 +6,12 @@
   pre-defined genomic regions}
 \usage{
 CoMethAllRegions(dnam, betaToM = TRUE, method = c("pearson",
-  "spearman"), rDropThresh_num = 0.4, arrayType = c("450k", "EPIC"),
-  CpGs_ls = NULL, file = NULL, fileType = c("gmt", "RDS"),
-  regionType = c("ISLAND", "NSHORE", "NSHELF", "SSHORE", "SSHELF",
-  "TSS1500", "TSS200", "UTR5", "EXON1", "GENEBODY", "UTR3"),
-  returnAllCpGs = FALSE, output = c("CpGs", "dataframe"),
-  cluster = NULL, ...)
+  "spearman"), rDropThresh_num = 0.4, minCpGs = 3,
+  arrayType = c("450k", "EPIC"), CpGs_ls = NULL, file = NULL,
+  fileType = c("gmt", "RDS"), regionType = c("ISLAND", "NSHORE",
+  "NSHELF", "SSHORE", "SSHELF", "TSS1500", "TSS200", "UTR5", "EXON1",
+  "GENEBODY", "UTR3"), returnAllCpGs = FALSE, output = c("CpGs",
+  "dataframe"), cluster = NULL, ...)
 }
 \arguments{
 \item{dnam}{matrix (or data frame) of beta values, with row names = CpG IDs,
@@ -24,6 +24,9 @@ values.}
 
 \item{rDropThresh_num}{thershold for min correlation between a cpg with sum
 of the rest of the CpGs}
+
+\item{minCpGs}{mininum number of CpGs to be considered a "region".
+Only regions with more than \code{minCpGs} will be returned.}
 
 \item{arrayType}{Type of array, can be "450k" or "EPIC"}
 

@@ -8,6 +8,8 @@
 #' @param method method for computing correlation, can be "spearman" or "pearson"
 #' @param rDropThresh_num thershold for min correlation between a cpg with sum
 #'    of the rest of the CpGs
+#' @param minCpGs mininum number of CpGs to be considered a "region".
+#'    Only regions with more than \code{minCpGs} will be returned.
 #' @param arrayType Type of array, can be "450k" or "EPIC"
 #'
 #' @param CpGs_ls list where each item is a character vector of CpGs IDs.
@@ -84,6 +86,7 @@ CoMethAllRegions <- function(dnam,
                              betaToM = TRUE,
                              method = c("pearson", "spearman"),
                              rDropThresh_num = 0.4,
+                             minCpGs = 3,
                              arrayType = c("450k","EPIC"),
                              CpGs_ls = NULL,
                              file = NULL,
@@ -147,6 +150,7 @@ CoMethAllRegions <- function(dnam,
       dnam = dnam,
       betaToM = betaToM,
       rDropThresh_num = rDropThresh_num,
+      minCpGs = minCpGs,
       method = method,
       arrayType = arrayType,
       returnAllCpGs = returnAllCpGs
@@ -161,6 +165,7 @@ CoMethAllRegions <- function(dnam,
       dnam = dnam,
       betaToM = betaToM,
       rDropThresh_num = rDropThresh_num,
+      minCpGs = minCpGs,
       method = method,
       arrayType = arrayType,
       returnAllCpGs = returnAllCpGs
