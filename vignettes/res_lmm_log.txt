@@ -1,0 +1,17 @@
+Fitting linear mixed model to all genomic regions... 
+Computation started at 2019-09-06 17:58:33. 
+ 
+Analyzing region chr22:24823455-24823519. 
+Analyzing region chr22:29784671-29784697. 
+Analyzing region chr22:39378224-39378382. 
+Analyzing region chr22:36044226-36044328. 
+Analyzing region chr22:43253521-43253559. 
+
+Computation completed at 2019-09-06 17:58:35. 
+Note: 
+(1) When mixed model failed to converge, p-value for mixed model is set to 1. 
+(2) When mixed model is singular, at least one of the estimated variance
+    components for intercepts or slopes random effects is 0, because there isn't
+    enough variability in data to estimate the random effects. In this case, the
+    mixed model reduces to a fixed effects model. The p-values for these regions
+    are still valid.

@@ -1,0 +1,30 @@
+Fitting linear mixed model to all genomic regions... 
+Computation started at 2019-08-16 16:40:10. 
+ 
+Analyzing region chr22:24999188-24999195. 
+Analyzing region chr22:24384135-24384245. 
+Analyzing region chr22:17565874-17565904. 
+Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00226577 (tol = 0.002, component 1)
+Analyzing region chr22:25423974-25424194. 
+Analyzing region chr22:50987294-50987527. 
+Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.002685 (tol = 0.002, component 1)
+Analyzing region chr22:39052386-39052528. 
+Analyzing region chr22:36013307-36013444. 
+Analyzing region chr22:50523686-50524124. 
+Analyzing region chr22:22901596-22901661. 
+Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.0096217 (tol = 0.002, component 1)
+Analyzing region chr22:32439254-32439391. 
+Analyzing region chr22:45809375-45809454. 
+Analyzing region chr22:19929254-19929286. 
+
+Computation completed at 2019-08-16 16:40:14. 
+Note: 
+(1) When mixed model failed to converge, p-value for mixed model is set to 1. 
+(2) When mixed model is singular, at least one of the estimated variance
+    components for intercepts or slopes random effects is 0, because there isn't
+    enough variability in data to estimate the random effects. In this case, the
+    mixed model reduces to a fixed effects model. The p-values for these regions
+    are still valid.
