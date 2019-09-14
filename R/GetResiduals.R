@@ -1,20 +1,26 @@
 
 #' Get Residuals
 #'
-#' @param dnam_df data frame of beta values for all genomic regions,
+#' @param dnam_df data frame of methylation values,
 #'    with row names = CpG IDs, column names = sample IDs. This is often the
-#'    genome-wide array data.
+#'    genome-wide array data. Note that if beta values are the input here,
+#'    then \code{betaToM} should be set to \code{TRUE}.
+#'    If mvalues are the input, then \code{betaToM} should be set to \code{FALSE}
+#'
 #' @param betaToM indicates if converting methylation beta values to mvalues
+#'
 #' @param pheno_df a data frame with phenotype and covariates, with variable
 #'    \code{Sample} indicating sample IDs.
+#'
 #' @param covariates_char character vector for names of the covariate variables
 #'
-#' @return output a matrix of residual values same size as \code{dnam_df}
+#' @return output a matrix of residual values, in the same dimension as \code{dnam_df}
 #'
 #' @export
 #'
 #' @examples
 #'    data(betaMatrixChr22_df)
+#'
 #'    data(pheno_df)
 #'
 #'    GetResiduals(
