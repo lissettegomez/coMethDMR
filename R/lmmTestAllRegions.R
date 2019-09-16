@@ -3,7 +3,7 @@
 #' methylation values in a list of genomic regions
 #'
 #'
-#' @param beta_df data frame of beta values for all genomic regions,
+#' @param betas data frame or matrix of beta values for all genomic regions,
 #'    with row names = CpG IDs, column names = sample IDs. This is often the
 #'    genome-wide array data.
 #' @param region_ls a list of genomic regions, each item is a vector of CpG IDs
@@ -91,7 +91,7 @@
 #'
 #'
 #'    results <- lmmTestAllRegions(
-#'      beta_df = betaMatrixChr22_df,
+#'      betas = betaMatrixChr22_df,
 #'      region_ls = coMeth_ls,
 #'      pheno_df,
 #'      contPheno_char = "stage",
@@ -104,7 +104,7 @@
 #'
 #'
 
-lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
+lmmTestAllRegions <- function(betas, region_ls, pheno_df,
                               minProbes = 3,
                               contPheno_char, covariates_char,
                               modelType = c("randCoef", "simple"),
@@ -120,6 +120,12 @@ lmmTestAllRegions <- function(beta_df, region_ls, pheno_df,
   ###  Setup  ###
   modelType <- match.arg(modelType)
   arrayType <- match.arg(arrayType)
+
+  if (class(betas) == "matrix"){
+    beta_df <- as.data.frame(betas)
+  } else {
+    beta_df <- betas
+  }
 
   CpGnames <- rownames(beta_df)
 

@@ -5,13 +5,13 @@
 \title{Fit mixed model to test association between a continuous phenotype and
 methylation values in a list of genomic regions}
 \usage{
-lmmTestAllRegions(beta_df, region_ls, pheno_df, minProbes = 3,
+lmmTestAllRegions(betas, region_ls, pheno_df, minProbes = 3,
   contPheno_char, covariates_char, modelType = c("randCoef", "simple"),
   arrayType = c("450k", "EPIC"), cluster = NULL, outFile = NULL,
   outLogFile = NULL)
 }
 \arguments{
-\item{beta_df}{data frame of beta values for all genomic regions,
+\item{betas}{data frame or matrix of beta values for all genomic regions,
 with row names = CpG IDs, column names = sample IDs. This is often the
 genome-wide array data.}
 
@@ -106,7 +106,7 @@ This function implements a mixed model to test association between
 
 
    results <- lmmTestAllRegions(
-     beta_df = betaMatrixChr22_df,
+     betas = betaMatrixChr22_df,
      region_ls = coMeth_ls,
      pheno_df,
      contPheno_char = "stage",

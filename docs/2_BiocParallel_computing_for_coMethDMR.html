@@ -302,7 +302,7 @@ Sys.time() - a0</code></pre>
 <h2><span class="header-section-number">3.2</span> Testing the co-methylated regions</h2>
 <p>Next we test these co-methylated regions against continuous phenotype stage, adjusting for covariates age and sex. We now execute the <code>lmmTestAllRegions()</code> function. This completes in a few seconds for the TSS200 regions. Note that computing the linear mixed model can often take more memory than identifying co-methylated regions.</p>
 <pre class="r"><code>res_df &lt;- lmmTestAllRegions(
-  beta_df = betaMatrixChr22_df,
+  betas = betaMatrixChr22_df,
   region_ls = coMeth_ls,
   pheno_df = pheno_df,
   contPheno_char = &quot;stage&quot;,
@@ -385,7 +385,7 @@ for (region in regions_char) {
   )
 
   res_df &lt;- lmmTestAllRegions(
-    beta_df = betaMatrixChr22_df,
+    betas = betaMatrixChr22_df,
     region_ls = pfcRegions_ls,
     pheno_df = pheno_df,
     contPheno_char = &quot;stage&quot;,
