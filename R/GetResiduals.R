@@ -1,7 +1,7 @@
 
 #' Get Residuals
 #'
-#' @param dnam_df data frame of methylation values,
+#' @param dnam data frame or matrix of methylation values,
 #'    with row names = CpG IDs, column names = sample IDs. This is often the
 #'    genome-wide array data. Note that if beta values are the input here,
 #'    then \code{betaToM} should be set to \code{TRUE}.
@@ -24,15 +24,22 @@
 #'    data(pheno_df)
 #'
 #'    GetResiduals(
-#'      dnam_df = betaMatrixChr22_df[1:10, 1:10],
+#'      dnam = betaMatrixChr22_df[1:10, 1:10],
 #'      betaToM = TRUE,
 #'      pheno_df = pheno_df,
 #'      covariates_char = c("age.brain", "sex", "Mplate")
 #'    )
 #'
-GetResiduals <- function(dnam_df, betaToM = TRUE,
+GetResiduals <- function(dnam, betaToM = TRUE,
                          pheno_df,
                          covariates_char){
+
+  if (class(dnam) == "matrix"){
+    dnam_df = as.data.frame (dnam)
+  } else {
+    dnam_df = dnam
+  }
+
 
   if (betaToM){
     ### Compute M values
