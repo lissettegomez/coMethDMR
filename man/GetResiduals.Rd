@@ -4,10 +4,10 @@
 \alias{GetResiduals}
 \title{Get Residuals}
 \usage{
-GetResiduals(dnam_df, betaToM = TRUE, pheno_df, covariates_char)
+GetResiduals(dnam, betaToM = TRUE, pheno_df, covariates_char)
 }
 \arguments{
-\item{dnam_df}{data frame of methylation values,
+\item{dnam}{data frame or matrix of methylation values,
 with row names = CpG IDs, column names = sample IDs. This is often the
 genome-wide array data. Note that if beta values are the input here,
 then \code{betaToM} should be set to \code{TRUE}.
@@ -32,7 +32,7 @@ Get Residuals
    data(pheno_df)
 
    GetResiduals(
-     dnam_df = betaMatrixChr22_df[1:10, 1:10],
+     dnam = betaMatrixChr22_df[1:10, 1:10],
      betaToM = TRUE,
      pheno_df = pheno_df,
      covariates_char = c("age.brain", "sex", "Mplate")
