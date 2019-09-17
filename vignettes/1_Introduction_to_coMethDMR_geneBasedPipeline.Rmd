@@ -1,6 +1,6 @@
 ---
 title: Introduction to coMethDMR
-author: "Lissette Gomez, Gabriel Odom, Lanyu Zhang, Tiago Chedraoui Silva, Lily Wang"
+author: "Lissette Gomez, Gabriel Odom, Lanyu Zhang, Lily Wang"
 date: "September 16, 2019"
 output:
   pdf_document: default
@@ -12,7 +12,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-`coMethDMR` is an R package that identifies genomic regions that are both co-methylated and differentially methylated in Illumina array datasets. Instead of testing all CpGs within a genomic region, `coMethDMR` carries out an additional step that selects co-methylated sub-regions first without using any outcome information. Next, `coMethDMR` tests association between methylation within the sub-region and continuous phenotype using a random coefficient mixed effects model, which models both variations between CpG sites within the region and differential methylation simultaneously. `coMethDMR` is available from GitHub, and will be submitted to Bioconductor soon.
+`coMethDMR` is an R package that identifies genomic regions that are both co-methylated and differentially methylated in Illumina array datasets. Instead of testing all CpGs within a genomic region, `coMethDMR` carries out an additional step that selects co-methylated sub-regions first without using any outcome information. Next, `coMethDMR` tests association between methylation within the sub-region and continuous phenotype using a random coefficient mixed effects model, which models both variations between CpG sites within the region and differential methylation simultaneously. 
 
 
 # 1. Quick start
@@ -42,7 +42,7 @@ data(betaMatrixChr22_df)
 betaMatrixChr22_df [1:5, 1:5]
 ```
 
-The corresponding phenotype dataset included variables `stage` (Braak AD stage), `subject.id`, `Mplate` (batch effect), `Sex`, `Sample` and `age.brain` (age of the brain donor). Please note the phenotype file needs to have a variable called "Sample" that links to the methylation dataset. 
+The corresponding phenotype dataset included variables `stage` (Braak AD stage), `subject.id`, `Mplate` (batch effect), `Sex`, `Sample` and `age.brain` (age of the brain donor). Please note the phenotype file needs to have a variable called "Sample" that will be used by coMethDMR to link to the methylation dataset. 
 
 ```{r}
 data(pheno_df)
@@ -217,7 +217,7 @@ For example, the following script computes residuals from linear model
 
 ```{r}
 resid_df <- GetResiduals(
-  dnam_df = betaMatrixChr22_df,
+  dnam = betaMatrixChr22_df,
   betaToM = TRUE, #converts to Mvalues for fitting linear model 
   pheno_df = pheno_df,
   covariates_char = c("age.brain", "sex", "Mplate")
