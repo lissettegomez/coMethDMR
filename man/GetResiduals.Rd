@@ -21,7 +21,7 @@ If mvalues are the input, then \code{betaToM} should be set to \code{FALSE}}
 \item{covariates_char}{character vector for names of the covariate variables}
 }
 \value{
-output a matrix of residual values, in the same dimension as \code{dnam_df}
+output a matrix of residual values, in the same dimension as \code{dnam}
 }
 \description{
 Get Residuals

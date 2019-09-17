@@ -23,7 +23,7 @@ test_that("lmmTestAllRegions returns df with correct classes", {
 
   expect_s3_class(
     lmmTestAllRegions(
-      beta_df = betaMatrixChr22_df,
+      betas = betaMatrixChr22_df,
       region_ls = coMeth_ls,
       pheno_df,
       contPheno_char = "stage",

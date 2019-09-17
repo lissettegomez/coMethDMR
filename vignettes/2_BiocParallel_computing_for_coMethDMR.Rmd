@@ -121,7 +121,7 @@ Next we test these co-methylated regions against continuous phenotype stage, adj
 
 ```{r singleRegionType_lmmTest, warning=FALSE, results='hide'}
 res_df <- lmmTestAllRegions(
-  beta_df = betaMatrixChr22_df,
+  betas = betaMatrixChr22_df,
   region_ls = coMeth_ls,
   pheno_df = pheno_df,
   contPheno_char = "stage",
@@ -194,7 +194,7 @@ for (region in regions_char) {
   )
   
   res_df <- lmmTestAllRegions(
-    beta_df = betaMatrixChr22_df,
+    betas = betaMatrixChr22_df,
     region_ls = pfcRegions_ls,
     pheno_df = pheno_df,
     contPheno_char = "stage",

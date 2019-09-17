@@ -14,9 +14,12 @@
 #'
 #' @param covariates_char character vector for names of the covariate variables
 #'
-#' @return output a matrix of residual values, in the same dimension as \code{dnam_df}
+#' @return output a matrix of residual values, in the same dimension as \code{dnam}
 #'
 #' @export
+#'
+#' @importFrom stats na.exclude
+#' @importFrom stats residuals
 #'
 #' @examples
 #'    data(betaMatrixChr22_df)
@@ -35,7 +38,7 @@ GetResiduals <- function(dnam, betaToM = TRUE,
                          covariates_char){
 
   if (class(dnam) == "matrix"){
-    dnam_df = as.data.frame (dnam)
+    dnam_df = as.data.frame(dnam)
   } else {
     dnam_df = dnam
   }

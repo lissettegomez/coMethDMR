@@ -125,7 +125,7 @@ Some messages are generated during mixed models fitting, which are saved to the 
 ```{r}
 
 out_df <- lmmTestAllRegions(
-   beta_df = betaMatrixChr22_df,
+   betas = betaMatrixChr22_df,
    region_ls = coMeth_ls,
    pheno_df,
    contPheno_char = "stage",
@@ -308,7 +308,7 @@ The simple linear mixed model is
 To test one genomic region against the continuous phenotype `stage`, adjusting for `age.brain`: 
 ```{r message = FALSE}
 lmmTestAllRegions(
-  beta_df = betaMatrixChr22_df,
+  betas = betaMatrixChr22_df,
   region_ls = coMeth_ls[1],
   pheno_df,
   contPheno_char = "stage",
@@ -322,7 +322,7 @@ If we don't want to adjust for any covariate effect, we can set `covariates_char
 
 ```{r message = FALSE}
 lmmTestAllRegions(
-  beta_df = betaMatrixChr22_df,
+  betas = betaMatrixChr22_df,
   region_ls = coMeth_ls[1],
   pheno_df,
   contPheno_char = "stage",
