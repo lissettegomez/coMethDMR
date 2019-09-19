@@ -68,12 +68,14 @@ AnnotateResults <- function(lmmRes_df, arrayType = c("450k","EPIC")){
 
       locations_df <- IlluminaHumanMethylation450kanno.ilmn12.hg19::Locations
       UCSCinfo_df  <- IlluminaHumanMethylation450kanno.ilmn12.hg19::Other
+      IslandsUCSCinfo_df <- IlluminaHumanMethylation450kanno.ilmn12.hg19::Islands.UCSC
 
     },
     "EPIC" = {
 
       locations_df <- IlluminaHumanMethylationEPICanno.ilm10b2.hg19::Locations
       UCSCinfo_df  <- IlluminaHumanMethylationEPICanno.ilm10b2.hg19::Other
+      IslandsUCSCinfo_df <- IlluminaHumanMethylationEPICanno.ilm10b2.hg19::Islands.UCSC
 
     }
   )
@@ -92,10 +94,12 @@ AnnotateResults <- function(lmmRes_df, arrayType = c("450k","EPIC")){
   )
   UCSCinfo_df <- UCSCinfo_df[, interestingColumns_char]
 
+  # UCSC Island Info
+  IslandsUCSCinfo_df <- as.data.frame(IslandsUCSCinfo_df)
 
 
   ###  Define Wrapper Function  ###
-  AnnotateRow <- function(row_df, loc_df, info_df, includeType){
+  AnnotateRow <- function(row_df, loc_df, info_df, island_df, includeType){
     # browser()
 
     ###  Filter Data Frames  ###
@@ -113,6 +117,8 @@ AnnotateResults <- function(lmmRes_df, arrayType = c("450k","EPIC")){
     # Find UCSC Annotation Information for those Probes
     infoOut_df <- info_df[probes_char, ]
 
+    # Find UCSC Relation to Island Information for those Probes
+    islandOut_df <- island_df[probes_char, ]
 
     ###  Wrangle UCSC Annotation  ###
     refGeneGroup_char <- unlist(
@@ -142,6 +148,8 @@ AnnotateResults <- function(lmmRes_df, arrayType = c("450k","EPIC")){
     )
     refGeneName_char <- sort(unique(refGeneName_char))
 
+    refIslandRelation_char <- sort(unique(islandOut_df$Relation_to_Island))
+
 
     ###  Return Annotated 1-Row Data Frame  ###
     if(includeType){
@@ -158,8 +166,10 @@ AnnotateResults <- function(lmmRes_df, arrayType = c("450k","EPIC")){
       paste0(unique(refGeneAcc_char), collapse = ";")
     row_df$UCSC_RefGene_Name <-
       paste0(unique(refGeneName_char), collapse = ";")
-    row_df$probes <-
-      paste0(unique(probes_char), collapse = ";")
+    # row_df$probes <-
+    #   paste0(unique(probes_char), collapse = ";")
+    row_df$Relation_to_Island <-
+      paste0(unique(refIslandRelation_char), collapse = ";")
 
      row_df
 
@@ -172,6 +182,7 @@ AnnotateResults <- function(lmmRes_df, arrayType = c("450k","EPIC")){
       row_df = lmmRes_df[row, ],
       loc_df = locations_df,
       info_df = UCSCinfo_df,
+      island_df = IslandsUCSCinfo_df,
       includeType = inclType_logi
     )
 
