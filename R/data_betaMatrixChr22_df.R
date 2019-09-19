@@ -7,4 +7,4 @@
 #'
 #'
 #' @source GEO accession: GSE59685
-"betaMatrixChr22_df"
+"betasChr22_df"

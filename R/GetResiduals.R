@@ -22,15 +22,15 @@
 #' @importFrom stats residuals
 #'
 #' @examples
-#'    data(betaMatrixChr22_df)
+#'    data(betasChr22_df)
 #'
 #'    data(pheno_df)
 #'
 #'    GetResiduals(
-#'      dnam = betaMatrixChr22_df[1:10, 1:10],
+#'      dnam = betaChr22_df[1:10, 1:10],
 #'      betaToM = TRUE,
 #'      pheno_df = pheno_df,
-#'      covariates_char = c("age.brain", "sex", "Mplate")
+#'      covariates_char = c("age.brain", "sex", "slide")
 #'    )
 #'
 GetResiduals <- function(dnam, betaToM = TRUE,

@@ -49,7 +49,7 @@
 #' @importFrom BiocParallel bplapply
 #'
 #' @examples
-#'    data(betaMatrixChr22_df)
+#'    data(betasChr22_df)
 #'
 #'
 #'    CpGisland_ls <- readRDS(
@@ -62,7 +62,7 @@
 #'    )
 #'
 #'    coMeth_ls <- CoMethAllRegions (
-#'      dnam = betaMatrixChr22_df,
+#'      dnam = betasChr22_df,
 #'      betaToM = TRUE,
 #'      method = "pearson",
 #'      CpGs_ls = CpGisland_ls,
@@ -74,7 +74,7 @@
 #'\dontrun{
 #'
 #'  CoMethAllRegions (
-#'    dnam = betaMatrixChr22_df,
+#'    dnam = betasChr22_df,
 #'    regionType = "ISLAND",
 #'    arrayType = "450k",
 #'    returnAllCpGs = FALSE

@@ -35,7 +35,7 @@
 #' @export
 #'
 #' @examples
-#'    data(betaMatrixChr22_df)
+#'    data(betasChr22_df)
 #'
 #'    CpGsChr22_char <- c(
 #'      "cg02953382", "cg12419862", "cg24565820", "cg04234412", "cg04824771",
@@ -44,7 +44,7 @@
 #'    )
 #'    CoMethSingleRegion(
 #'      CpGs_char = CpGsChr22_char,
-#'      dnam = betaMatrixChr22_df
+#'      dnam = betasChr22_df
 #'    )
 #'
 #'    data(betaMatrix_ex3)

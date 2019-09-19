@@ -18,13 +18,13 @@
 #' @export
 #'
 #' @examples
-#'    data(betaMatrixChr22_df)
+#'    data(betasChr22_df)
 #'    data(pheno_df)
 #'    AllRegionNames_char <- c("chr22:18267969-18268249", "chr22:18531243-18531447")
 #'
 #'    CpGsInfoAllRegions(
 #'      AllRegionNames_char,
-#'      betas_df = betaMatrixChr22_df,
+#'      betas_df = betasChr22_df,
 #'      pheno_df, contPheno_char = "stage",
 #'      covariates_char = c("age.brain", "sex")
 #'    )

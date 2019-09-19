@@ -67,7 +67,7 @@
 #' @importFrom utils write.csv
 #'
 #' @examples
-#'    data(betaMatrixChr22_df)
+#'    data(betasChr22_df)
 #'
 #'    data(pheno_df)
 #'
@@ -81,7 +81,7 @@
 #'    )
 #'
 #'    coMeth_ls <- CoMethAllRegions(
-#'      dnam = betaMatrixChr22_df,
+#'      dnam = betasChr22_df,
 #'      betaToM = TRUE,
 #'      CpGs_ls = CpGisland_ls,
 #'      arrayType = "450k",
@@ -91,7 +91,7 @@
 #'
 #'
 #'    results <- lmmTestAllRegions(
-#'      betas = betaMatrixChr22_df,
+#'      betas = betasChr22_df,
 #'      region_ls = coMeth_ls,
 #'      pheno_df,
 #'      contPheno_char = "stage",
