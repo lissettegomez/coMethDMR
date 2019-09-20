@@ -37,12 +37,12 @@ are used as regression outcomes in these models. The model for each CpG is:
   \code{methylation M value ~ contPheno_char + covariates_char}
 }
 \examples{
-   data(betaMatrixChr22_df)
+   data(betasChr22_df)
    data(pheno_df)
 
    CpGsInfoOneRegion(
      regionName_char = "chr22:19709548-19709755",
-     betas_df = betaMatrixChr22_df,
+     betas_df = betasChr22_df,
      pheno_df, contPheno_char = "stage",
      covariates_char = c("age.brain", "sex"),
      arrayType = "450k"
@@ -51,7 +51,7 @@ are used as regression outcomes in these models. The model for each CpG is:
    # not adjusting for covariates
    CpGsInfoOneRegion(
      regionName_char = "chr22:18267969-18268249",
-     betas_df = betaMatrixChr22_df,
+     betas_df = betasChr22_df,
      pheno_df, contPheno_char = "stage",
      covariates_char = NULL
    )

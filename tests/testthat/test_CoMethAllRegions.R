@@ -1,7 +1,7 @@
 # Lizhong Liu
 context("CoMethAllRegions")
 
-data(betaMatrixChr22_df)
+data(betasChr22_df)
 CpGsChr22_ls <- readRDS(
   system.file ("extdata",
                "CpGislandsChr22_ex.RDS",
@@ -11,7 +11,7 @@ CpGsChr22_ls <- readRDS(
 )
 
 out_ls <- CoMethAllRegions(
-  dnam = betaMatrixChr22_df,
+  dnam = betasChr22_df,
   CpGs_ls = CpGsChr22_ls,
   arrayType = "450k",
   returnAllCpGs = FALSE

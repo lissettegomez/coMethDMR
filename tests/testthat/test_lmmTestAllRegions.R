@@ -1,7 +1,7 @@
 # Lizhong Liu
 context("lmmTestAllRegions")
 
-data(betaMatrixChr22_df)
+data(betasChr22_df)
 data(pheno_df)
 
 CpGisland_ls <- readRDS(
@@ -12,7 +12,7 @@ CpGisland_ls <- readRDS(
 )
 
 coMeth_ls <- CoMethAllRegions(
-  dnam = betaMatrixChr22_df,
+  dnam = betasChr22_df,
   rDropThresh_num = 0.5,
   CpGs_ls = CpGisland_ls,
   arrayType = "450k",
@@ -23,7 +23,7 @@ test_that("lmmTestAllRegions returns df with correct classes", {
 
   expect_s3_class(
     lmmTestAllRegions(
-      betas = betaMatrixChr22_df,
+      betas = betasChr22_df,
       region_ls = coMeth_ls,
       pheno_df,
       contPheno_char = "stage",

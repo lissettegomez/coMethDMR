@@ -52,7 +52,7 @@ Wrapper function to find contiguous and comethyalted sub-regions within a
   pre-defined genomic region
 }
 \examples{
-   data(betaMatrixChr22_df)
+   data(betasChr22_df)
 
    CpGsChr22_char <- c(
      "cg02953382", "cg12419862", "cg24565820", "cg04234412", "cg04824771",
@@ -61,7 +61,7 @@ Wrapper function to find contiguous and comethyalted sub-regions within a
    )
    CoMethSingleRegion(
      CpGs_char = CpGsChr22_char,
-     dnam = betaMatrixChr22_df
+     dnam = betasChr22_df
    )
 
    data(betaMatrix_ex3)

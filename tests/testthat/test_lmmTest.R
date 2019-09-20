@@ -1,7 +1,7 @@
 # Lizhong Liu
 context("lmmTest")
 
-data(betaMatrixChr22_df)
+data(betasChr22_df)
 data(pheno_df)
 
 CpGsChr22_char <- c(
@@ -9,8 +9,8 @@ CpGsChr22_char <- c(
   "cg09033563", "cg10150615", "cg18538332", "cg20007245", "cg23131131",
   "cg25703541"
 )
-coMethCpGs <- CoMethSingleRegion(CpGsChr22_char, betaMatrixChr22_df)
-coMethBetaMatrix <- betaMatrixChr22_df[coMethCpGs$CpGsSubregions[[1]], ]
+coMethCpGs <- CoMethSingleRegion(CpGsChr22_char, betasChr22_df)
+coMethBetaMatrix <- betasChr22_df[coMethCpGs$CpGsSubregions[[1]], ]
 
 test_that("lmmTest returns df with correct classes", {
 

@@ -72,7 +72,7 @@ argument (2) use \code{regionType} argument (3) use \code{file} and \code{fileTy
 examples of these files are at https://github.com/lissettegomez/coMethDMRdata
 }
 \examples{
-   data(betaMatrixChr22_df)
+   data(betasChr22_df)
 
 
    CpGisland_ls <- readRDS(
@@ -85,7 +85,7 @@ examples of these files are at https://github.com/lissettegomez/coMethDMRdata
    )
 
    coMeth_ls <- CoMethAllRegions (
-     dnam = betaMatrixChr22_df,
+     dnam = betasChr22_df,
      betaToM = TRUE,
      method = "pearson",
      CpGs_ls = CpGisland_ls,
@@ -97,7 +97,7 @@ examples of these files are at https://github.com/lissettegomez/coMethDMRdata
 \dontrun{
 
  CoMethAllRegions (
-   dnam = betaMatrixChr22_df,
+   dnam = betasChr22_df,
    regionType = "ISLAND",
    arrayType = "450k",
    returnAllCpGs = FALSE

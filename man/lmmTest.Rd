@@ -53,7 +53,7 @@ This function implements a mixed model to test association between
    normal distributions instead of t-distributions.
 }
 \examples{
-  data(betaMatrixChr22_df)
+  data(betasChr22_df)
 
   CpGsChr22_char <- c(
     "cg02953382", "cg12419862", "cg24565820", "cg04234412", "cg04824771",
@@ -61,10 +61,10 @@ This function implements a mixed model to test association between
     "cg25703541"
   )
 
-  coMethCpGs <- CoMethSingleRegion(CpGsChr22_char, betaMatrixChr22_df)
+  coMethCpGs <- CoMethSingleRegion(CpGsChr22_char, betasChr22_df)
 
   # test only the first co-methylated region
-  coMethBeta_df <- betaMatrixChr22_df[coMethCpGs$CpGsSubregions[[1]], ]
+  coMethBeta_df <- betasChr22_df[coMethCpGs$CpGsSubregions[[1]], ]
 
   data(pheno_df)
 
