@@ -32,7 +32,7 @@ Get Residuals
    data(pheno_df)
 
    GetResiduals(
-     dnam = betaSChr22_df[1:10, 1:10],
+     dnam = betasChr22_df[1:10, 1:10],
      betaToM = TRUE,
      pheno_df = pheno_df,
      covariates_char = c("age.brain", "sex", "slide")
