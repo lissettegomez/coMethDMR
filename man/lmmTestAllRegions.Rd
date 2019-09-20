@@ -79,7 +79,7 @@ This function implements a mixed model to test association between
    regions are still valid.
 }
 \examples{
-   data(betaMatrixChr22_df)
+   data(betasChr22_df)
 
    data(pheno_df)
 
@@ -93,7 +93,7 @@ This function implements a mixed model to test association between
    )
 
    coMeth_ls <- CoMethAllRegions(
-     dnam = betaMatrixChr22_df,
+     dnam = betasChr22_df,
      betaToM = TRUE,
      CpGs_ls = CpGisland_ls,
      arrayType = "450k",
@@ -103,7 +103,7 @@ This function implements a mixed model to test association between
 
 
    results <- lmmTestAllRegions(
-     betas = betaMatrixChr22_df,
+     betas = betasChr22_df,
      region_ls = coMeth_ls,
      pheno_df,
      contPheno_char = "stage",

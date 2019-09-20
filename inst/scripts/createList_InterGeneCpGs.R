@@ -57,61 +57,6 @@ names(region3_200) <- lapply(region3_200_df, NameRegion)
 
 saveRDS(region3_200, "InterGene_3_200.rds")
 
-### Find overlap between gene regions e intergenic regions
-
-computeDensity <- function (cpgs, name_char){
-
-  #browser()
-
-  chr <- as.character(sub(":.*",  "",  name_char))
-
-  range <- sub ("c.*:", "",  name_char, ignore.case = TRUE)
-
-  start <- as.numeric(sub ("-\\d*", "", range))
-
-  end <- as.numeric(sub ("\\d*.-", "", range))
-
-  length <- end - start
-
-  nCpGs <- length(as.character(cpgs))
-
-  out_df <- data.frame (chr, start, end, length, nCpGs)
-
-  out_df$density <- out_df$length / out_df$nCpGs
-
-  return (out_df)
-}
-
-
-
-CpGintergenesCloseBy <- region3_200
-closeBynames_char <- names(CpGintergenesCloseBy)
-closeByDensityIntergenes_ls <- mapply (FUN = computeDensity,
-                                       CpGintergenesCloseBy,
-                                       closeBynames_char,
-                                       SIMPLIFY = FALSE)
-closeByDensityIntergenes_df <- do.call (rbind, closeByDensityIntergenes_ls)
-
-
-
-CpGgenesCloseBy <- readRDS("Gene_3_200.rds")
-closeBynames_char <- names(CpGgenesCloseBy)
-closeByDensity_ls <- mapply (FUN = computeDensity, CpGgenesCloseBy, closeBynames_char, SIMPLIFY = FALSE)
-closeByDensity_df <- do.call (rbind, closeByDensity_ls)
-
-
-genesRegions <- GRanges(
-  seqnames=closeByDensity_df$chr,
-  ranges=IRanges(closeByDensity_df$start, closeByDensity_df$end)
-  )
-
-intergenesRegions <- GRanges(
-  seqnames=closeByDensityIntergenes_df$chr,
-  ranges=IRanges(closeByDensityIntergenes_df$start, closeByDensityIntergenes_df$end)
-  )
-
-overlap <- findOverlaps(genesRegions, intergenesRegions)
-
 ### remove chrx and chrY ###
 
 region <- readRDS("InterGene_3_200.rds")
@@ -122,5 +67,5 @@ chrX_Y <- grep(paste("chrX", "chrY", sep="|"), regionNames)
 
 regionNoXY <- region[-chrX_Y]
 
-saveRDS(regionNoXY, "InterGene_3_200noXY.rds")
+saveRDS(regionNoXY, "InterGene_3_200.rds")
 

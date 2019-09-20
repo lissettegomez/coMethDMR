@@ -1,16 +1,6 @@
 library(coMethDMR)
 library(tidyr)
 
-## https://github.com/rforge/ima/blob/master/www/fullannotInd.rda
-# annotData <- load("fullannotInd.rda")
-#
-# annotDF <- as.data.frame(fullannot)
-#
-# AllGeneNames <- names(GENEBODYInd$SID)
-
-
-# data(IlluminaHumanMethylation450kanno.ilmn12.hg19)
-
 annotDF <- IlluminaHumanMethylation450kanno.ilmn12.hg19::Other
 
 cpgGene_df <- subset(annotDF, select="UCSC_RefGene_Name")
@@ -24,10 +14,6 @@ cpgGeneCG_df$CpG <- rownames(cpgGeneCG_df)
 cpgGeneCGlong_df <- unique(separate_rows(cpgGeneCG_df,1,sep=";"))
 
 AllGeneNames <- unique(cpgGeneCGlong_df$UCSC_RefGene_Name)
-
-# multChrGenes <- read.table("C:/Users/lxg255/Documents/multipleChrGenes.txt")
-
-# AllGeneNamesU <- AllGeneNames[which(!AllGeneNames %in% multChrGenes$V1)]
 
 ### make a list, where each item include cpgs for each gene
 
@@ -44,8 +30,6 @@ for (i in 1:length(AllGeneNames)){
   allGeneRegions_ls <- c(allGeneRegions_ls, geneRegion_ls)
 
 }
-
-# saveRDS(allGeneRegions_ls, "Gene_CpG_Regions_noMultipleChrGenes.rds")
 
 region3 <- allGeneRegions_ls [lapply(allGeneRegions_ls, length) >=3]
 region3_200 <- lapply(region3,
@@ -77,4 +61,4 @@ chrX_Y <- grep(paste("chrX", "chrY", sep="|"), regionNames)
 
 regionNoXY <- region[-chrX_Y]
 
-saveRDS(regionNoXY, "Gene_3_200noXY.rds")
+saveRDS(regionNoXY, "Gene_3_200.rds")

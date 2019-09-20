@@ -15,10 +15,6 @@ cpgGeneCGlong_df <- unique(separate_rows(cpgGeneCG_df,1,sep=";"))
 
 AllGeneNames <- unique(cpgGeneCGlong_df$UCSC_RefGene_Name)
 
-# multChrGenes <- read.table("C:/Users/lxg255/Documents/multipleChrGenes.txt")
-
-# AllGeneNamesU <- AllGeneNames[which(!AllGeneNames %in% multChrGenes$V1)]
-
 ### make a list, where each item include cpgs for each gene
 
 allGeneRegions_ls <- list()
@@ -34,8 +30,6 @@ for (i in 1:length(AllGeneNames)){
   allGeneRegions_ls <- c(allGeneRegions_ls, geneRegion_ls)
 
 }
-
-saveRDS(allGeneRegions_ls, "Gene_CpG_Regions_noMultipleChrGenes.rds")
 
 region3 <- allGeneRegions_ls [lapply(allGeneRegions_ls, length) >=3]
 region3_200 <- lapply(region3,
