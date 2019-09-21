@@ -3,8 +3,8 @@ title: Introduction to coMethDMR
 author: "Lissette Gomez, Gabriel Odom, Lanyu Zhang, Lily Wang"
 date: "September 16, 2019"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
   word_document: default
 ---
 
@@ -38,11 +38,11 @@ The input of `coMethDMR` are methylation beta values. We assume quality control 
 
 ```{r}
 
-data(betaMatrixChr22_df)
-betaMatrixChr22_df [1:5, 1:5]
+data(betasChr22_df)
+betasChr22_df [1:5, 1:5]
 ```
 
-The corresponding phenotype dataset included variables `stage` (Braak AD stage), `subject.id`, `Mplate` (batch effect), `Sex`, `Sample` and `age.brain` (age of the brain donor). Please note the phenotype file needs to have a variable called "Sample" that will be used by coMethDMR to link to the methylation dataset. 
+The corresponding phenotype dataset included variables `stage` (Braak AD stage), `subject.id`, `slide` (batch effect), `Sex`, `Sample` and `age.brain` (age of the brain donor). Please note the phenotype file needs to have a variable called "Sample" that will be used by coMethDMR to link to the methylation dataset. 
 
 ```{r}
 data(pheno_df)
@@ -73,7 +73,7 @@ Here, `CpGisland_ls` is a list of 20 items, with each item of the list including
 Next, we identify co-methylated regions based on Mvalues.  
 ```{r}
 coMeth_ls <- CoMethAllRegions (
-  dnam = betaMatrixChr22_df,
+  dnam = betasChr22_df,
   betaToM = TRUE, #converts to mvalues
   CpGs_ls = CpGisland_ls,
   arrayType = "450k",
@@ -111,8 +111,8 @@ WriteCorrPlot <- function (beta_mat){
 
 # subsetting beta values to include only co-methylated probes
 betas_df <- subset(
-  betaMatrixChr22_df, 
-  row.names(betaMatrixChr22_df) %in% coMeth_ls [[1]]
+  betasChr22_df, 
+  row.names(betasChr22_df) %in% coMeth_ls [[1]]
 )
 
 WriteCorrPlot (betas_df)
@@ -125,7 +125,7 @@ Some messages are generated during mixed models fitting, which are saved to the 
 ```{r}
 
 out_df <- lmmTestAllRegions(
-   betas = betaMatrixChr22_df,
+   betas = betasChr22_df,
    region_ls = coMeth_ls,
    pheno_df,
    contPheno_char = "stage",
@@ -159,7 +159,7 @@ To further examine the significant regions, we can also extract individual CpG p
 ```{r}
 outCpGs_df <- CpGsInfoOneRegion(
  regionName_char = "chr22:18268062-18268249",
- betas_df = betaMatrixChr22_df,
+ betas_df = betasChr22_df,
  pheno_df, contPheno_char = "stage",
  covariates_char = NULL,
  arrayType = "450k"
@@ -174,7 +174,7 @@ These CpGs mapped to intergenic regions, so there are no gene names associated w
 ```{r}
 CpGsInfoOneRegion(
   regionName_char = "chr22:19709548-19709755",
-  betas_df = betaMatrixChr22_df,
+  betas_df = betasChr22_df,
   pheno_df, contPheno_char = "stage",
   covariates_char = NULL,
   arrayType = "450k"
@@ -213,14 +213,14 @@ Vignette # 2 illustrates how to leverage parallel computing via `BiocParallel` R
 Before identifying co-methylated clusters, we recommend removing uninteresting technical and biological effects, so that the resulting co-methylated clusters are only driven by the biological factors we are interested in. This can be accomplished using the `GetResiduals` function. 
 
 For example, the following script computes residuals from linear model 
-`Mvalues ~ age.brain + sex + Mplate`
+`Mvalues ~ age.brain + sex + slide`
 
 ```{r}
 resid_df <- GetResiduals(
-  dnam = betaMatrixChr22_df,
+  dnam = betasChr22_df,
   betaToM = TRUE, #converts to Mvalues for fitting linear model 
   pheno_df = pheno_df,
-  covariates_char = c("age.brain", "sex", "Mplate")
+  covariates_char = c("age.brain", "sex", "slide")
 )
 ```
 
@@ -308,7 +308,7 @@ The simple linear mixed model is
 To test one genomic region against the continuous phenotype `stage`, adjusting for `age.brain`: 
 ```{r message = FALSE}
 lmmTestAllRegions(
-  betas = betaMatrixChr22_df,
+  betas = betasChr22_df,
   region_ls = coMeth_ls[1],
   pheno_df,
   contPheno_char = "stage",
@@ -322,7 +322,7 @@ If we don't want to adjust for any covariate effect, we can set `covariates_char
 
 ```{r message = FALSE}
 lmmTestAllRegions(
-  betas = betaMatrixChr22_df,
+  betas = betasChr22_df,
   region_ls = coMeth_ls[1],
   pheno_df,
   contPheno_char = "stage",

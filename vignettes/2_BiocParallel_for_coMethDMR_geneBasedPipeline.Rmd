@@ -34,11 +34,11 @@ In Section 2, we give a brief re-introduction to the example data. In Section 3,
 # Example Dataset
 For illustration, we use a subset of prefrontal cortex methylation data (GEO GSE59685) described in Lunnon et al. (2014). This example dataset includes beta values for 8552 CpGs on chromosome 22 for a random selection of 20 subjects. We assume quality control and normalization of the methylation dataset have been performed by R packages such as **minfi** or **RnBeads**.
 ```{r ex_data}
-data(betaMatrixChr22_df)
-betaMatrixChr22_df[1:5, 1:5]
+data(betasChr22_df)
+betasChr22_df[1:5, 1:5]
 ```
 
-The corresponding phenotype dataset included variables `stage` (Braak AD stage), `subject.id`, `Mplate` (batch effect), `sex`, `Sample` and `age.brain` (age of the brain donor). 
+The corresponding phenotype dataset included variables `stage` (Braak AD stage), `subject.id`, `slide` (batch effect), `sex`, `Sample` and `age.brain` (age of the brain donor). 
 ```{r ex_pheno_data}
 data(pheno_df)
 head(pheno_df)
@@ -85,10 +85,10 @@ This step removes uninteresting technical and biological effects using the `GetR
 
 ```{r}
 resid_df <- GetResiduals(
-  dnam = betaMatrixChr22_df,
+  dnam = betasChr22_df,
   betaToM = TRUE, #converts to Mvalues for fitting linear model 
   pheno_df = pheno_df,
-  covariates_char = c("age.brain", "sex", "Mplate")
+  covariates_char = c("age.brain", "sex", "slide")
 )
 ```
 
@@ -128,7 +128,7 @@ Next we test these co-methylated regions against continuous phenotype `stage`, a
 
 ```{r singleRegionType_lmmTest, warning=FALSE, results='hide'}
 res_df <- lmmTestAllRegions(
-  beta_df = betaMatrixChr22_df,
+  beta_df = betasChr22_df,
   region_ls = coMeth_ls,
   pheno_df = pheno_df,
   contPheno_char = "stage",
@@ -211,10 +211,10 @@ Next we remove uninteresting biological and technical effects, execute the `CoMe
 aAll <- Sys.time()
 
 residChr22_df <- GetResiduals(
-  dnam = betaMatrixChr22_df,
+  dnam = betasChr22_df,
   betaToM = TRUE, #converts to Mvalues for fitting linear model 
   pheno_df = pheno_df,
-  covariates_char = c("age.brain", "sex", "Mplate")
+  covariates_char = c("age.brain", "sex", "slide")
 )
 
 coMethChr22_ls <- CoMethAllRegions(
@@ -226,11 +226,11 @@ coMethChr22_ls <- CoMethAllRegions(
 )
   
 resChr22_df <- lmmTestAllRegions(
-    beta_df = betaMatrixChr22_df,
+    beta_df = betasChr22_df,
     region_ls = coMethChr22_ls,
     pheno_df = pheno_df,
     contPheno_char = "stage",
-    covariates_char = c("age.brain", "sex", "Mplate"),
+    covariates_char = c("age.brain", "sex", "slide"),
     modelType = "randCoef",
     arrayType = "450k",
     cluster = snow_cl, 
