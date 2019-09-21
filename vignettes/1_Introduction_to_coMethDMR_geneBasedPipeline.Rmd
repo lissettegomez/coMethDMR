@@ -3,8 +3,8 @@ title: Introduction to coMethDMR
 author: "Lissette Gomez, Gabriel Odom, Lanyu Zhang, Lily Wang"
 date: "September 16, 2019"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
   word_document: default
 ---
 
