@@ -3,14 +3,14 @@ title: "Genome-wide methylation analysis using coMethDMR via parallel computing"
 author: "Gabriel J. Odom, Lissette Gomez, Lanyu Zhang and Lily Wang"
 date: "9/17/2019"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
   html_document:
     number_sections: yes
     toc: yes
     toc_depth: 2
     toc_float: false
-  pdf_document:
-    toc: yes
-    toc_depth: '2'
   word_document:
     toc: yes
 ---
@@ -126,9 +126,9 @@ The object `coMeth_ls` is a list, with each item containing the list of CpGs wit
 ## Testing the co-methylated regions
 Next we test these co-methylated regions against continuous phenotype `stage`, adjusting for covariates `age` and `sex`, by  executing the `lmmTestAllRegions()` function. 
 
-```{r singleRegionType_lmmTest, warning=FALSE, results='hide'}
+```{r singleRegionType_lmmTest, warning=FALSE, results='hide', message = FALSE}
 res_df <- lmmTestAllRegions(
-  beta_df = betasChr22_df,
+  betas = betasChr22_df,
   region_ls = coMeth_ls,
   pheno_df = pheno_df,
   contPheno_char = "stage",
@@ -170,28 +170,23 @@ snow_cl <- SnowParam(workers = 20, type = "SOCK")
 First, we read in clusters of CpGs located closely on the array, in genic and intergenic regions. 
 
 ```{r}
-# closeByGene_ls <- readRDS(
-#   system.file(
-#     "extdata",
-#     "450k_Gene_3_200.RDS",
-#     package = 'coMethDMR',
-#     mustWork = TRUE
-#   )
-# )
-# 
-# closeByInterGene_ls <- readRDS(
-#   system.file(
-#     "extdata",
-#     "Inter_Gene_3_200,RDS",
-#     package = 'coMethDMR',
-#     mustWork = TRUE
-#   )
-# )
+closeByGene_ls <- readRDS(
+  system.file(
+    "extdata",
+    "450k_Gene_3_200.RDS",
+    package = 'coMethDMR',
+    mustWork = TRUE
+  )
+)
 
-# < this will be changed once package datasets are updated
-closeByGene_ls <- readRDS ("C:/Users/lxw391/Dropbox (BBSR)/GabrielOdom/coMethDMR/LWtest/450k_Gene_3_200.RDS")
-
-closeByInterGene_ls <- readRDS ("C:/Users/lxw391/Dropbox (BBSR)/GabrielOdom/coMethDMR/LWtest/450k_InterGene_3_200.RDS")
+closeByInterGene_ls <- readRDS(
+  system.file(
+    "extdata",
+    "450k_InterGene_3_200.RDS",
+    package = 'coMethDMR',
+    mustWork = TRUE
+  )
+)
 
 # put them together in one list
 closeBy_ls <- c(closeByGene_ls, closeByInterGene_ls)
@@ -206,8 +201,8 @@ closeByChr22_ls[1]
 
 ```
 
-Next we remove uninteresting biological and technical effects, execute the `CoMethAllRegions()` function over each worker on the cluster (this completes in roughly xx minutes using 20 cores and 64Gb of RAM), then pass these results to `lmmTestAllRegions()`:
-```{r loop_over_region_types, eval=TRUE}
+Next we remove uninteresting biological and technical effects, execute the `CoMethAllRegions()` function over each worker on the cluster (this completes in roughly 2.6 minutes using 20 cores and 64Gb of RAM), then pass these results to `lmmTestAllRegions()`:
+```{r loop_over_region_types, eval=TRUE, message=FALSE}
 aAll <- Sys.time()
 
 residChr22_df <- GetResiduals(
@@ -226,7 +221,7 @@ coMethChr22_ls <- CoMethAllRegions(
 )
   
 resChr22_df <- lmmTestAllRegions(
-    beta_df = betasChr22_df,
+    betas = betasChr22_df,
     region_ls = coMethChr22_ls,
     pheno_df = pheno_df,
     contPheno_char = "stage",
@@ -254,26 +249,26 @@ head(lmmResAnnotatedChr22_df)
 
 The analysis for EPIC methylation arrays would be the same as those for 450k arrays, except by testing genomic regions in files "EPIC_Gene_3_200.RDS" and "EPIC_InterGene_3_200.RDS", instead of "450k_Gene_3_200.RDS" and "450k_InterGene_3_200,RDS". 
 
-So the following scripts replace those in Section xxx. 
+So the following scripts replace those in Section 4.  
 
 ```{r}
-# closeByGene_ls <- readRDS(
-#   system.file(
-#     "extdata",
-#     "450k_Gene_3_200.RDS",
-#     package = 'coMethDMR',
-#     mustWork = TRUE
-#   )
-# )
-# 
-# closeByInterGene_ls <- readRDS(
-#   system.file(
-#     "extdata",
-#     "InterGene_3_200,RDS",
-#     package = 'coMethDMR',
-#     mustWork = TRUE
-#   )
-# )
+closeByGene_ls <- readRDS(
+  system.file(
+    "extdata",
+    "EPIC_Gene_3_200.RDS",
+    package = 'coMethDMR',
+    mustWork = TRUE
+  )
+)
+
+closeByInterGene_ls <- readRDS(
+  system.file(
+    "extdata",
+    "EPIC_InterGene_3_200.RDS",
+    package = 'coMethDMR',
+    mustWork = TRUE
+  )
+)
 ```
 
 

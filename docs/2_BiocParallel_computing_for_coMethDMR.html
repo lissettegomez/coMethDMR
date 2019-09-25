@@ -9,7 +9,7 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Gabriel J. Odom, Lissette Gomez, and Lily Wang" />
+<meta name="author" content="Gabriel J. Odom, Lissette Gomez, Lanyu Zhang and Lily Wang" />
 
 
 <title>Genome-wide methylation analysis using coMethDMR via parallel computing</title>
@@ -190,8 +190,8 @@ $(document).ready(function () {
 
 
 <h1 class="title toc-ignore">Genome-wide methylation analysis using coMethDMR via parallel computing</h1>
-<h4 class="author">Gabriel J. Odom, Lissette Gomez, and Lily Wang</h4>
-<h4 class="date">8/20/2019</h4>
+<h4 class="author">Gabriel J. Odom, Lissette Gomez, Lanyu Zhang and Lily Wang</h4>
+<h4 class="date">9/17/2019</h4>
 
 </div>
 
@@ -200,14 +200,15 @@ $(document).ready(function () {
 <li><a href="#introduction"><span class="toc-section-number">1</span> Introduction</a></li>
 <li><a href="#example-dataset"><span class="toc-section-number">2</span> Example Dataset</a></li>
 <li><a href="#analyzing-one-type-of-genomic-region-via-biocparallel"><span class="toc-section-number">3</span> Analyzing One Type of Genomic Region via BiocParallel</a><ul>
-<li><a href="#finding-co-methylated-regions"><span class="toc-section-number">3.1</span> Finding co-methylated regions</a></li>
-<li><a href="#testing-the-co-methylated-regions"><span class="toc-section-number">3.2</span> Testing the co-methylated regions</a></li>
+<li><a href="#compute-residuals"><span class="toc-section-number">3.1</span> Compute residuals</a></li>
+<li><a href="#finding-co-methylated-regions"><span class="toc-section-number">3.2</span> Finding co-methylated regions</a></li>
+<li><a href="#testing-the-co-methylated-regions"><span class="toc-section-number">3.3</span> Testing the co-methylated regions</a></li>
 </ul></li>
-<li><a href="#analyzing-all-types-of-genomic-regions-via-biocparallel"><span class="toc-section-number">4</span> Analyzing All Types of Genomic Regions via BiocParallel</a><ul>
-<li><a href="#analyzing-multiple-region-types"><span class="toc-section-number">4.1</span> Analyzing multiple region types</a></li>
-<li><a href="#annotate-results"><span class="toc-section-number">4.2</span> Annotate results</a></li>
+<li><a href="#comethdmr-analysis-pipeline-for-450k-methylation-arrays-datasets-via-biocparallel"><span class="toc-section-number">4</span> coMethDMR Analysis Pipeline for 450k Methylation Arrays Datasets via BiocParallel</a><ul>
+<li><a href="#annotate-results"><span class="toc-section-number">4.1</span> Annotate results</a></li>
 </ul></li>
-<li><a href="#additional-comments-on-computational-time-and-resources"><span class="toc-section-number">5</span> Additional Comments on Computational Time and Resources</a></li>
+<li><a href="#implementing-parallel-computing-for-comethdmr-analysis-of-epic-methylation-arrays-datasets"><span class="toc-section-number">5</span> Implementing Parallel Computing for coMethDMR Analysis of EPIC Methylation Arrays Datasets</a></li>
+<li><a href="#additional-comments-on-computational-time-and-resources"><span class="toc-section-number">6</span> Additional Comments on Computational Time and Resources</a></li>
 </ul>
 </div>
 
@@ -217,56 +218,75 @@ $(document).ready(function () {
 <p>First, we load these two packages.</p>
 <pre class="r"><code>library(coMethDMR)
 library(BiocParallel)</code></pre>
-<p>In Section 2, we give a brief re-introduction to the example data. In Section 3, we present example scripts for analyzing a single type (e.g. CpG islands) of genomic regions using parallel computing. In Section 4, we present example scripts for analyzing genomic regions from all eleven types on the Illumina arrays (TSS1500, TSS200, UTR5, EXON1, GENEBODY, UTR3, NSHORE, NSHELF, ISLAND, SSHORE and SSHELF) using parallel computing.</p>
+<p>In Section 2, we give a brief re-introduction to the example data. In Section 3, we present example scripts for analyzing a single type (e.g. genic regions) of genomic regions using parallel computing. In Section 4, we present example scripts for analyzing genic and intergenic regions on the Illumina arrays using parallel computing.</p>
 </div>
 <div id="example-dataset" class="section level1">
 <h1><span class="header-section-number">2</span> Example Dataset</h1>
 <p>For illustration, we use a subset of prefrontal cortex methylation data (GEO GSE59685) described in Lunnon et al. (2014). This example dataset includes beta values for 8552 CpGs on chromosome 22 for a random selection of 20 subjects. We assume quality control and normalization of the methylation dataset have been performed by R packages such as <strong>minfi</strong> or <strong>RnBeads</strong>.</p>
-<pre class="r"><code>data(betaMatrixChr22_df)
-betaMatrixChr22_df[1:5, 1:5]</code></pre>
+<pre class="r"><code>data(betasChr22_df)
+betasChr22_df[1:5, 1:5]</code></pre>
 <pre><code>##            GSM1443279 GSM1443663 GSM1443434 GSM1443547 GSM1443577
 ## cg00004192  0.9249942  0.8463296  0.8700718  0.9058205  0.9090382
 ## cg00004775  0.6523025  0.6247554  0.7573476  0.6590817  0.6726261
 ## cg00012194  0.8676339  0.8679048  0.8484754  0.8754985  0.8484458
 ## cg00013618  0.9466056  0.9475467  0.9566493  0.9588431  0.9419563
 ## cg00014104  0.3932388  0.5525716  0.4075900  0.3997278  0.3216956</code></pre>
-<p>The corresponding phenotype dataset included variables <code>stage</code> (Braak AD stage), <code>subject.id</code>, <code>Mplate</code> (batch effect), <code>sex</code>, <code>Sample</code> and <code>age.brain</code> (age of the brain donor).</p>
+<p>The corresponding phenotype dataset included variables <code>stage</code> (Braak AD stage), <code>subject.id</code>, <code>slide</code> (batch effect), <code>sex</code>, <code>Sample</code> and <code>age.brain</code> (age of the brain donor).</p>
 <pre class="r"><code>data(pheno_df)
 head(pheno_df)</code></pre>
-<pre><code>##    stage subject.id      Mplate         sex     Sample age.brain
-## 3      0          1  6042316048 Sex: FEMALE GSM1443251        82
-## 8      2          2  6042316066 Sex: FEMALE GSM1443256        82
-## 10    NA          3  6042316066   Sex: MALE GSM1443258        89
-## 15     1          4  7786923107 Sex: FEMALE GSM1443263        81
-## 21     2          5  6042316121 Sex: FEMALE GSM1443269        92
-## 22     1          6  6042316099   Sex: MALE GSM1443270        78</code></pre>
-<p>Note that only samples with both methylation data and non-missing phenotype data are analyzed by <strong>coMethDMR</strong>. So in this example, the sample with <code>subject.id = 3</code> which lacks AD stage information will be excluded from analysis.</p>
+<pre><code>##    stage subject.id         sex     Sample age.brain       slide
+## 3      0          1 Sex: FEMALE GSM1443251        82  6042316048
+## 8      2          2 Sex: FEMALE GSM1443256        82  6042316066
+## 10    NA          3   Sex: MALE GSM1443258        89  6042316066
+## 15     1          4 Sex: FEMALE GSM1443263        81  7786923107
+## 21     2          5 Sex: FEMALE GSM1443269        92  6042316121
+## 22     1          6   Sex: MALE GSM1443270        78  6042316099</code></pre>
+<p>Note that only samples with both methylation data and non-missing phenotype data are analyzed by <strong>coMethDMR</strong>. So in this example, the sample with <code>subject.id = 3</code> which lacks AD stage information will be excluded from analysis. Please also note the phenotype file needs to have a variable called “Sample” that will be used by <strong>coMethDMR</strong> to link to the methylation dataset.</p>
 </div>
 <div id="analyzing-one-type-of-genomic-region-via-biocparallel" class="section level1">
 <h1><span class="header-section-number">3</span> Analyzing One Type of Genomic Region via BiocParallel</h1>
 <p>As mentioned previously in “Introduction to <strong>coMethDMR</strong>”, there are several steps in the <strong>coMethDMR</strong> pipeline:</p>
 <ol style="list-style-type: decimal">
-<li>Obtain CpGs located closely in pre-defined genomic regions (e.g. CpG islands),</li>
+<li>Obtain CpGs located closely in pre-defined genomic regions,</li>
 <li>Identify co-methylated regions, and</li>
 <li>Test co-methylated regions against the outcome variable (AD stage).</li>
 </ol>
-<p>Suppose we are interested in analyzing genomic regions corresponding to the gene promoter regions, specifically the <code>TSS200</code> regions. In the following, <code>closeByTSS200_ls</code> is a list, where each item includes CpGs located closely (max distance between 2 CpGs is 200bp by default) in the <code>TSS200</code> regions.</p>
-<pre class="r"><code>closeByTSS200_ls &lt;- readRDS(
+<p>Suppose we are interested in analyzing genic regions on the 450k arrays. In the following, <code>closeByGeneAll_ls</code> is a list, where each item includes at least 3 CpGs located closely (max distance between 2 CpGs is 200bp by default).</p>
+<pre class="r"><code>closeByGeneAll_ls &lt;- readRDS(
   system.file(
     &quot;extdata&quot;,
-    &quot;TSS200_3_200.rds&quot;,
+    &quot;450k_Gene_3_200.rds&quot;,
     package = 'coMethDMR',
     mustWork = TRUE
   )
 )
 
-closeByTSS200_ls[1]</code></pre>
-<pre><code>## $`Chr5:16180033-16180076`
-## [1] &quot;cg25092681&quot; &quot;cg00339556&quot; &quot;cg01791874&quot; &quot;cg17030173&quot; &quot;cg17712694&quot;
-## [6] &quot;cg16150752&quot; &quot;cg21901718&quot;</code></pre>
-<p>If you are interested in analyzing other types of genomic regions, see “Introduction to <strong>coMethDMR</strong>”, Section 2.1 for necessary modifications to this code.</p>
+closeByGeneAll_ls[1]</code></pre>
+<pre><code>## $`chr4:91760141-91760229`
+## [1] &quot;cg01583657&quot; &quot;cg25325192&quot; &quot;cg06044899&quot;</code></pre>
+<p>Next, we select regions on chromosome 22 for demonstration,.</p>
+<pre class="r"><code>indx &lt;- grep (&quot;chr22&quot;, names(closeByGeneAll_ls))
+
+closeByGene_ls &lt;- closeByGeneAll_ls[indx]
+length(closeByGene_ls)</code></pre>
+<pre><code>## [1] 676</code></pre>
+<pre class="r"><code>closeByGene_ls[1]</code></pre>
+<pre><code>## $`chr22:30662799-30663041`
+## [1] &quot;cg19018155&quot; &quot;cg10467217&quot; &quot;cg24727122&quot; &quot;cg02597698&quot; &quot;cg25666403&quot;
+## [6] &quot;cg02026204&quot; &quot;cg05539509&quot; &quot;cg07498879&quot;</code></pre>
+<p>There are 676 genic regions to be tested for chromosome 22.</p>
+<div id="compute-residuals" class="section level2">
+<h2><span class="header-section-number">3.1</span> Compute residuals</h2>
+<p>This step removes uninteresting technical and biological effects using the <code>GetResiduals</code> function, so that the resulting co-methylated clusters are only driven by the biological factors we are interested in.</p>
+<pre class="r"><code>resid_df &lt;- GetResiduals(
+  dnam = betasChr22_df,
+  betaToM = TRUE, #converts to Mvalues for fitting linear model 
+  pheno_df = pheno_df,
+  covariates_char = c(&quot;age.brain&quot;, &quot;sex&quot;, &quot;slide&quot;)
+)</code></pre>
+</div>
 <div id="finding-co-methylated-regions" class="section level2">
-<h2><span class="header-section-number">3.1</span> Finding co-methylated regions</h2>
+<h2><span class="header-section-number">3.2</span> Finding co-methylated regions</h2>
 <p>The cluster computing with the <strong>BiocParallel</strong> package involves two steps:</p>
 <ol style="list-style-type: decimal">
 <li>Setting up the clusters, and</li>
@@ -274,44 +294,35 @@ closeByTSS200_ls[1]</code></pre>
 </ol>
 <p>First, we set up the cluster:</p>
 <pre class="r"><code>snow_cl &lt;- SnowParam(workers = 20, type = &quot;SOCK&quot;)</code></pre>
-<p>Now we execute the <code>CoMethAllRegions()</code> function using each worker in the cluster, to find co-methylated clusters in the TSS200 regions.</p>
-<p>Note that for demonstration, the following script evaluates only the first 500 regions by setting <code>CpGs_ls = closeByTSS200_ls[1:500]</code>, to identify co-methylated clusters in all 10907 TSS200 regions, change to <code>CpGs_ls = closeByTSS200_ls</code>. This would take about 6 minutes over 20 cores with 64Gb of RAM.</p>
+<p>Now we execute the <code>CoMethAllRegions()</code> function using each worker in the cluster, to find co-methylated clusters in the genic regions.</p>
 <pre class="r"><code>a0 &lt;- Sys.time()
+
 coMeth_ls &lt;- CoMethAllRegions(
-  dnam = betaMatrixChr22_df,
+  dnam = resid_df,
+  betaToM = FALSE,
   method = &quot;spearman&quot;,
   arrayType = &quot;450k&quot;,
-  CpGs_ls = closeByTSS200_ls[1:500],
+  CpGs_ls = closeByGene_ls,
   cluster = snow_cl
 )
 Sys.time() - a0</code></pre>
-<pre><code>## Time difference of 43.449 secs</code></pre>
-<p>Note that argument <code>regionType = &quot;TSS200&quot;</code> can also be used to obtain the co-methyalted regions. The following scripts are equivalent to the block of scripts above.</p>
-<pre class="r"><code>a0 &lt;- Sys.time()
-coMeth_ls &lt;- CoMethAllRegions(
-  dnam = betaMatrixChr22_df,
-  method = &quot;spearman&quot;,
-  arrayType = &quot;450k&quot;,
-  regionType = &quot;TSS200&quot;,
-  cluster = snow_cl
-)
-Sys.time() - a0</code></pre>
+<pre><code>## Time difference of 57.64354 secs</code></pre>
 <p>The object <code>coMeth_ls</code> is a list, with each item containing the list of CpGs within an identified co-methylated region.</p>
 </div>
 <div id="testing-the-co-methylated-regions" class="section level2">
-<h2><span class="header-section-number">3.2</span> Testing the co-methylated regions</h2>
-<p>Next we test these co-methylated regions against continuous phenotype stage, adjusting for covariates age and sex. We now execute the <code>lmmTestAllRegions()</code> function. This completes in a few seconds for the TSS200 regions. Note that computing the linear mixed model can often take more memory than identifying co-methylated regions.</p>
+<h2><span class="header-section-number">3.3</span> Testing the co-methylated regions</h2>
+<p>Next we test these co-methylated regions against continuous phenotype <code>stage</code>, adjusting for covariates <code>age</code> and <code>sex</code>, by executing the <code>lmmTestAllRegions()</code> function.</p>
 <pre class="r"><code>res_df &lt;- lmmTestAllRegions(
-  betas = betaMatrixChr22_df,
+  betas = betasChr22_df,
   region_ls = coMeth_ls,
   pheno_df = pheno_df,
   contPheno_char = &quot;stage&quot;,
-  covariates_char = c(&quot;age.brain&quot;, &quot;sex&quot;),
+  covariates_char = NULL,
   modelType = &quot;randCoef&quot;,
   arrayType = &quot;450k&quot;,
+  cluster = snow_cl, 
   outLogFile = &quot;res_lmm_log.txt&quot;
 )</code></pre>
-<pre><code>## messages for mixed model fittings are in file res_lmm_log.txt</code></pre>
 <p>Model fit messages and diagnostics for each region will be saved to the log file specified with the <code>outLogFile</code> argument. For a single region, this will return a one row of model fit statistics similar to the following:</p>
 <table>
 <thead>
@@ -350,125 +361,131 @@ Sys.time() - a0</code></pre>
 <!-- ``` -->
 </div>
 </div>
-<div id="analyzing-all-types-of-genomic-regions-via-biocparallel" class="section level1">
-<h1><span class="header-section-number">4</span> Analyzing All Types of Genomic Regions via BiocParallel</h1>
-<p>Genomic regions on the Illumina arrays can be defined based on their relations to genes or CpG Islands. Genomic regions annotated to genes include TSS1500, TSS200, UTR5, EXON1, GENEBODY and UTR3. Genomic regions annotated to CGIs are NSHORE, NSHELF, ISLAND, SSHORE and SSHELF. In this section, we describe analyzing three of these 11 types of genomic regions using coMethDMR.</p>
-<p>Same as before, first, we create the clusters of workers. If you still have the clusters defined, you can reuse them; if not, create them again.</p>
+<div id="comethdmr-analysis-pipeline-for-450k-methylation-arrays-datasets-via-biocparallel" class="section level1">
+<h1><span class="header-section-number">4</span> coMethDMR Analysis Pipeline for 450k Methylation Arrays Datasets via BiocParallel</h1>
+<p>In this section, we provide example scripts for testing genic and intergenic regions using <strong>coMethDMR</strong> and <strong>BiocParallel</strong> R packages.</p>
+<p>Same as before, first, we create the clusters of workers.</p>
 <pre class="r"><code>snow_cl &lt;- SnowParam(workers = 20, type = &quot;SOCK&quot;)</code></pre>
-<div id="analyzing-multiple-region-types" class="section level2">
-<h2><span class="header-section-number">4.1</span> Analyzing multiple region types</h2>
-<p>For illustration, we will only analyze CpG islands and shores. If you would like to analyse all region types, use the <code>AllRegions_char</code> vector instead of <code>regions_char</code>.</p>
-<pre class="r"><code># Create vector of region types
-# AllRegions_char &lt;- c(
-#   &quot;NSHORE&quot;, &quot;NSHELF&quot;, &quot;SSHORE&quot;, &quot;SSHELF&quot;, &quot;TSS1500&quot;, &quot;TSS200&quot;, &quot;UTR5&quot;, &quot;EXON1&quot;,
-#   &quot;GENEBODY&quot;, &quot;UTR3&quot;, &quot;ISLAND&quot;
-# )
-regions_char &lt;- c(
-  &quot;NSHORE&quot;, &quot;SSHORE&quot;, &quot;ISLAND&quot;
+<p>First, we read in clusters of CpGs located closely on the array, in genic and intergenic regions.</p>
+<pre class="r"><code>closeByGene_ls &lt;- readRDS(
+  system.file(
+    &quot;extdata&quot;,
+    &quot;450k_Gene_3_200.RDS&quot;,
+    package = 'coMethDMR',
+    mustWork = TRUE
+  )
 )
 
-# Create empty results list for region types
-resultsAll_ls &lt;- vector(mode = &quot;list&quot;, length = length(regions_char))
-names(resultsAll_ls) &lt;- regions_char</code></pre>
-<p>Finally, we execute the <code>CoMethAllRegions()</code> function over each worker on the cluster (this completes in roughly 17 minutes using 20 cores and 64Gb of RAM), then pass these results to <code>lmmTestAllRegions()</code>:</p>
+closeByInterGene_ls &lt;- readRDS(
+  system.file(
+    &quot;extdata&quot;,
+    &quot;450k_InterGene_3_200.RDS&quot;,
+    package = 'coMethDMR',
+    mustWork = TRUE
+  )
+)
+
+# put them together in one list
+closeBy_ls &lt;- c(closeByGene_ls, closeByInterGene_ls)
+
+# select regions on chrom 22 for demonstration
+indx &lt;- grep (&quot;chr22&quot;, names(closeBy_ls))
+
+closeByChr22_ls &lt;- closeBy_ls[indx]
+length(closeByChr22_ls)</code></pre>
+<pre><code>## [1] 752</code></pre>
+<pre class="r"><code>closeByChr22_ls[1]</code></pre>
+<pre><code>## $`chr22:30662799-30663041`
+## [1] &quot;cg19018155&quot; &quot;cg10467217&quot; &quot;cg24727122&quot; &quot;cg02597698&quot; &quot;cg25666403&quot;
+## [6] &quot;cg02026204&quot; &quot;cg05539509&quot; &quot;cg07498879&quot;</code></pre>
+<p>Next we remove uninteresting biological and technical effects, execute the <code>CoMethAllRegions()</code> function over each worker on the cluster (this completes in roughly xx minutes using 20 cores and 64Gb of RAM), then pass these results to <code>lmmTestAllRegions()</code>:</p>
 <pre class="r"><code>aAll &lt;- Sys.time()
 
-for (region in regions_char) {
+residChr22_df &lt;- GetResiduals(
+  dnam = betasChr22_df,
+  betaToM = TRUE, #converts to Mvalues for fitting linear model 
+  pheno_df = pheno_df,
+  covariates_char = c(&quot;age.brain&quot;, &quot;sex&quot;, &quot;slide&quot;)
+)
 
-  print(region) # Uncomment for progress updates
-  pfcRegions_ls &lt;- CoMethAllRegions(
-    dnam = betaMatrixChr22_df,
+coMethChr22_ls &lt;- CoMethAllRegions(
+    dnam = residChr22_df,
     method = &quot;spearman&quot;,
     arrayType = &quot;450k&quot;,
-    regionType = region,
+    CpGs_ls = closeByChr22_ls,
     cluster = snow_cl
-  )
-
-  res_df &lt;- lmmTestAllRegions(
-    betas = betaMatrixChr22_df,
-    region_ls = pfcRegions_ls,
+)
+  
+resChr22_df &lt;- lmmTestAllRegions(
+    betas = betasChr22_df,
+    region_ls = coMethChr22_ls,
     pheno_df = pheno_df,
     contPheno_char = &quot;stage&quot;,
-    covariates_char = c(&quot;age.brain&quot;, &quot;sex&quot;),
+    covariates_char = c(&quot;age.brain&quot;, &quot;sex&quot;, &quot;slide&quot;),
     modelType = &quot;randCoef&quot;,
     arrayType = &quot;450k&quot;,
-    outLogFile = paste0(region, &quot;_lmm_log.txt&quot;)
+    cluster = snow_cl, 
+    outLogFile = paste0(&quot;lmm_log.txt&quot;)
   )
 
-  res_df$regionType &lt;- region
-
-  resultsAll_ls[[region]] &lt;- res_df
-
-}
-
 Sys.time() - aAll</code></pre>
-<p>Now that we have the results, we need to stack the model fits for each region.</p>
-<pre class="r"><code>lmmResults_df &lt;- do.call(rbind, resultsAll_ls)
-row.names(lmmResults_df) &lt;- NULL
-
-head(lmmResults_df)</code></pre>
-<pre><code>##   chrom    start      end nCpGs     Estimate     StdErr       Stat
-## 1 chr22 17082770 17082787     3 -0.024283518 0.02282435 -1.0639301
-## 2 chr22 18632429 18632476     3 -0.003507545 0.01861621 -0.1884135
-## 3 chr22 20861470 20861479     3 -0.013943194 0.02021033 -0.6899042
-## 4 chr22 21398553 21398582     3 -0.060684190 0.03448228 -1.7598658
-## 5 chr22 21921731 21921833     4  0.044321951 0.01343634  3.2986632
-## 6 chr22 23522307 23522474     5 -0.048519527 0.02202002 -2.2034281
-##         pValue        FDR regionType
-## 1 0.2873603476 0.52682730     NSHORE
-## 2 1.0000000000 1.00000000     NSHORE
-## 3 0.4902544311 0.77039982     NSHORE
-## 4 1.0000000000 1.00000000     NSHORE
-## 5 0.0009714639 0.02137221     NSHORE
-## 6 0.0275645926 0.10107017     NSHORE</code></pre>
-<p>We can see this output is similar to the previous output, with the additional column annotating the type of genomic region corresponding to each co-methylated region.</p>
-</div>
+<pre><code>## Time difference of 2.594784 mins</code></pre>
 <div id="annotate-results" class="section level2">
-<h2><span class="header-section-number">4.2</span> Annotate results</h2>
-<p>Finally, we may be interested in the specific probes in these regions, or which genes overlap with these regions. We can use the <code>AnnotateResults()</code> function.</p>
-<pre class="r"><code>lmmResAnnotated_df &lt;- AnnotateResults(
-  lmmRes_df = lmmResults_df,
+<h2><span class="header-section-number">4.1</span> Annotate results</h2>
+<p>Finally, we can annotate the results using the <code>AnnotateResults()</code> function.</p>
+<pre class="r"><code>lmmResAnnotatedChr22_df &lt;- AnnotateResults(
+  lmmRes_df = resChr22_df,
   arrayType = &quot;450k&quot;
 )
-head(lmmResAnnotated_df)</code></pre>
-<pre><code>##   chrom    start      end nCpGs     Estimate     StdErr       Stat
-## 1 chr22 17082770 17082787     3 -0.024283518 0.02282435 -1.0639301
-## 2 chr22 18632429 18632476     3 -0.003507545 0.01861621 -0.1884135
-## 3 chr22 20861470 20861479     3 -0.013943194 0.02021033 -0.6899042
-## 4 chr22 21398553 21398582     3 -0.060684190 0.03448228 -1.7598658
-## 5 chr22 21921731 21921833     4  0.044321951 0.01343634  3.2986632
-## 6 chr22 23522307 23522474     5 -0.048519527 0.02202002 -2.2034281
-##         pValue        FDR regionType UCSC_RefGene_Group
-## 1 0.2873603476 0.52682730     NSHORE             TSS200
-## 2 1.0000000000 1.00000000     NSHORE            TSS1500
-## 3 0.4902544311 0.77039982     NSHORE            TSS1500
-## 4 1.0000000000 1.00000000     NSHORE             TSS200
-## 5 0.0009714639 0.02137221     NSHORE     TSS1500;TSS200
-## 6 0.0275645926 0.10107017     NSHORE     TSS1500;TSS200
-##          UCSC_RefGene_Accession UCSC_RefGene_Name
-## 1                     NR_001591         psiTPTE22
-## 2                     NM_017414             USP18
-## 3        NM_001003891;NM_015889             MED15
-## 4                     NR_002829            P2RX6P
-## 5 NM_003347;NR_028436;NR_028437            UBE2L3
-## 6           NM_004327;NM_021574               BCR
-##                                                   probes
-## 1                       cg01660911;cg14505585;cg12431879
-## 2                       cg01963623;cg18699242;cg02169692
-## 3                       cg19265040;cg26608332;cg26796825
-## 4                       cg00004192;cg15169469;cg15362336
-## 5            cg17274080;cg25421647;cg26067319;cg26844104
-## 6 cg03930964;cg04028010;cg00281467;cg07260820;cg10480239</code></pre>
-<p>Finally. we can save our results:</p>
-<pre class="r"><code>write.csv(
-  lmmResAnnotated_df,
-  file = &quot;EWAS_PFC_lmmOut.csv&quot;
+head(lmmResAnnotatedChr22_df)</code></pre>
+<pre><code>##   chrom    start      end nCpGs     Estimate      StdErr        Stat
+## 1 chr22 30662799 30663041     8 -0.055595635 0.018245154 -3.04714525
+## 2 chr22 18632404 18633123    10  0.009610613 0.009099696  1.05614660
+## 3 chr22 43253145 43253208     3 -0.005337807 0.024929198 -0.21411869
+## 4 chr22 43253517 43253559     5  0.001995900 0.024066502  0.08293269
+## 5 chr22 43254043 43254168     3  0.017364244 0.025402933  0.68355270
+## 6 chr22 30901532 30901886     7  0.017027844 0.016148814  1.05443308
+##      pValue FDR           UCSC_RefGene_Group UCSC_RefGene_Accession
+## 1 1.0000000   1 1stExon;5'UTR;TSS1500;TSS200              NM_020530
+## 2 0.2909012   1 1stExon;5'UTR;TSS1500;TSS200              NM_017414
+## 3 0.8304545   1                1stExon;5'UTR NM_001142293;NM_014570
+## 4 0.9339051   1                       TSS200 NM_001142293;NM_014570
+## 5 1.0000000   1                      TSS1500 NM_001142293;NM_014570
+## 6 1.0000000   1    1stExon;5'UTR;Body;TSS200 NM_001161368;NM_174977
+##   UCSC_RefGene_Name     Relation_to_Island
+## 1               OSM                OpenSea
+## 2             USP18 Island;N_Shore;S_Shore
+## 3           ARFGAP3                 Island
+## 4           ARFGAP3                 Island
+## 5           ARFGAP3                S_Shore
+## 6           SEC14L4         Island;S_Shore</code></pre>
+</div>
+</div>
+<div id="implementing-parallel-computing-for-comethdmr-analysis-of-epic-methylation-arrays-datasets" class="section level1">
+<h1><span class="header-section-number">5</span> Implementing Parallel Computing for coMethDMR Analysis of EPIC Methylation Arrays Datasets</h1>
+<p>The analysis for EPIC methylation arrays would be the same as those for 450k arrays, except by testing genomic regions in files “EPIC_Gene_3_200.RDS” and “EPIC_InterGene_3_200.RDS”, instead of “450k_Gene_3_200.RDS” and “450k_InterGene_3_200,RDS”.</p>
+<p>So the following scripts replace those in Section 4.</p>
+<pre class="r"><code>closeByGene_ls &lt;- readRDS(
+  system.file(
+    &quot;extdata&quot;,
+    &quot;EPIC_Gene_3_200.RDS&quot;,
+    package = 'coMethDMR',
+    mustWork = TRUE
+  )
+)
+
+closeByInterGene_ls &lt;- readRDS(
+  system.file(
+    &quot;extdata&quot;,
+    &quot;EPIC_InterGene_3_200.RDS&quot;,
+    package = 'coMethDMR',
+    mustWork = TRUE
+  )
 )</code></pre>
 </div>
-</div>
 <div id="additional-comments-on-computational-time-and-resources" class="section level1">
-<h1><span class="header-section-number">5</span> Additional Comments on Computational Time and Resources</h1>
-<p>In this vignette, we have analyzed a small subset of a real EWAS dataset (i.e. only chromosome 22 data on 20 subjects). To give users a more realistic estimate of time for analyzing real EWAS datasets, we also measured time used for analyzing the entire Lunnon et al. (2014) dataset with 110 samples on all chromosomes. These computation times measured on a Dell Precision 5810 with 64Gb of RAM, an Intel Xeon E5-2640 CPU at 2.40Ghz, and using up to 20 cores. More specifically, in Section 4, the entire <strong>coMethDMR</strong> workflow for all 11 types of genomic regions took 50 minutes with 12 cores and used 24Gb of RAM. We’re currently working improving the speed and reducing the size of <strong>coMethDMR</strong>, so please check back soon for updates.</p>
+<h1><span class="header-section-number">6</span> Additional Comments on Computational Time and Resources</h1>
+<p>In this vignette, we have analyzed a small subset of a real EWAS dataset (i.e. only chromosome 22 data on 20 subjects). To give users a more realistic estimate of time for analyzing real EWAS datasets, we also measured time used for analyzing the entire Lunnon et al. (2014) dataset with 110 samples on all chromosomes. These computation times measured on a Dell Precision 5810 with 64Gb of RAM, an Intel Xeon E5-2640 CPU at 2.40Ghz, and using up to 20 cores. More specifically, in Section 4, the entire <strong>coMethDMR</strong> workflow for took xxx minutes with xxx cores and used 24Gb of RAM. We’re currently working improving the speed and reducing the size of <strong>coMethDMR</strong>, so please check back soon for updates.</p>
 </div>
 
 
