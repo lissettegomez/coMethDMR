@@ -4,7 +4,7 @@
 \alias{AnnotateResults}
 \title{Annotate \code{coMethDMR} Pipeline Results}
 \usage{
-AnnotateResults(lmmRes_df, arrayType = c("450k", "EPIC"))
+AnnotateResults(lmmRes_df, arrayType = c("450k", "EPIC"), cores = 1)
 }
 \arguments{
 \item{lmmRes_df}{A data frame returned by \code{\link{lmmTestAllRegions}}. This data
@@ -20,6 +20,8 @@ Optionally, the data frame can also has
   See details below.}
 
 \item{arrayType}{Type of array: 450k or EPIC}
+
+\item{cores}{Number of cores ued for computation}
 }
 \value{
 A data frame with
