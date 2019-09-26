@@ -4,7 +4,8 @@
 \alias{GetResiduals}
 \title{Get Residuals}
 \usage{
-GetResiduals(dnam, betaToM = TRUE, pheno_df, covariates_char)
+GetResiduals(dnam, betaToM = TRUE, pheno_df, covariates_char,
+  cores = 1)
 }
 \arguments{
 \item{dnam}{data frame or matrix of methylation values,
@@ -19,6 +20,8 @@ If mvalues are the input, then \code{betaToM} should be set to \code{FALSE}}
 \code{Sample} indicating sample IDs.}
 
 \item{covariates_char}{character vector for names of the covariate variables}
+
+\item{cores}{Number of cores ued for computation}
 }
 \value{
 output a matrix of residual values, in the same dimension as \code{dnam}
