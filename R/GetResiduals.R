@@ -24,7 +24,7 @@
 #' @importFrom stats residuals
 #' @importFrom doParallel registerDoParallel
 #' @importFrom plyr llply
-#' 
+#'
 #' @examples
 #'    data(betasChr22_df)
 #'
@@ -41,83 +41,83 @@ GetResiduals <- function(dnam, betaToM = TRUE,
                          pheno_df,
                          covariates_char,
                          cores = 1){
-  
+
   if (class(dnam) == "matrix"){
     dnam_df = as.data.frame(dnam)
   } else {
     dnam_df = dnam
   }
-  
-  
+
+
   if (betaToM){
     ### Compute M values
     value_df <- log2(dnam_df / (1 - dnam_df))
   } else {
     value_df <- dnam_df
   }
-  
+
   ### Select samples in both value_df and pheno_df
   if(!"Sample" %in% colnames(pheno_df)) {
     message("Could not find sample column in the pheno_df.")
     return(NULL)
   }
-  
+
   ## Make sure Sample is character but not factor
   pheno_df$Sample <- as.character(pheno_df$Sample)
-  
+
   ## Check if samples in value_df and pheno_df are identical
   idt <- identical(colnames(value_df), pheno_df$Sample)
 
   if (idt){
-    
+
     value_df <- value_df
     pheno_df <- pheno_df
-    
+
   } else {
-    message("Metadata is not in the same order as metadata. We will use Sample column to put in the same order.") 
+    message("Phenotype data is not in the same order as methylation data. We will use column Sample in phenotype data to put these two files in the same order.")
     intersectSample <- intersect(colnames(value_df), pheno_df$Sample)
-    
+
     ### Select samples of pheno_df based on intersect samples
     pheno_df <- pheno_df[pheno_df$Sample %in% intersectSample, ]
-    
+
     ### Select samples of value_df in pheno_df
     value_df <- value_df[ , pheno_df$Sample]
-    
+
   }
-  
+
   ### Create the formula
   cov_char <- paste(covariates_char, collapse = " + ")
   formula_char <- paste0("val ~ ", cov_char)
-  
-  
-  
+
+
+
   parallel <- FALSE
   if(cores > 1) {
     registerDoParallel(cores)
     parallel <- TRUE
   }
-  
+
   ### Take residuals
   resid_ls <- plyr::llply(seq_len(nrow(value_df)), .fun = function(row){
-    
+
     val <- t(value_df[row, ])
     colnames(val) <- "val"
-    
+
     dat <- cbind(val, pheno_df)
     dat$val <- as.numeric(dat$val)
-    
+
     fitE <- lm(formula_char, data = dat, na.action = na.exclude)
-    
+
     residuals(fitE)
-    
+
   },
   .progress = "time",
   .parallel = parallel)
-  
+
   resid_df <- do.call(rbind, resid_ls)
-  
+
   row.names(resid_df) <- row.names(value_df)
-  
+
   resid_df
-  
+
 }
