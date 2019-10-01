@@ -27,9 +27,10 @@
 #'    \code{returnAllCpGs = 0} indicates not returning any CpG.
 #' @param output a character vector of CpGs or a dataframe of CpGs along with
 #'    rDrop info
-#' @param cluster computing clusters created when using parallel computing
-#'
-#' @param ... Dots for internal arguments. Currently unused.
+#' @param nCores_int Number of computing cores to be used when executing code
+#'    in parallel. Defaults to 1 (serial computing).
+#' @param ... Dots for additional arguments passed to the cluster constructor.
+#'    See \code{\link{CreateParallelWorkers}} for more information.
 #'
 #' @return  When \code{output = "dataframe"} is selected, returns a list of data frames, each with \code{CpG}
 #' (CpG name), \code{Chr} (chromosome number), \code{MAPINFO} (genomic
@@ -98,7 +99,7 @@ CoMethAllRegions <- function(dnam,
                              ),
                              returnAllCpGs = FALSE,
                              output = c("CpGs", "dataframe"),
-                             cluster = NULL,
+                             nCores_int = 1L,
                              ...){
   # browser()
 
@@ -142,7 +143,7 @@ CoMethAllRegions <- function(dnam,
 
 
   ### Extract contiguous comethylated region(s) from each close by region ###
-  if(is.null(cluster)){
+  if(nCores_int == 1){
 
     coMethCpGsAllREgions_ls <- lapply(
       unname(closeByGenomicRegion_ls),
@@ -157,6 +158,8 @@ CoMethAllRegions <- function(dnam,
     )
 
   } else {
+
+    cluster <- CreateParallelWorkers(nCores_int, ...)
 
     coMethCpGsAllREgions_ls <- bplapply(
       unname(closeByGenomicRegion_ls),

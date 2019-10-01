@@ -18,9 +18,12 @@
 #' @param modelType type of mixed model, can be \code{randCoef} for random
 #'    coefficient mixed model, or \code{simple} for simple linear mixed model.
 #' @param arrayType Type of array, can be "450k" or "EPIC"
-#' @param cluster computing clusters created when using parallel computing
 #' @param outFile output .csv file with the results for the mixed model analysis
 #' @param outLogFile log file for mixed models analysis messages
+#' @param nCores_int Number of computing cores to be used when executing code
+#'    in parallel. Defaults to 1 (serial computing).
+#' @param ... Dots for additional arguments passed to the cluster constructor.
+#'    See \code{\link{CreateParallelWorkers}} for more information.
 #'
 #' @return (1) output file: a .csv file with location of the genomic region
 #'   (\code{chrom, start, end}), number of CpGs (\code{nCpGs}), \code{Estimate},
@@ -106,9 +109,10 @@ lmmTestAllRegions <- function(betas, region_ls, pheno_df,
                               contPheno_char, covariates_char,
                               modelType = c("randCoef", "simple"),
                               arrayType = c("450k","EPIC"),
-                              cluster = NULL,
                               outFile = NULL,
-                              outLogFile = NULL){
+                              outLogFile = NULL,
+                              nCores_int = 1L,
+                              ...){
   # browser()
 
   warnLvl <- options()$warn
@@ -152,7 +156,7 @@ lmmTestAllRegions <- function(betas, region_ls, pheno_df,
   )
 
   ###  Run mixed model for all the contiguous comethylated regions  ###
-  if(is.null(cluster)){
+  if(nCores_int == 1){
 
     results_ls <- lapply(
       coMethBetaDF_ls,
@@ -166,6 +170,8 @@ lmmTestAllRegions <- function(betas, region_ls, pheno_df,
     )
 
   } else {
+
+    cluster <- CreateParallelWorkers(nCores_int, ...)
 
     results_ls <- bplapply(
       coMethBetaDF_ls,

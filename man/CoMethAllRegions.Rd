@@ -11,7 +11,7 @@ CoMethAllRegions(dnam, betaToM = TRUE, method = c("pearson",
   fileType = c("gmt", "RDS"), regionType = c("ISLAND", "NSHORE",
   "NSHELF", "SSHORE", "SSHELF", "TSS1500", "TSS200", "UTR5", "EXON1",
   "GENEBODY", "UTR3"), returnAllCpGs = FALSE, output = c("CpGs",
-  "dataframe"), cluster = NULL, ...)
+  "dataframe"), nCores_int = 1L, ...)
 }
 \arguments{
 \item{dnam}{matrix (or data frame) of beta values, with row names = CpG IDs,
@@ -48,9 +48,11 @@ outputting all the CpGs in the input regions, while
 \item{output}{a character vector of CpGs or a dataframe of CpGs along with
 rDrop info}
 
-\item{cluster}{computing clusters created when using parallel computing}
+\item{nCores_int}{Number of computing cores to be used when executing code
+in parallel. Defaults to 1 (serial computing).}
 
-\item{...}{Dots for internal arguments. Currently unused.}
+\item{...}{Dots for additional arguments passed to the cluster constructor.
+See \code{\link{CreateParallelWorkers}} for more information.}
 }
 \value{
 When \code{output = "dataframe"} is selected, returns a list of data frames, each with \code{CpG}

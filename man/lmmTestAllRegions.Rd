@@ -7,8 +7,8 @@ methylation values in a list of genomic regions}
 \usage{
 lmmTestAllRegions(betas, region_ls, pheno_df, contPheno_char,
   covariates_char, modelType = c("randCoef", "simple"),
-  arrayType = c("450k", "EPIC"), cluster = NULL, outFile = NULL,
-  outLogFile = NULL)
+  arrayType = c("450k", "EPIC"), outFile = NULL, outLogFile = NULL,
+  nCores_int = 1L, ...)
 }
 \arguments{
 \item{betas}{data frame or matrix of beta values for all genomic regions,
@@ -33,11 +33,15 @@ coefficient mixed model, or \code{simple} for simple linear mixed model.}
 
 \item{arrayType}{Type of array, can be "450k" or "EPIC"}
 
-\item{cluster}{computing clusters created when using parallel computing}
-
 \item{outFile}{output .csv file with the results for the mixed model analysis}
 
 \item{outLogFile}{log file for mixed models analysis messages}
+
+\item{nCores_int}{Number of computing cores to be used when executing code
+in parallel. Defaults to 1 (serial computing).}
+
+\item{...}{Dots for additional arguments passed to the cluster constructor.
+See \code{\link{CreateParallelWorkers}} for more information.}
 }
 \value{
 (1) output file: a .csv file with location of the genomic region

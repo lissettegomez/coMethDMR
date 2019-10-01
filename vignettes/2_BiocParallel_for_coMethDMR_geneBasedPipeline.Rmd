@@ -54,7 +54,6 @@ As mentioned previously in “Introduction to **coMethDMR**”, there are severa
 3. Test co-methylated regions against the outcome variable (AD stage).
 
 Suppose we are interested in analyzing genic regions on the 450k arrays. In the following, `closeByGeneAll_ls` is a list, where each item includes at least 3 CpGs located closely (max distance between 2 CpGs is 200bp by default). 
-
 ```{r list_of_cgis}
 closeByGeneAll_ls <- readRDS(
   system.file(
@@ -64,7 +63,10 @@ closeByGeneAll_ls <- readRDS(
     mustWork = TRUE
   )
 )
+```
 
+We can inspect the first region in the list via:
+```{r}
 closeByGeneAll_ls[1]
 ```
 
@@ -76,39 +78,33 @@ closeByGene_ls <- closeByGeneAll_ls[indx]
 length(closeByGene_ls)
 
 closeByGene_ls[1]
-
 ```
 There are 676 genic regions to be tested for chromosome 22. 
 
 ## Compute residuals
-This step removes uninteresting technical and biological effects using the `GetResiduals` function, so that the resulting co-methylated clusters are only driven by the biological factors we are interested in. 
-
-```{r}
+This step removes uninteresting technical and biological effects using the `GetResiduals` function, so that the resulting co-methylated clusters are only driven by the biological factors we are interested in. **ODOM: For 676 genic regions over XX cores, this takes YY seconds.**
+```{r, results='hide'}
+# a0 <- Sys.time()
 resid_df <- GetResiduals(
   dnam = betasChr22_df,
-  betaToM = TRUE, #converts to Mvalues for fitting linear model 
+  # converts to Mvalues for fitting linear model
+  betaToM = TRUE,  
   pheno_df = pheno_df,
+  # Features in pheno_df used as covariates
   covariates_char = c("age.brain", "sex", "slide")
 )
+# Sys.time() - a0
+# This returns a matrix, not a data frame.
 ```
 
 
 ## Finding co-methylated regions
 
-The cluster computing with the **BiocParallel** package involves two steps: 
+The cluster computing with the **BiocParallel** package involves simply changing the default value of one argument: `nCores_int`. This argument enables you to perform parallel computing when you set the number of cores to an integer value greater than 1. *If you do not know how many cores your machine has, use the `detectCores()` function from the `parallel` package. Note that, if you have many applications open on your computer, you should not use all of the cores available.*
 
-1. Setting up the clusters, and 
-2. Passing in the cluster as an argument to `CoMethAllRegions()`. 
-
-First, we set up the cluster: 
-```{r create_cluster}
-snow_cl <- SnowParam(workers = 20, type = "SOCK")
-```
-
-Now we execute the `CoMethAllRegions()` function using each worker in the cluster, to find co-methylated clusters in the genic regions. 
-
+Once we know how many cores we have available, we execute the `CoMethAllRegions()` function using each worker in the cluster, to find co-methylated clusters in the genic regions. **ODOM: For 676 genic regions, 20 samples, and 8552 sites over XX cores, this takes YY seconds.**
 ```{r BiocParallel_Gene, message=FALSE}
-a0 <- Sys.time()
+# a1 <- Sys.time()
 
 coMeth_ls <- CoMethAllRegions(
   dnam = resid_df,
@@ -116,17 +112,20 @@ coMeth_ls <- CoMethAllRegions(
   method = "spearman",
   arrayType = "450k",
   CpGs_ls = closeByGene_ls,
-  cluster = snow_cl
+  nCores_int = 6
 )
-Sys.time() - a0
+
+# Sys.time() - a1
+# 40 seconds over 6 cores
 ```
 
 The object `coMeth_ls` is a list, with each item containing the list of CpGs within an identified co-methylated region. 
 
 ## Testing the co-methylated regions
-Next we test these co-methylated regions against continuous phenotype `stage`, adjusting for covariates `age` and `sex`, by  executing the `lmmTestAllRegions()` function. 
-
+Next we test these co-methylated regions against continuous phenotype `stage`, adjusting for covariates `age` and `sex`, by  executing the `lmmTestAllRegions()` function.  **ODOM: For 676 genic regions, 20 samples, and 8552 sites over XX cores, this takes YY seconds.**
 ```{r singleRegionType_lmmTest, warning=FALSE, results='hide', message = FALSE}
+# a2 <- Sys.time()
+
 res_df <- lmmTestAllRegions(
   betas = betasChr22_df,
   region_ls = coMeth_ls,
@@ -135,9 +134,12 @@ res_df <- lmmTestAllRegions(
   covariates_char = NULL,
   modelType = "randCoef",
   arrayType = "450k",
-  cluster = snow_cl, 
+  nCores_int = 6,
   outLogFile = "res_lmm_log.txt"
 )
+
+# Sys.time() - a2
+# 15 seconds over 6 cores
 ```
 
 Model fit messages and diagnostics for each region will be saved to the log file specified with the `outLogFile` argument. For a single region, this will return a one row of model fit statistics similar to the following:
@@ -162,13 +164,7 @@ Model fit messages and diagnostics for each region will be saved to the log file
 
 In this section, we provide example scripts for testing genic and intergenic regions using **coMethDMR** and **BiocParallel** R packages. 
 
-Same as before, first, we create the clusters of workers. 
-```{r cluster_2, eval=FALSE}
-snow_cl <- SnowParam(workers = 20, type = "SOCK")
-```
-
-First, we read in clusters of CpGs located closely on the array, in genic and intergenic regions. 
-
+First, we read in clusters of CpGs located closely on the array, in genic and intergenic regions, then combine them into a single list.
 ```{r}
 closeByGene_ls <- readRDS(
   system.file(
@@ -190,20 +186,20 @@ closeByInterGene_ls <- readRDS(
 
 # put them together in one list
 closeBy_ls <- c(closeByGene_ls, closeByInterGene_ls)
+```
 
+For demonstration purposes, we will select regions on Chromosome 22 only.
+```{r}
 # select regions on chrom 22 for demonstration
 indx <- grep ("chr22", names(closeBy_ls))
 
 closeByChr22_ls <- closeBy_ls[indx]
 length(closeByChr22_ls)
-
-closeByChr22_ls[1]
-
 ```
 
 Next we remove uninteresting biological and technical effects, execute the `CoMethAllRegions()` function over each worker on the cluster (this completes in roughly 2.6 minutes using 20 cores and 64Gb of RAM), then pass these results to `lmmTestAllRegions()`:
-```{r loop_over_region_types, eval=TRUE, message=FALSE}
-aAll <- Sys.time()
+```{r loop_over_region_types, message=FALSE, results='hide'}
+# aAll <- Sys.time()
 
 residChr22_df <- GetResiduals(
   dnam = betasChr22_df,
@@ -213,31 +209,32 @@ residChr22_df <- GetResiduals(
 )
 
 coMethChr22_ls <- CoMethAllRegions(
-    dnam = residChr22_df,
-    method = "spearman",
-    arrayType = "450k",
-    CpGs_ls = closeByChr22_ls,
-    cluster = snow_cl
+  dnam = residChr22_df,
+  method = "spearman",
+  arrayType = "450k",
+  CpGs_ls = closeByChr22_ls,
+  nCores_int = 6
 )
   
 resChr22_df <- lmmTestAllRegions(
-    betas = betasChr22_df,
-    region_ls = coMethChr22_ls,
-    pheno_df = pheno_df,
-    contPheno_char = "stage",
-    covariates_char = c("age.brain", "sex", "slide"),
-    modelType = "randCoef",
-    arrayType = "450k",
-    cluster = snow_cl, 
-    outLogFile = paste0("lmm_log.txt")
-  )
+  betas = betasChr22_df,
+  region_ls = coMethChr22_ls,
+  pheno_df = pheno_df,
+  contPheno_char = "stage",
+  covariates_char = c("age.brain", "sex", "slide"),
+  modelType = "randCoef",
+  arrayType = "450k",
+  nCores_int = 6,
+  outLogFile = paste0("lmm_log.txt")
+)
 
-Sys.time() - aAll
+# Sys.time() - aAll
+# 3 minutes over 6 cores
 ```
 
 ## Annotate results
 Finally, we can annotate the results using the `AnnotateResults()` function.
-```{r annotate_results}
+```{r annotate_results, results='hide'}
 lmmResAnnotatedChr22_df <- AnnotateResults(
   lmmRes_df = resChr22_df,
   arrayType = "450k"
