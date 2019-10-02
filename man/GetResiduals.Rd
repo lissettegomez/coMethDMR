@@ -5,7 +5,7 @@
 \title{Get Residuals}
 \usage{
 GetResiduals(dnam, betaToM = TRUE, pheno_df, covariates_char,
-  cores = 1)
+  nCores_int = 1L, ...)
 }
 \arguments{
 \item{dnam}{data frame or matrix of methylation values,
@@ -21,7 +21,11 @@ If mvalues are the input, then \code{betaToM} should be set to \code{FALSE}}
 
 \item{covariates_char}{character vector for names of the covariate variables}
 
-\item{cores}{Number of cores ued for computation}
+\item{nCores_int}{Number of computing cores to be used when executing code
+in parallel. Defaults to 1 (serial computing).}
+
+\item{...}{Dots for additional arguments passed to the cluster constructor.
+See \code{\link{CreateParallelWorkers}} for more information.}
 }
 \value{
 output a matrix of residual values, in the same dimension as \code{dnam}

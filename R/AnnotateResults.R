@@ -17,8 +17,11 @@
 #'
 #' @param arrayType Type of array: 450k or EPIC
 #'
-#' @param cores Number of cores ued for computation
-#' 
+#' @param nCores_int Number of computing cores to be used when executing code
+#'    in parallel. Defaults to 1 (serial computing).
+#' @param ... Dots for additional arguments passed to the cluster constructor.
+#'    See \code{\link{CreateParallelWorkers}} for more information.
+#'
 #' @return A data frame with
 #'    \itemize{
 #'      \item the location of the genomic region's chromosome (\code{chrom}),
@@ -49,7 +52,10 @@
 #'      arrayType = "450k"
 #'    )
 #'
-AnnotateResults <- function(lmmRes_df, arrayType = c("450k","EPIC"), cores = 1){
+AnnotateResults <- function(lmmRes_df,
+                            arrayType = c("450k","EPIC"),
+                            nCores_int = 1L,
+                            ...){
   # browser()
 
   ###  Check Inputs  ###
@@ -173,31 +179,41 @@ AnnotateResults <- function(lmmRes_df, arrayType = c("450k","EPIC"), cores = 1){
     row_df$Relation_to_Island <-
       paste0(unique(refIslandRelation_char), collapse = ";")
 
-     row_df
+    row_df
 
   }
 
   inclType_logi <- !is.null(lmmRes_df$regionType)
-  
-  
-  parallel <- FALSE
-  if(cores > 1) {
-    registerDoParallel(cores)
-    parallel <- TRUE
-  }
-  
-  resultsAnno_ls <- plyr::llply(seq_len(nrow(lmmRes_df)), function(row){
 
-    AnnotateRow(
-      row_df = lmmRes_df[row, ],
-      loc_df = locations_df,
-      info_df = UCSCinfo_df,
-      island_df = IslandsUCSCinfo_df,
-      includeType = inclType_logi
+  if(nCores_int == 1){
+
+    resultsAnno_ls <- lapply(seq_len(nrow(lmmRes_df)),
+                             function(row){
+                               AnnotateRow(
+                                 row_df = lmmRes_df[row, ],
+                                 loc_df = locations_df,
+                                 info_df = UCSCinfo_df,
+                                 island_df = IslandsUCSCinfo_df,
+                                 includeType = inclType_logi
+                               )}
     )
 
-  }, .progress = "time", .parallel = parallel)
+  } else {
 
+    cluster <- CreateParallelWorkers(nCores_int, ...)
+
+    resultsAnno_ls <- bplapply(
+      seq_len(nrow(lmmRes_df)),
+      function(row){
+        AnnotateRow(
+          row_df = lmmRes_df[row, ],
+          loc_df = locations_df,
+          info_df = UCSCinfo_df,
+          island_df = IslandsUCSCinfo_df,
+          includeType = inclType_logi
+        )},  BPPARAM = cluster
+    )
+  }
   do.call(rbind, resultsAnno_ls)
 
 }

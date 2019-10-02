@@ -14,8 +14,12 @@
 #'
 #' @param covariates_char character vector for names of the covariate variables
 #'
-#' @param cores Number of cores ued for computation
+#' @param nCores_int Number of computing cores to be used when executing code
+#'    in parallel. Defaults to 1 (serial computing).
+#' @param ... Dots for additional arguments passed to the cluster constructor.
+#'    See \code{\link{CreateParallelWorkers}} for more information.
 #'
+
 #' @return output a matrix of residual values, in the same dimension as \code{dnam}
 #'
 #' @export
@@ -40,7 +44,8 @@
 GetResiduals <- function(dnam, betaToM = TRUE,
                          pheno_df,
                          covariates_char,
-                         cores = 1){
+                         nCores_int = 1L,
+                         ...){
 
   if (class(dnam) == "matrix"){
     dnam_df = as.data.frame(dnam)
@@ -90,30 +95,46 @@ GetResiduals <- function(dnam, betaToM = TRUE,
   formula_char <- paste0("val ~ ", cov_char)
 
 
+  if(nCores_int == 1){
 
-  parallel <- FALSE
-  if(cores > 1) {
-    registerDoParallel(cores)
-    parallel <- TRUE
+    resid_ls <- lapply(seq_len(nrow(value_df)),
+                       function(row){
+
+                         val <- t(value_df[row, ])
+                         colnames(val) <- "val"
+
+                         dat <- cbind(val, pheno_df)
+                         dat$val <- as.numeric(dat$val)
+
+                         fitE <- lm(formula_char, data = dat, na.action = na.exclude)
+
+                         residuals(fitE)
+
+                       }
+    )
+
+  } else {
+
+    cluster <- CreateParallelWorkers(nCores_int, ...)
+
+    resid_ls <- bplapply(
+      seq_len(nrow(value_df)),
+      function(row){
+
+        val <- t(value_df[row, ])
+        colnames(val) <- "val"
+
+        dat <- cbind(val, pheno_df)
+        dat$val <- as.numeric(dat$val)
+
+        fitE <- lm(formula_char, data = dat, na.action = na.exclude)
+
+        residuals(fitE)
+
+      },  BPPARAM = cluster
+    )
   }
-
   ### Take residuals
-  resid_ls <- plyr::llply(seq_len(nrow(value_df)), .fun = function(row){
-
-    val <- t(value_df[row, ])
-    colnames(val) <- "val"
-
-    dat <- cbind(val, pheno_df)
-    dat$val <- as.numeric(dat$val)
-
-    fitE <- lm(formula_char, data = dat, na.action = na.exclude)
-
-    residuals(fitE)
-
-  },
-  .progress = "time",
-  .parallel = parallel)
-
   resid_df <- do.call(rbind, resid_ls)
 
   row.names(resid_df) <- row.names(value_df)

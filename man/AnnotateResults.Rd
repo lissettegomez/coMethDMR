@@ -4,7 +4,8 @@
 \alias{AnnotateResults}
 \title{Annotate \code{coMethDMR} Pipeline Results}
 \usage{
-AnnotateResults(lmmRes_df, arrayType = c("450k", "EPIC"), cores = 1)
+AnnotateResults(lmmRes_df, arrayType = c("450k", "EPIC"),
+  nCores_int = 1L, ...)
 }
 \arguments{
 \item{lmmRes_df}{A data frame returned by \code{\link{lmmTestAllRegions}}. This data
@@ -21,7 +22,11 @@ Optionally, the data frame can also has
 
 \item{arrayType}{Type of array: 450k or EPIC}
 
-\item{cores}{Number of cores ued for computation}
+\item{nCores_int}{Number of computing cores to be used when executing code
+in parallel. Defaults to 1 (serial computing).}
+
+\item{...}{Dots for additional arguments passed to the cluster constructor.
+See \code{\link{CreateParallelWorkers}} for more information.}
 }
 \value{
 A data frame with
