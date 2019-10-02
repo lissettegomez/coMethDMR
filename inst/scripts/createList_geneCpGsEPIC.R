@@ -32,6 +32,8 @@ for (i in 1:length(AllGeneNames)){
 }
 
 region3 <- allGeneRegions_ls [lapply(allGeneRegions_ls, length) >=3]
+saveRDS(region3, "inst/extdata/EPIC_GeneByName_3.rds")
+
 region3_200 <- lapply(region3,
                       CloseBySingleRegion,
                       arrayType = "EPIC",
