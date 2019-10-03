@@ -51,6 +51,15 @@ MarkComethylatedCpGs <- function (betaCluster_mat,
                                   rDropThresh_num = 0.4,
                                   method = c("pearson", "spearman")) {
 
+
+  ### Check that betaToM == "TRUE" only if betaCluster_mat has beta values ###
+
+  if((min(betaCluster_mat)<0 | max(betaCluster_mat>1)) & betaToM == "TRUE") {
+    message("The input methylation values are not beta values,
+         if they are M values, 'betaToM' should be FALSE")
+    return(NULL)
+  }
+
   ### Calculate r_drop and Store CpGs ###
 
   if (betaToM == "TRUE") {
