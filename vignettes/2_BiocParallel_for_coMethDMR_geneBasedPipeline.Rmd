@@ -70,19 +70,21 @@ We can inspect the first region in the list via:
 closeByGeneAll_ls[1]
 ```
 
-Next, we select regions on chromosome 22 for demonstration,. 
+Next, for demonstration, we select regions on chromosome 22. 
 ```{r}
 indx <- grep ("chr22", names(closeByGeneAll_ls))
 
 closeByGene_ls <- closeByGeneAll_ls[indx]
 length(closeByGene_ls)
-
+```
+There are 676 genic regions to be tested for chromosome 22. The first region contains the CpGs
+```{r}
 closeByGene_ls[1]
 ```
-There are 676 genic regions to be tested for chromosome 22. 
+
 
 ## Compute residuals
-This step removes uninteresting technical and biological effects using the `GetResiduals` function, so that the resulting co-methylated clusters are only driven by the biological factors we are interested in. **ODOM: For 676 genic regions over XX cores, this takes YY seconds.**
+This step removes uninteresting technical and biological effects using the `GetResiduals` function, so that the resulting co-methylated clusters are only driven by the biological factors we are interested in. **ODOM: For 676 genic regions in serial, this takes 37 seconds. For these regions over 6 cores, this takes 82 seconds.**
 ```{r, results='hide'}
 # a0 <- Sys.time()
 resid_df <- GetResiduals(
@@ -92,6 +94,7 @@ resid_df <- GetResiduals(
   pheno_df = pheno_df,
   # Features in pheno_df used as covariates
   covariates_char = c("age.brain", "sex", "slide")
+  # cores = 6
 )
 # Sys.time() - a0
 # This returns a matrix, not a data frame.
@@ -102,7 +105,7 @@ resid_df <- GetResiduals(
 
 The cluster computing with the **BiocParallel** package involves simply changing the default value of one argument: `nCores_int`. This argument enables you to perform parallel computing when you set the number of cores to an integer value greater than 1. *If you do not know how many cores your machine has, use the `detectCores()` function from the `parallel` package. Note that, if you have many applications open on your computer, you should not use all of the cores available.*
 
-Once we know how many cores we have available, we execute the `CoMethAllRegions()` function using each worker in the cluster, to find co-methylated clusters in the genic regions. **ODOM: For 676 genic regions, 20 samples, and 8552 sites over XX cores, this takes YY seconds.**
+Once we know how many cores we have available, we execute the `CoMethAllRegions()` function using each worker in the cluster, to find co-methylated clusters in the genic regions. **ODOM: For 676 genic regions, 20 samples, and 8552 sites over 6 cores, this takes 99 seconds.**
 ```{r BiocParallel_Gene, message=FALSE}
 # a1 <- Sys.time()
 
@@ -116,7 +119,8 @@ coMeth_ls <- CoMethAllRegions(
 )
 
 # Sys.time() - a1
-# 40 seconds over 6 cores
+# 40 seconds over 6 cores on Mac
+# 99 seconds over 6 cores on Windows
 ```
 
 The object `coMeth_ls` is a list, with each item containing the list of CpGs within an identified co-methylated region. 
@@ -139,7 +143,8 @@ res_df <- lmmTestAllRegions(
 )
 
 # Sys.time() - a2
-# 15 seconds over 6 cores
+# 15 seconds over 6 cores on Mac
+# 37 seconds over 6 cores on Windows
 ```
 
 Model fit messages and diagnostics for each region will be saved to the log file specified with the `outLogFile` argument. For a single region, this will return a one row of model fit statistics similar to the following:
@@ -148,17 +153,6 @@ Model fit messages and diagnostics for each region will be saved to the log file
 |-------|----------|----------|-------|----------|--------|---------|--------|
 | chr22 | 24823455 | 24823519 |      4|  -0.0702 | 0.0290 | -2.4184 | 0.0155 |
 
-<!-- Because the linear mixed model may fail to converge in some cases, we want to record the computational logs from the parallel workers. To do this, we add additional information to the clusters. -->
-<!-- ```{r add_BP_log, eval=FALSE} -->
-<!-- snow_cl <- SnowParam(workers = 8, type = "SOCK") -->
-<!-- register(snow_cl) -->
-
-<!-- bplog(snow_cl) <- TRUE -->
-
-<!-- dirName <- paste0("lmm_results_log_", Sys.Date(), "/") -->
-<!-- dir.create(dirName) -->
-<!-- bplogdir(snow_cl) <- dirName -->
-<!-- ``` -->
 
 # coMethDMR Analysis Pipeline for 450k Methylation Arrays Datasets via BiocParallel
 
@@ -205,11 +199,13 @@ residChr22_df <- GetResiduals(
   dnam = betasChr22_df,
   betaToM = TRUE, #converts to Mvalues for fitting linear model 
   pheno_df = pheno_df,
-  covariates_char = c("age.brain", "sex", "slide")
+  covariates_char = c("age.brain", "sex", "slide"),
+  cores = 6
 )
 
 coMethChr22_ls <- CoMethAllRegions(
   dnam = residChr22_df,
+  betaToM = FALSE, # these are residuals, not beta values
   method = "spearman",
   arrayType = "450k",
   CpGs_ls = closeByChr22_ls,
@@ -229,7 +225,8 @@ resChr22_df <- lmmTestAllRegions(
 )
 
 # Sys.time() - aAll
-# 3 minutes over 6 cores
+# 3 minutes over 6 cores on Mac
+# 4.4 minutes over 6 cores on Windows
 ```
 
 ## Annotate results
@@ -270,4 +267,4 @@ closeByInterGene_ls <- readRDS(
 
 
 # Additional Comments on Computational Time and Resources
-In this vignette, we have analyzed a small subset of a real EWAS dataset (i.e. only chromosome 22 data on 20 subjects). To give users a more realistic estimate of time for analyzing real EWAS datasets, we also measured time used for analyzing the entire Lunnon et al. (2014) dataset with 110 samples on all chromosomes. These computation times measured on a Dell Precision 5810 with 64Gb of RAM, an Intel Xeon E5-2640 CPU at 2.40Ghz, and using up to 20 cores. More specifically, in Section 4, the entire **coMethDMR** workflow for took xxx minutes with xxx cores and used 24Gb of RAM. We’re currently working improving the speed and reducing the size of **coMethDMR**, so please check back soon for updates.  
+In this vignette, we have analyzed a small subset of a real EWAS dataset (i.e. only chromosome 22 data on 20 subjects). To give users a more realistic estimate of time for analyzing real EWAS datasets, we also measured time used for analyzing the entire Lunnon et al. (2014) dataset with 110 samples on all chromosomes. These computation times measured on a Dell Precision 5810 with 64Gb of RAM, an Intel Xeon E5-2640 CPU at 2.40Ghz, and using up to 20 cores. More specifically, in Section 4, the entire **coMethDMR** workflow for took 103 minutes with 6 cores and used a maximum of 24Gb of RAM (for the `CoMethAllRegions()` function). We’re currently working improving the speed and reducing the size of **coMethDMR**, so please check back soon for updates.  
