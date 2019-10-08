@@ -59,7 +59,8 @@
 #'    )
 #'
 CoMethSingleRegion <- function(CpGs_char,
-                               dnam, betaToM = TRUE,
+                               dnam,
+                               betaToM = TRUE,
                                rDropThresh_num = 0.4,
                                method = c("pearson", "spearman"),
                                minCpGs = 3,
