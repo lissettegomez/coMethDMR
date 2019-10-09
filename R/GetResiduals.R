@@ -41,6 +41,24 @@
 #'      covariates_char = c("age.brain", "sex", "slide")
 #'    )
 #'
+#' \dontrun{
+#'    GetResiduals(
+#'      dnam = betasChr22_df[1:10, 1:10],
+#'      betaToM = TRUE,
+#'      pheno_df = pheno_df,
+#'      covariates_char = c("age.brain", "sex", "slide"),
+#'      nCores_int = 2
+#'    )
+#'    GetResiduals(
+#'      dnam = betasChr22_df[1:10, 1:10],
+#'      betaToM = TRUE,
+#'      pheno_df = pheno_df,
+#'      covariates_char = c("age.brain", "sex", "slide"),
+#'      progressbar = TRUE
+#'    )
+#'
+#' }
+#'
 GetResiduals <- function(dnam, betaToM = TRUE,
                          pheno_df,
                          covariates_char,
@@ -94,46 +112,24 @@ GetResiduals <- function(dnam, betaToM = TRUE,
   cov_char <- paste(covariates_char, collapse = " + ")
   formula_char <- paste0("val ~ ", cov_char)
 
+  cluster <- CreateParallelWorkers(nCores_int, ...)
 
-  if(nCores_int == 1){
+  resid_ls <- bplapply(
+    seq_len(nrow(value_df)),
+    function(row){
 
-    resid_ls <- lapply(seq_len(nrow(value_df)),
-                       function(row){
+      val <- t(value_df[row, ])
+      colnames(val) <- "val"
 
-                         val <- t(value_df[row, ])
-                         colnames(val) <- "val"
+      dat <- cbind(val, pheno_df)
+      dat$val <- as.numeric(dat$val)
 
-                         dat <- cbind(val, pheno_df)
-                         dat$val <- as.numeric(dat$val)
+      fitE <- lm(formula_char, data = dat, na.action = na.exclude)
 
-                         fitE <- lm(formula_char, data = dat, na.action = na.exclude)
+      residuals(fitE)
 
-                         residuals(fitE)
-
-                       }
-    )
-
-  } else {
-
-    cluster <- CreateParallelWorkers(nCores_int, ...)
-
-    resid_ls <- bplapply(
-      seq_len(nrow(value_df)),
-      function(row){
-
-        val <- t(value_df[row, ])
-        colnames(val) <- "val"
-
-        dat <- cbind(val, pheno_df)
-        dat$val <- as.numeric(dat$val)
-
-        fitE <- lm(formula_char, data = dat, na.action = na.exclude)
-
-        residuals(fitE)
-
-      },  BPPARAM = cluster
-    )
-  }
+    },  BPPARAM = cluster
+  )
   ### Take residuals
   resid_df <- do.call(rbind, resid_ls)
 

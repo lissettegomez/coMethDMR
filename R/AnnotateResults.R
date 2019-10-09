@@ -73,7 +73,6 @@ AnnotateResults <- function(lmmRes_df,
   switch(
     arrayType,
     "450k" = {
-
       locations_df <- IlluminaHumanMethylation450kanno.ilmn12.hg19::Locations
       UCSCinfo_df  <- IlluminaHumanMethylation450kanno.ilmn12.hg19::Other
       IslandsUCSCinfo_df <- IlluminaHumanMethylation450kanno.ilmn12.hg19::Islands.UCSC
@@ -185,35 +184,18 @@ AnnotateResults <- function(lmmRes_df,
 
   inclType_logi <- !is.null(lmmRes_df$regionType)
 
-  if(nCores_int == 1){
+  cluster <- CreateParallelWorkers(nCores_int, ...)
 
-    resultsAnno_ls <- lapply(seq_len(nrow(lmmRes_df)),
-                             function(row){
-                               AnnotateRow(
-                                 row_df = lmmRes_df[row, ],
-                                 loc_df = locations_df,
-                                 info_df = UCSCinfo_df,
-                                 island_df = IslandsUCSCinfo_df,
-                                 includeType = inclType_logi
-                               )}
-    )
-
-  } else {
-
-    cluster <- CreateParallelWorkers(nCores_int, ...)
-
-    resultsAnno_ls <- bplapply(
-      seq_len(nrow(lmmRes_df)),
-      function(row){
-        AnnotateRow(
-          row_df = lmmRes_df[row, ],
-          loc_df = locations_df,
-          info_df = UCSCinfo_df,
-          island_df = IslandsUCSCinfo_df,
-          includeType = inclType_logi
-        )},  BPPARAM = cluster
-    )
-  }
+  resultsAnno_ls <- bplapply(
+    seq_len(nrow(lmmRes_df)),
+    function(row){
+      AnnotateRow(
+        row_df = lmmRes_df[row, ],
+        loc_df = locations_df,
+        info_df = UCSCinfo_df,
+        island_df = IslandsUCSCinfo_df,
+        includeType = inclType_logi
+      )},  BPPARAM = cluster
+  )
   do.call(rbind, resultsAnno_ls)
-
 }

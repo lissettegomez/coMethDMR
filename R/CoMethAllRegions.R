@@ -141,40 +141,20 @@ CoMethAllRegions <- function(dnam,
 
   }
 
+  cluster <- CreateParallelWorkers(nCores_int, ...)
 
-  ### Extract contiguous comethylated region(s) from each close by region ###
-  if(nCores_int == 1){
-
-    coMethCpGsAllREgions_ls <- lapply(
-      unname(closeByGenomicRegion_ls),
-      FUN = CoMethSingleRegion,
-      dnam = dnam,
-      betaToM = betaToM,
-      rDropThresh_num = rDropThresh_num,
-      minCpGs = minCpGs,
-      method = method,
-      arrayType = arrayType,
-      returnAllCpGs = returnAllCpGs
-    )
-
-  } else {
-
-    cluster <- CreateParallelWorkers(nCores_int, ...)
-
-    coMethCpGsAllREgions_ls <- bplapply(
-      unname(closeByGenomicRegion_ls),
-      FUN = CoMethSingleRegion,
-      BPPARAM = cluster,
-      dnam = dnam,
-      betaToM = betaToM,
-      rDropThresh_num = rDropThresh_num,
-      minCpGs = minCpGs,
-      method = method,
-      arrayType = arrayType,
-      returnAllCpGs = returnAllCpGs
-    )
-
-  }
+  coMethCpGsAllREgions_ls <- bplapply(
+    unname(closeByGenomicRegion_ls),
+    FUN = CoMethSingleRegion,
+    BPPARAM = cluster,
+    dnam = dnam,
+    betaToM = betaToM,
+    rDropThresh_num = rDropThresh_num,
+    minCpGs = minCpGs,
+    method = method,
+    arrayType = arrayType,
+    returnAllCpGs = returnAllCpGs
+  )
 
 
   ### return output ###

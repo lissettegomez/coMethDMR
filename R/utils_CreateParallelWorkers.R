@@ -21,10 +21,14 @@
 #'
 CreateParallelWorkers <- function(nCores, ...){
 
-  if(Sys.info()["sysname"] == "Windows"){
-    SnowParam(workers = nCores, type = "SOCK", ...)
+  if(nCores > 1L) {
+    if(Sys.info()["sysname"] == "Windows"){
+      SnowParam(workers = nCores, type = "SOCK", ...)
+    } else {
+      MulticoreParam(workers = nCores, ...)
+    }
   } else {
-    MulticoreParam(workers = nCores, ...)
+    SerialParam(...)
   }
 
 }
