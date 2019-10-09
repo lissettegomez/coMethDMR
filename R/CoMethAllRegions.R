@@ -14,13 +14,9 @@
 #'
 #' @param CpGs_ls list where each item is a character vector of CpGs IDs.
 #'
-#' @param regionType Type of input genomic regions (e.g. "ISLAND" for CpG island)
-
-#' @param file an RDS or gmt file with clusters of CpG locations (i.e. CpGs
+#' @param file an RDS file with clusters of CpG locations (i.e. CpGs
 #'    located closely to each other on the genome). This file can be generated
 #'    by the \code{\link{WriteCloseByAllRegions}} function.
-#' @param fileType file extension for input file, can be "gmt" or "RDS"
-
 #' @param returnAllCpGs When there is not a contiguous comethylated region in
 #'    the inputing pre-defined region, \code{returnAllCpGs = 1} indicates
 #'    outputting all the CpGs in the input regions, while
@@ -41,8 +37,8 @@
 #' When \code{output = "CpGs"} is selected, returns a list, each item is a list of CpGs
 #' in the contiguous co-methylated subregion.
 #'
-#' @details There are several ways to input genomic regions for this function: (1) use \code{CpGs_ls}
-#' argument (2) use \code{regionType} argument (3) use \code{file} and \code{fileType} arguments,
+#' @details There are two ways to input genomic regions for this function: (1) use \code{CpGs_ls}
+#' argument (2) use \code{file} argument,
 #' examples of these files are at https://github.com/lissettegomez/coMethDMRdata
 #'
 #' @export
@@ -72,16 +68,6 @@
 #'      output = "CpGs"
 #'    )
 #'
-#'\dontrun{
-#'
-#'  CoMethAllRegions (
-#'    dnam = betasChr22_df,
-#'    regionType = "ISLAND",
-#'    arrayType = "450k",
-#'    returnAllCpGs = FALSE
-#'  )
-#'
-#'}
 #'
 CoMethAllRegions <- function(dnam,
                              betaToM = TRUE,
@@ -89,55 +75,26 @@ CoMethAllRegions <- function(dnam,
                              rDropThresh_num = 0.4,
                              minCpGs = 3,
                              arrayType = c("450k","EPIC"),
-                             CpGs_ls = NULL,
+                             CpGs_ls,
                              file = NULL,
-                             fileType = c("gmt","RDS"),
-                             regionType = c(
-                               "ISLAND", "NSHORE", "NSHELF", "SSHORE", "SSHELF",
-                               "TSS1500", "TSS200", "UTR5", "EXON1", "GENEBODY",
-                               "UTR3"
-                             ),
                              returnAllCpGs = FALSE,
                              output = c("CpGs", "dataframe"),
                              nCores_int = 1L,
                              ...){
   # browser()
 
-  regionType <- match.arg(regionType)
   method <- match.arg(method)
   arrayType <- match.arg(arrayType)
-  fileType <- match.arg(fileType)
   output <- match.arg(output)
 
   ### Read file of close by CpGs ###
-  if(!is.null(CpGs_ls)){
+  if(!is.null(CpGs_ls)) {
 
-    closeByGenomicRegion_ls <- CreateCpGsRegions(CpGs_ls)$regions
-
-  } else if(!is.null(file)) {
-
-    switch(
-      fileType,
-      "RDS" = {
-        rdsFile <- readRDS(file)
-        closeByGenomicRegion_ls <- rdsFile$regions
-      },
-      "gmt" = {
-        gmtFile <- read_gmt(file, setType = "regions")
-        closeByGenomicRegion_ls <- gmtFile$regions
-      }
-    )
+    closeByGenomicRegion_ls <- CpGs_ls
 
   } else {
 
-    closeByGenomicRegion_ls <- readRDS(
-      system.file(
-        "extdata",
-        paste0(regionType, "_3_200.rds"),
-        package = 'coMethDMR',
-        mustWork = TRUE
-      )
-    )
+    closeByGenomicRegion_ls <- readRDS(file)
 
   }
 
@@ -175,6 +132,8 @@ CoMethAllRegions <- function(dnam,
     )
 
   }
+
+  coMethCpGsAllREgions_ls <- unique(coMethCpGsAllREgions_ls)
 
 
   ### return output ###

@@ -7,11 +7,9 @@
 \usage{
 CoMethAllRegions(dnam, betaToM = TRUE, method = c("pearson",
   "spearman"), rDropThresh_num = 0.4, minCpGs = 3,
-  arrayType = c("450k", "EPIC"), CpGs_ls = NULL, file = NULL,
-  fileType = c("gmt", "RDS"), regionType = c("ISLAND", "NSHORE",
-  "NSHELF", "SSHORE", "SSHELF", "TSS1500", "TSS200", "UTR5", "EXON1",
-  "GENEBODY", "UTR3"), returnAllCpGs = FALSE, output = c("CpGs",
-  "dataframe"), nCores_int = 1L, ...)
+  arrayType = c("450k", "EPIC"), CpGs_ls, file = NULL,
+  returnAllCpGs = FALSE, output = c("CpGs", "dataframe"),
+  nCores_int = 1L, ...)
 }
 \arguments{
 \item{dnam}{matrix (or data frame) of beta values, with row names = CpG IDs,
@@ -32,13 +30,9 @@ Only regions with more than \code{minCpGs} will be returned.}
 
 \item{CpGs_ls}{list where each item is a character vector of CpGs IDs.}
 
-\item{file}{an RDS or gmt file with clusters of CpG locations (i.e. CpGs
+\item{file}{an RDS file with clusters of CpG locations (i.e. CpGs
 located closely to each other on the genome). This file can be generated
 by the \code{\link{WriteCloseByAllRegions}} function.}
-
-\item{fileType}{file extension for input file, can be "gmt" or "RDS"}
-
-\item{regionType}{Type of input genomic regions (e.g. "ISLAND" for CpG island)}
 
 \item{returnAllCpGs}{When there is not a contiguous comethylated region in
 the inputing pre-defined region, \code{returnAllCpGs = 1} indicates
@@ -69,8 +63,8 @@ Extract contiguous co-methylated genomic regions from a list of
   pre-defined genomic regions
 }
 \details{
-There are several ways to input genomic regions for this function: (1) use \code{CpGs_ls}
-argument (2) use \code{regionType} argument (3) use \code{file} and \code{fileType} arguments,
+There are two ways to input genomic regions for this function: (1) use \code{CpGs_ls}
+argument (2) use \code{file} argument,
 examples of these files are at https://github.com/lissettegomez/coMethDMRdata
 }
 \examples{
@@ -96,15 +90,5 @@ examples of these files are at https://github.com/lissettegomez/coMethDMRdata
      output = "CpGs"
    )
 
-\dontrun{
-
- CoMethAllRegions (
-   dnam = betasChr22_df,
-   regionType = "ISLAND",
-   arrayType = "450k",
-   returnAllCpGs = FALSE
- )
-
-}
 
 }

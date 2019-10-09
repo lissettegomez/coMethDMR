@@ -26,8 +26,6 @@
 #'
 #' @importFrom stats na.exclude
 #' @importFrom stats residuals
-#' @importFrom doParallel registerDoParallel
-#' @importFrom plyr llply
 #'
 #' @examples
 #'    data(betasChr22_df)

@@ -2,18 +2,15 @@
 % Please edit documentation in R/WriteCloseByAllRegions.R
 \name{WriteCloseByAllRegions}
 \alias{WriteCloseByAllRegions}
-\title{Extract clusters of CpG probes located closely from a list of pre-defined genomic regions}
+\title{Extract clusters of CpG probes located closely}
 \usage{
-WriteCloseByAllRegions(file, regionType = c("ISLAND", "NSHORE", "NSHELF",
-  "SSHORE", "SSHELF", "TSS1500", "TSS200", "UTR5", "EXON1", "GENEBODY",
-  "UTR3"), arrayType = c("450k", "EPIC"), maxGap = 200, minCpGs = 3,
-  fileType = c("gmt", "RDS"), ...)
+WriteCloseByAllRegions(fileName, regions, arrayType = c("450k", "EPIC"),
+  maxGap = 200, minCpGs = 3, ...)
 }
 \arguments{
-\item{file}{file where the output genomic regions will be saved. File extension should not
-be supplied, it is automatically added via the \code{fileType} argument.}
+\item{fileName}{Name of the RDS file where the output genomic regions will be saved.}
 
-\item{regionType}{Type of input genomic regions (e.g. "ISLAND" for CpG island)}
+\item{regions}{GRanges of input genomic regions}
 
 \item{arrayType}{Type of array, can be "450k" or "EPIC"}
 
@@ -22,8 +19,6 @@ are placed into the same cluster}
 
 \item{minCpGs}{an integer, minimum number of CpGs for each resulting region}
 
-\item{fileType}{the output files can be saved as .gmt or .RDS.}
-
 \item{...}{Dots for internal arguments. Currently unused.}
 }
 \value{
@@ -31,24 +26,19 @@ a file with the genomic regions containing CpGs located closely within each
  inputing pre-defined genomic region
 }
 \description{
-Extract clusters of CpG probes located closely from a list of pre-defined genomic regions
+Extract clusters of CpG probes located closely
 }
 \details{
 For \code{maxGap} = 200 and \code{minCpGs} = 3, we already calculated
    the clusters of CpGs. They are saved in folder \code{/inst/extdata/}.
-
- Note that for output files, .gmt files can be opened as flat text file. .RDS files are half
- the size of .gmt files, but they can only be read in the R enviroment.
-
- Creating and writing the file for one type of genomic region (\code{regionType = "ISLAND"}
- ) took about 25 minutes.
 }
 \examples{
-\dontrun{
-  WriteCloseByAllRegions(
-     regionType = "ISLAND", arrayType = "450k", maxGap = 50,
-     minCpGs = 3, fileType = "gmt", file = "closeByRegions"
-  )
-}
+
+data(regions)
+
+WriteCloseByAllRegions(
+   regions = regions, arrayType = "EPIC", maxGap = 50,
+   minCpGs = 3, fileName = "closeByRegions.rds"
+)
 
 }
