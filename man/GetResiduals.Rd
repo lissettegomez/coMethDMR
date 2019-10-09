@@ -45,4 +45,22 @@ Get Residuals
      covariates_char = c("age.brain", "sex", "slide")
    )
 
+\dontrun{
+   GetResiduals(
+     dnam = betasChr22_df[1:10, 1:10],
+     betaToM = TRUE,
+     pheno_df = pheno_df,
+     covariates_char = c("age.brain", "sex", "slide"),
+     nCores_int = 2
+   )
+   GetResiduals(
+     dnam = betasChr22_df[1:10, 1:10],
+     betaToM = TRUE,
+     pheno_df = pheno_df,
+     covariates_char = c("age.brain", "sex", "slide"),
+     progressbar = TRUE
+   )
+
+}
+
 }

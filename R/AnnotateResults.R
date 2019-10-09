@@ -128,34 +128,25 @@ AnnotateResults <- function(lmmRes_df,
     islandOut_df <- island_df[probes_char, ]
 
     ###  Wrangle UCSC Annotation  ###
-    refGeneGroup_char <- unlist(
-      sapply(
-        infoOut_df$UCSC_RefGene_Group,
-        strsplit, ";",
-        USE.NAMES = FALSE
-      )
-    )
+    refGeneGroup_char <-
+      sort(unique(unlist(
+        strsplit(infoOut_df$UCSC_RefGene_Group, ";")
+      )))
+
     refGeneGroup_char <- sort(unique(refGeneGroup_char))
 
-    refGeneAcc_char <- unlist(
-      sapply(
-        infoOut_df$UCSC_RefGene_Accession,
-        strsplit, ";",
-        USE.NAMES = FALSE
-      )
-    )
-    refGeneAcc_char <- sort(unique(refGeneAcc_char))
+    refGeneAcc_char <-
+      sort(unique(unlist(
+        strsplit(infoOut_df$UCSC_RefGene_Accession, ";")
+      )))
 
-    refGeneName_char <- unlist(
-      sapply(
-        infoOut_df$UCSC_RefGene_Name,
-        strsplit, ";",
-        USE.NAMES = FALSE
-      )
-    )
-    refGeneName_char <- sort(unique(refGeneName_char))
+    refGeneName_char <-
+      sort(unique(unlist(
+        strsplit(infoOut_df$UCSC_RefGene_Name, ";")
+      )))
 
-    refIslandRelation_char <- sort(unique(islandOut_df$Relation_to_Island))
+    refIslandRelation_char <-
+      sort(unique(islandOut_df$Relation_to_Island))
 
 
     ###  Return Annotated 1-Row Data Frame  ###
