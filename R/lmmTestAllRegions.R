@@ -122,7 +122,7 @@ lmmTestAllRegions <- function(betas, region_ls, pheno_df,
   modelType <- match.arg(modelType)
   arrayType <- match.arg(arrayType)
 
-  if (class(betas) == "matrix"){
+  if (is(betas, "matrix")){
     beta_df <- as.data.frame(betas)
   } else {
     beta_df <- betas

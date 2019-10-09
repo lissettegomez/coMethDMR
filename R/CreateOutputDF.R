@@ -35,7 +35,9 @@
 #'    keepCpGs_df <- MarkComethylatedCpGs(betaCluster_mat = betaClusterTransp_mat)
 #'    keepContiguousCpGs_df <- FindComethylatedRegions(CpGs_df = keepCpGs_df)
 #'    CreateOutputDF(keepCpGs_df, keepContiguousCpGs_df, CpGsOrdered_df)
-CreateOutputDF <- function(keepCpGs_df, keepContiguousCpGs_df, CpGsOrdered_df,
+CreateOutputDF <- function(keepCpGs_df,
+                           keepContiguousCpGs_df,
+                           CpGsOrdered_df,
                            returnAllCpGs = FALSE){
 
   if (returnAllCpGs == FALSE & all(keepContiguousCpGs_df$Subregion == 0)){
@@ -45,7 +47,7 @@ CreateOutputDF <- function(keepCpGs_df, keepContiguousCpGs_df, CpGsOrdered_df,
   } else {
 
     output_df <- merge(
-      keepCpGs_df, keepContiguousCpGs_df, by.x = "CpG", by.y = "ProbeID", all.x = T
+      keepCpGs_df, keepContiguousCpGs_df, by.x = "CpG", by.y = "ProbeID", all.x = TRUE
     )
     output2_df <- merge(
       CpGsOrdered_df, output_df, by.x = "cpg", by.y = "CpG"

@@ -63,7 +63,7 @@ GetResiduals <- function(dnam, betaToM = TRUE,
                          nCores_int = 1L,
                          ...){
 
-  if (class(dnam) == "matrix"){
+  if (is(dnam, "matrix")){
     dnam_df = as.data.frame(dnam)
   } else {
     dnam_df = dnam
