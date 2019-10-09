@@ -83,7 +83,7 @@ MarkComethylatedCpGs <- function (betaCluster_mat,
   CpGs_df <- data.frame(
     CpG = clusterRdrop_df$CpG,
     keep = ifelse(CpGs_char %in% dropCpGs_char, 0, 1), ##(drop=0, keep=1)
-    ind = 1:ncol(betaCluster_mat),
+    ind = seq_len(ncol(betaCluster_mat)),
     r_drop = clusterRdrop_df$r_drop,
     stringsAsFactors = FALSE
   )

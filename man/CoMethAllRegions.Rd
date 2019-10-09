@@ -38,7 +38,8 @@ by the \code{\link{WriteCloseByAllRegions}} function.}
 
 \item{fileType}{file extension for input file, can be "gmt" or "RDS"}
 
-\item{regionType}{Type of input genomic regions (e.g. "ISLAND" for CpG island)}
+\item{regionType}{Type of input genomic regions
+(e.g. "ISLAND" for CpG island)}
 
 \item{returnAllCpGs}{When there is not a contiguous comethylated region in
 the inputing pre-defined region, \code{returnAllCpGs = 1} indicates
@@ -55,22 +56,25 @@ in parallel. Defaults to 1 (serial computing).}
 See \code{\link{CreateParallelWorkers}} for more information.}
 }
 \value{
-When \code{output = "dataframe"} is selected, returns a list of data frames, each with \code{CpG}
+When \code{output = "dataframe"} is selected,
+returns a list of data frames, each with \code{CpG}
 (CpG name), \code{Chr} (chromosome number), \code{MAPINFO} (genomic
 position), \code{r_drop} (correlation between the CpG with rest of the
 CpGs), \code{keep} (indicator for co-methylated CpG),
 \code{keep_contiguous} (index for contiguous comethylated subregions).
 
-When \code{output = "CpGs"} is selected, returns a list, each item is a list of CpGs
-in the contiguous co-methylated subregion.
+When \code{output = "CpGs"} is selected, returns a list,
+each item is a list of CpGs in the contiguous co-methylated subregion.
 }
 \description{
 Extract contiguous co-methylated genomic regions from a list of
   pre-defined genomic regions
 }
 \details{
-There are several ways to input genomic regions for this function: (1) use \code{CpGs_ls}
-argument (2) use \code{regionType} argument (3) use \code{file} and \code{fileType} arguments,
+There are several ways to input genomic regions
+for this function: (1) use \code{CpGs_ls} argument
+(2) use \code{regionType} argument
+(3) use \code{file} and \code{fileType} arguments,
 examples of these files are at https://github.com/lissettegomez/coMethDMRdata
 }
 \examples{

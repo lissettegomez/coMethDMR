@@ -5,44 +5,53 @@
 #'    column names = sample IDs. This is typically genome-wide methylation beta
 #'    values.
 #' @param betaToM indicates if converting methylation beta values to mvalues
-#' @param method method for computing correlation, can be "spearman" or "pearson"
+#' @param method method for computing correlation,
+#' can be "spearman" or "pearson"
+#'
 #' @param rDropThresh_num thershold for min correlation between a cpg with sum
 #'    of the rest of the CpGs
 #' @param minCpGs mininum number of CpGs to be considered a "region".
 #'    Only regions with more than \code{minCpGs} will be returned.
+#'
 #' @param arrayType Type of array, can be "450k" or "EPIC"
 #'
 #' @param CpGs_ls list where each item is a character vector of CpGs IDs.
 #'
-#' @param regionType Type of input genomic regions (e.g. "ISLAND" for CpG island)
-
+#' @param regionType Type of input genomic regions
+#' (e.g. "ISLAND" for CpG island)
+#'
 #' @param file an RDS or gmt file with clusters of CpG locations (i.e. CpGs
 #'    located closely to each other on the genome). This file can be generated
 #'    by the \code{\link{WriteCloseByAllRegions}} function.
 #' @param fileType file extension for input file, can be "gmt" or "RDS"
-
+#'
 #' @param returnAllCpGs When there is not a contiguous comethylated region in
 #'    the inputing pre-defined region, \code{returnAllCpGs = 1} indicates
 #'    outputting all the CpGs in the input regions, while
 #'    \code{returnAllCpGs = 0} indicates not returning any CpG.
+#'
 #' @param output a character vector of CpGs or a dataframe of CpGs along with
 #'    rDrop info
+#'
 #' @param nCores_int Number of computing cores to be used when executing code
 #'    in parallel. Defaults to 1 (serial computing).
 #' @param ... Dots for additional arguments passed to the cluster constructor.
 #'    See \code{\link{CreateParallelWorkers}} for more information.
 #'
-#' @return  When \code{output = "dataframe"} is selected, returns a list of data frames, each with \code{CpG}
+#' @return  When \code{output = "dataframe"} is selected,
+#' returns a list of data frames, each with \code{CpG}
 #' (CpG name), \code{Chr} (chromosome number), \code{MAPINFO} (genomic
 #' position), \code{r_drop} (correlation between the CpG with rest of the
 #' CpGs), \code{keep} (indicator for co-methylated CpG),
 #' \code{keep_contiguous} (index for contiguous comethylated subregions).
 #'
-#' When \code{output = "CpGs"} is selected, returns a list, each item is a list of CpGs
-#' in the contiguous co-methylated subregion.
+#' When \code{output = "CpGs"} is selected, returns a list,
+#' each item is a list of CpGs in the contiguous co-methylated subregion.
 #'
-#' @details There are several ways to input genomic regions for this function: (1) use \code{CpGs_ls}
-#' argument (2) use \code{regionType} argument (3) use \code{file} and \code{fileType} arguments,
+#' @details There are several ways to input genomic regions
+#' for this function: (1) use \code{CpGs_ls} argument
+#' (2) use \code{regionType} argument
+#' (3) use \code{file} and \code{fileType} arguments,
 #' examples of these files are at https://github.com/lissettegomez/coMethDMRdata
 #'
 #' @export

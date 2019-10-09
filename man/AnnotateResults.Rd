@@ -8,16 +8,16 @@ AnnotateResults(lmmRes_df, arrayType = c("450k", "EPIC"),
   nCores_int = 1L, ...)
 }
 \arguments{
-\item{lmmRes_df}{A data frame returned by \code{\link{lmmTestAllRegions}}. This data
-frame must contain the following columns:
+\item{lmmRes_df}{A data frame returned by \code{\link{lmmTestAllRegions}}.
+This data frame must contain the following columns:
    \itemize{
      \item{\code{chrom} : }{the chromosome the region is on, e.g. ``chr22''}
      \item{\code{start} : }{the region start point}
      \item{\code{end} : }{the region end point}
      }
 
-Optionally, the data frame can also has
-  \code{regionType}, which is a character string marking the type of genomic region tested.
+Optionally, the data frame can also has \code{regionType},
+which is a character string marking the type of genomic region tested.
   See details below.}
 
 \item{arrayType}{Type of array: 450k or EPIC}

@@ -32,6 +32,7 @@ Imports:
   stats,
   utils
 Suggests: 
+  knitr,
   testthat
 biocViews:
     DNAMethylation,
