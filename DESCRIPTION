@@ -29,6 +29,10 @@ Imports:
   GenomicRanges,
   IRanges,
   lmerTest,
-  pathwayPCA  
+  pathwayPCA,
+  stats
 Suggests: 
   testthat
+biocViews:
+    DNAMethylation,
+    Epigenetics

@@ -13,9 +13,7 @@
 #'
 #' @export
 #'
-#' @importFrom BiocParallel SnowParam
-#' @importFrom BiocParallel MulticoreParam
-#'
+#' @importFrom BiocParallel SnowParam SerialParam MulticoreParam
 #' @examples
 #'    workers_cl <- CreateWorkers(nCores = 4)
 #'
