@@ -34,7 +34,6 @@
 CloseBySingleRegion <- function(CpGs_char,
                                 arrayType = c("450k","EPIC"),
                                 maxGap = 200, minCpGs = 3){
-
   CpGsOrdered_df <- OrderCpGsByLocation(
     CpGs_char, arrayType, output = "dataframe"
   )

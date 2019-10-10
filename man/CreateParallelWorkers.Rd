@@ -12,6 +12,9 @@ computation}
 
 \item{...}{Additional arguments passed to the cluster constructors.}
 }
+\value{
+A parameter class for use in parallel evaluation
+}
 \description{
 This function is a wrapper for the \code{\link[BiocParallel]{SnowParam}} and
    \code{\link[BiocParallel]{MulticoreParam}} constructor functions.
@@ -23,5 +26,4 @@ This function checks the operating system and then creates a
 }
 \examples{
    workers_cl <- CreateWorkers(nCores = 4)
-
 }

@@ -122,7 +122,7 @@ lmmTestAllRegions <- function(betas, region_ls, pheno_df,
   modelType <- match.arg(modelType)
   arrayType <- match.arg(arrayType)
 
-  if (class(betas) == "matrix"){
+  if (is(betas, "matrix")){
     beta_df <- as.data.frame(betas)
   } else {
     beta_df <- betas
@@ -156,37 +156,20 @@ lmmTestAllRegions <- function(betas, region_ls, pheno_df,
   )
 
   ###  Run mixed model for all the contiguous comethylated regions  ###
-  if(nCores_int == 1){
 
-    results_ls <- lapply(
-      coMethBetaDF_ls,
-      FUN = lmmTest,
-      pheno_df,
-      contPheno_char,
-      covariates_char,
-      modelType,
-      arrayType,
-      outLogFile
-    )
+  cluster <- CreateParallelWorkers(nCores_int, ...)
 
-  } else {
-
-    cluster <- CreateParallelWorkers(nCores_int, ...)
-
-    results_ls <- bplapply(
-      coMethBetaDF_ls,
-      FUN = lmmTest,
-      BPPARAM = cluster,
-      pheno_df,
-      contPheno_char,
-      covariates_char,
-      modelType,
-      arrayType,
-      outLogFile
-    )
-
-  }
-
+  results_ls <- bplapply(
+    coMethBetaDF_ls,
+    FUN = lmmTest,
+    BPPARAM = cluster,
+    pheno_df,
+    contPheno_char,
+    covariates_char,
+    modelType,
+    arrayType,
+    outLogFile
+  )
 
   if(writeLog_logi){
 

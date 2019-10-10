@@ -13,6 +13,10 @@ output:
     toc_float: false
   word_document:
     toc: yes
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{"Genome-wide methylation analysis using coMethDMR via parallel computing"}
+  %\VignetteEncoding{UTF-8}    
 ---
 
 ```{r setup, include=FALSE}

@@ -38,11 +38,11 @@ FindComethylatedRegions <- function(CpGs_df, minCpGs_int = 3){
 
     ### Create output dataframe with CpGs and contiguous comethylated subregion number ###
     #globalVariables("ind")
-    ind<-NULL
+    ind <- NULL
 
        if (nSegsMinCpGs_int > 0){
 
-         inner_ls <- lapply(1:nSegsMinCpGs_int, function(u){
+         inner_ls <- lapply(seq_len(nSegsMinCpGs_int), function(u){
 
            data.frame(
              CpG = subset(

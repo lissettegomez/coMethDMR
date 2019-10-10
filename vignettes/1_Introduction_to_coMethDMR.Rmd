@@ -6,6 +6,10 @@ output:
   pdf_document: default
   html_document: default
   word_document: default
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{"Introduction to coMethDMR"}
+  %\VignetteEncoding{UTF-8}       
 ---
 
 ```{r setup, include=FALSE}

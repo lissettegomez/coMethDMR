@@ -45,7 +45,7 @@ GetResiduals <- function(dnam, betaToM = TRUE,
                          nCores_int = 1L,
                          ...){
 
-  if (class(dnam) == "matrix"){
+  if (is(dnam, "matrix")){
     dnam_df = as.data.frame(dnam)
   } else {
     dnam_df = dnam
@@ -92,46 +92,24 @@ GetResiduals <- function(dnam, betaToM = TRUE,
   cov_char <- paste(covariates_char, collapse = " + ")
   formula_char <- paste0("val ~ ", cov_char)
 
+  cluster <- CreateParallelWorkers(nCores_int, ...)
 
-  if(nCores_int == 1){
+  resid_ls <- bplapply(
+    seq_len(nrow(value_df)),
+    function(row){
 
-    resid_ls <- lapply(seq_len(nrow(value_df)),
-                       function(row){
+      val <- t(value_df[row, ])
+      colnames(val) <- "val"
 
-                         val <- t(value_df[row, ])
-                         colnames(val) <- "val"
+      dat <- cbind(val, pheno_df)
+      dat$val <- as.numeric(dat$val)
 
-                         dat <- cbind(val, pheno_df)
-                         dat$val <- as.numeric(dat$val)
+      fitE <- lm(formula_char, data = dat, na.action = na.exclude)
 
-                         fitE <- lm(formula_char, data = dat, na.action = na.exclude)
+      residuals(fitE)
 
-                         residuals(fitE)
-
-                       }
-    )
-
-  } else {
-
-    cluster <- CreateParallelWorkers(nCores_int, ...)
-
-    resid_ls <- bplapply(
-      seq_len(nrow(value_df)),
-      function(row){
-
-        val <- t(value_df[row, ])
-        colnames(val) <- "val"
-
-        dat <- cbind(val, pheno_df)
-        dat$val <- as.numeric(dat$val)
-
-        fitE <- lm(formula_char, data = dat, na.action = na.exclude)
-
-        residuals(fitE)
-
-      },  BPPARAM = cluster
-    )
-  }
+    },  BPPARAM = cluster
+  )
   ### Take residuals
   resid_df <- do.call(rbind, resid_ls)
 
