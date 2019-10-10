@@ -20,7 +20,8 @@ values.}
 
 \item{betaToM}{indicates if converting methylation beta values to mvalues}
 
-\item{method}{method for computing correlation, can be "spearman" or "pearson"}
+\item{method}{method for computing correlation,
+can be "spearman" or "pearson"}
 
 \item{rDropThresh_num}{thershold for min correlation between a cpg with sum
 of the rest of the CpGs}
