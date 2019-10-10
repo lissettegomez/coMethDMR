@@ -16,6 +16,7 @@
 #' @param arrayType Type of array, can be "450k" or "EPIC"
 #'
 #' @param CpGs_ls list where each item is a character vector of CpGs IDs.
+#'    This should be CpG probes located closely on the array.
 #'
 #' @param file an RDS file with clusters of CpG locations (i.e. CpGs
 #'    located closely to each other on the genome). This file can be generated
@@ -79,7 +80,7 @@
 #'
 #'
 CoMethAllRegions <- function(dnam,
-                             betaToM = TRUE,
+                             betaToM = FALSE,
                              method = c("pearson", "spearman"),
                              rDropThresh_num = 0.4,
                              minCpGs = 3,
