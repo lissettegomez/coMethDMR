@@ -49,7 +49,7 @@
 #' for this function: (1) use \code{CpGs_ls} argument
 #' (2) use \code{file} argument
 #'
-#' examples of these files are at https://github.com/lissettegomez/coMethDMRdata
+#' examples of these files are in /inst/extdata/ folder of the package.
 #'
 #' @export
 #'
