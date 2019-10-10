@@ -3,20 +3,20 @@ title: "Genome-wide methylation analysis using coMethDMR via parallel computing"
 author: "Gabriel J. Odom, Lissette Gomez,  Tiago Chedraoui Silva, Lanyu Zhang and Lily Wang"
 date: "10/9/2019"
 output:
-  pdf_document:
-    toc: yes
-    toc_depth: '2'
   html_document:
     number_sections: yes
     toc: yes
     toc_depth: 2
     toc_float: false
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
   word_document:
     toc: yes
 vignette: >
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{"Genome-wide methylation analysis using coMethDMR via parallel computing"}
   %\VignetteEncoding{UTF-8}    
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 ```{r setup, include=FALSE}
@@ -88,7 +88,7 @@ closeByGene_ls[1]
 
 
 ## Compute residuals
-This step removes uninteresting technical and biological effects using the `GetResiduals` function, so that the resulting co-methylated clusters are only driven by the biological factors we are interested in. **ODOM: For 676 genic regions in serial, this takes 37 seconds. For these regions over 6 cores, this takes 82 seconds.**
+This step removes uninteresting technical and biological effects using the `GetResiduals` function, so that the resulting co-methylated clusters are only driven by the biological factors we are interested in. 
 ```{r, results='hide'}
 # a0 <- Sys.time()
 resid_df <- GetResiduals(
@@ -104,12 +104,13 @@ resid_df <- GetResiduals(
 # This returns a matrix, not a data frame.
 ```
 
+This step took about 37 seconds when computing in serial, and about 82 seconds when computing over 6 cores.  
 
 ## Finding co-methylated regions
 
 The cluster computing with the **BiocParallel** package involves simply changing the default value of one argument: `nCores_int`. This argument enables you to perform parallel computing when you set the number of cores to an integer value greater than 1. *If you do not know how many cores your machine has, use the `detectCores()` function from the `parallel` package. Note that, if you have many applications open on your computer, you should not use all of the cores available.*
 
-Once we know how many cores we have available, we execute the `CoMethAllRegions()` function using each worker in the cluster, to find co-methylated clusters in the genic regions. **ODOM: For 676 genic regions, 20 samples, and 8552 sites over 6 cores, this takes 99 seconds.**
+Once we know how many cores we have available, we execute the `CoMethAllRegions()` function using each worker in the cluster, to find co-methylated clusters in the genic regions.  This step took about 99 seconds over 6 cores.
 ```{r BiocParallel_Gene, message=FALSE}
 # a1 <- Sys.time()
 
@@ -130,7 +131,7 @@ coMeth_ls <- CoMethAllRegions(
 The object `coMeth_ls` is a list, with each item containing the list of CpGs within an identified co-methylated region. 
 
 ## Testing the co-methylated regions
-Next we test these co-methylated regions against continuous phenotype `stage`, adjusting for covariates `age` and `sex`, by  executing the `lmmTestAllRegions()` function.  **ODOM: For 676 genic regions, 20 samples, and 8552 sites over XX cores, this takes YY seconds.**
+Next we test these co-methylated regions against continuous phenotype `stage`, adjusting for covariates `age` and `sex`, by  executing the `lmmTestAllRegions()` function.  
 ```{r singleRegionType_lmmTest, warning=FALSE, results='hide', message = FALSE}
 # a2 <- Sys.time()
 
@@ -139,7 +140,7 @@ res_df <- lmmTestAllRegions(
   region_ls = coMeth_ls,
   pheno_df = pheno_df,
   contPheno_char = "stage",
-  covariates_char = NULL,
+  covariates_char = c("age", "sex"),
   modelType = "randCoef",
   arrayType = "450k",
   nCores_int = 6,
@@ -204,7 +205,7 @@ residChr22_df <- GetResiduals(
   betaToM = TRUE, #converts to Mvalues for fitting linear model 
   pheno_df = pheno_df,
   covariates_char = c("age.brain", "sex", "slide"),
-  cores = 6
+  nCores_int = 6
 )
 
 coMethChr22_ls <- CoMethAllRegions(
