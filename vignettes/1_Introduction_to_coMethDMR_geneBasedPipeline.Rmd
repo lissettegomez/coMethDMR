@@ -1,7 +1,7 @@
 ---
 title: Introduction to coMethDMR
-author: "Lissette Gomez, Gabriel Odom, Lanyu Zhang, Lily Wang"
-date: "September 16, 2019"
+author: "Lissette Gomez, Gabriel Odom,  Tiago Chedraoui Silva, Lanyu Zhang, Lily Wang"
+date: "October 9, 2019"
 output:
   pdf_document: default
   html_document: default
@@ -335,6 +335,67 @@ lmmTestAllRegions(
   arrayType = "450k"
 )
 ```
+
+## 2.4 Analyzing a specific gene
+
+Finally, we demonstrate coMethDMR analysis for a particular gene, for example the `ARFGAP3` gene. 
+
+```{r message = FALSE}
+
+geneList <- readRDS(
+        system.file(
+          "extdata",
+          "450k_CpGstoGene_min3CpGs.RDS",
+          package = 'coMethDMR',
+          mustWork = TRUE
+        )
+)
+
+# list probes for this gene
+geneList$ARFGAP3
+
+
+# list probes located closely on this gene
+gene3_200 <- CloseBySingleRegion(
+        CpGs_char = geneList$ARFGAP3, arrayType = "450k", maxGap = 200, minCpGs = 3
+)
+CpGsOrdered_df <- lapply(gene3_200, OrderCpGsByLocation, arrayType="450k", output = "dataframe")
+names(gene3_200) <- lapply(CpGsOrdered_df, NameRegion)
+
+gene3_200
+
+
+# co-methlyated region within the gene
+coMeth_ls <- CoMethAllRegions (
+        dnam = betasChr22_df,
+        betaToM = TRUE,
+        method = "pearson",
+        CpGs_ls = gene3_200,
+        arrayType = "450k",
+        returnAllCpGs = FALSE,
+        output = "CpGs"
+)
+
+coMeth_ls 
+
+# test the co-methylated regions within the gene
+results <- lmmTestAllRegions(
+        betas = betasChr22_df,
+        region_ls = coMeth_ls,
+        pheno_df,
+        contPheno_char = "stage",
+        covariates_char = "age.brain",
+        modelType = "randCoef",
+        arrayType = "450k",
+        # generates a log file in the current directory
+        outLogFile = paste0("lmmLog_", Sys.Date(), ".txt")
+)
+
+# add annotation
+AnnotateResults(lmmRes_df = results, arrayType = "450k")
+
+```
+
 
 # 3. Frequently Asked Questions
 
