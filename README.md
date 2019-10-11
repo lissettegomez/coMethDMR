@@ -1,7 +1,5 @@
 ## coMethDMR: Accurate identification of co-methylated and differentially methylated regions in epigenome-wide association studies 
 
-by Lissette Gomez, Gabriel J. Odom, Juan I. Young, Eden R. Martin, Lizhong Liu, Xi Chen, Anthony J. Griswold, Zhen Gao, Lanyu Zhang and Lily Wang
-
 ## Description
 coMethDMR is an R package that identifies genomic regions associated with continuous phenotypes by optimally leverages covariations 
 among CpGs within predefined genomic regions. Instead of testing all CpGs within a genomic region, coMethDMR carries out an additional 
@@ -25,7 +23,7 @@ library(coMethDMR)
 
 ## Manual
 
-The reference manual for coMethDMR can be downloaded from /docs/coMethDMR.pdf.
+The reference manual for coMethDMR can be downloaded from /docs/coMethDMR_0.0.0.9001.pdf.
 
 ## References
-Manuscirpt is available at https://www.biorxiv.org/content/10.1101/615427v1
+Gomez L, Odom GJ, Young JI, Martin ER, Liu L, Chen X, Griswold AJ, Gao Z, Zhang L, Wang L (2019) coMethDMR: Accurate identification of co-methylated and differentially methylated regions in epigenome-wide association studies with continuous phenotypes. Nucleic Acids Research, gkz590, https://doi.org/10.1093/nar/gkz590

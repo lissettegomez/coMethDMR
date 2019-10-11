@@ -3,7 +3,7 @@
 #' This function is a wrapper for the \code{\link[BiocParallel]{SnowParam}} and
 #'    \code{\link[BiocParallel]{MulticoreParam}} constructor functions.
 #'
-#' @param nCores The number of computing cores to amke available for coMethDMR
+#' @param nCores The number of computing cores to make available for coMethDMR
 #'    computation
 #' @param ... Additional arguments passed to the cluster constructors.
 #'
