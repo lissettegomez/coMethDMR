@@ -17,6 +17,7 @@
 #' @param covariates_char character vector for names of the covariate variables
 #' @param modelType type of mixed model, can be \code{randCoef} for random
 #'    coefficient mixed model, or \code{simple} for simple linear mixed model.
+#' @param genome Human genome of reference hg19 or hg38
 #' @param arrayType Type of array, can be "450k" or "EPIC"
 #' @param outFile output .csv file with the results for the mixed model analysis
 #' @param outLogFile log file for mixed models analysis messages
@@ -108,6 +109,7 @@
 lmmTestAllRegions <- function(betas, region_ls, pheno_df,
                               contPheno_char, covariates_char,
                               modelType = c("randCoef", "simple"),
+                              genome = c("hg19","hg38"),
                               arrayType = c("450k","EPIC"),
                               outFile = NULL,
                               outLogFile = NULL,
@@ -121,6 +123,7 @@ lmmTestAllRegions <- function(betas, region_ls, pheno_df,
   ###  Setup  ###
   modelType <- match.arg(modelType)
   arrayType <- match.arg(arrayType)
+  genome <- match.arg(genome)
 
   if (is(betas, "matrix")){
     beta_df <- as.data.frame(betas)
@@ -167,6 +170,7 @@ lmmTestAllRegions <- function(betas, region_ls, pheno_df,
     contPheno_char,
     covariates_char,
     modelType,
+    genome,
     arrayType,
     outLogFile
   )

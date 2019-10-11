@@ -10,6 +10,7 @@
 #' @param covariates_char character vector for names of the covariate variables
 #' @param modelType type of mixed model, can be \code{randCoef} for random
 #'    coefficient mixed model, or \code{simple} for simple linear mixed model.
+#' @param genome Human genome of reference hg19 or hg38
 #' @param arrayType Type of array, can be "450k" or "EPIC"
 #' @param outLogFile Name of log file for messages of mixed model analysis
 #'
@@ -65,12 +66,14 @@
 
 lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
                     modelType = c("randCoef", "simple"),
+                    genome = c("hg19","hg38"),
                     arrayType = c("450k","EPIC"),
                     outLogFile = NULL){
   # browser()
 
   modelType <- match.arg(modelType)
   arrayType <- match.arg(arrayType)
+  genome <- match.arg(genome)
 
   ### Transpose betaOne_df from wide to long ###
   betaOne_df$ProbeID <- row.names(betaOne_df)
@@ -94,7 +97,7 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
   # regionNames
   regionName <- NameRegion(
     OrderCpGsByLocation(
-      betaOne_df$ProbeID, arrayType, output = "dataframe"
+      betaOne_df$ProbeID, genome, arrayType, output = "dataframe"
     )
   )
 
