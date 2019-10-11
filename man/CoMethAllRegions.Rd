@@ -5,7 +5,7 @@
 \title{Extract contiguous co-methylated genomic regions from a list of
   pre-defined genomic regions}
 \usage{
-CoMethAllRegions(dnam, betaToM = TRUE, method = c("pearson",
+CoMethAllRegions(dnam, betaToM = FALSE, method = c("pearson",
   "spearman"), rDropThresh_num = 0.4, minCpGs = 3,
   arrayType = c("450k", "EPIC"), CpGs_ls, file = NULL,
   returnAllCpGs = FALSE, output = c("CpGs", "dataframe"),
@@ -29,7 +29,8 @@ Only regions with more than \code{minCpGs} will be returned.}
 
 \item{arrayType}{Type of array, can be "450k" or "EPIC"}
 
-\item{CpGs_ls}{list where each item is a character vector of CpGs IDs.}
+\item{CpGs_ls}{list where each item is a character vector of CpGs IDs.
+This should be CpG probes located closely on the array.}
 
 \item{file}{an RDS file with clusters of CpG locations (i.e. CpGs
 located closely to each other on the genome). This file can be generated

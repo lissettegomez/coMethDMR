@@ -15,7 +15,7 @@
 #'
 #' @importFrom BiocParallel SnowParam SerialParam MulticoreParam
 #' @examples
-#'    workers_cl <- CreateWorkers(nCores = 4)
+#'    workers_cl <- CreateParallelWorkers(nCores = 4)
 #' @return A parameter class for use in parallel evaluation
 CreateParallelWorkers <- function(nCores, ...){
 

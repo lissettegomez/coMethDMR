@@ -140,7 +140,7 @@ res_df <- lmmTestAllRegions(
   region_ls = coMeth_ls,
   pheno_df = pheno_df,
   contPheno_char = "stage",
-  covariates_char = c("age", "sex"),
+  covariates_char = c("age.brain", "sex"),
   modelType = "randCoef",
   arrayType = "450k",
   nCores_int = 6,

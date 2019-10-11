@@ -25,5 +25,5 @@ This function checks the operating system and then creates a
    machines and the \code{MulticoreParam} function for non-Windows machines.
 }
 \examples{
-   workers_cl <- CreateWorkers(nCores = 4)
+   workers_cl <- CreateParallelWorkers(nCores = 4)
 }
