@@ -8,46 +8,41 @@
 #' @return vector of CpG probe IDs mapped to the genomic region
 #' @export
 #'
-#' @importFrom stats lm
+#' @importFrom tidyr separate %>%
+#' @importFrom GenomicRanges makeGRangesFromDataFrame
 #'
 #' @examples
 #'    GetCpGsInRegion(
 #'      regionName_char = "chr22:18267969-18268249",
+#'      genome = "hg19",
 #'      arrayType = "450k"
 #'    )
-GetCpGsInRegion <- function(regionName_char, arrayType = c("450k","EPIC")){
+GetCpGsInRegion <- function(regionName_char,
+                            genome = c("hg19","hg38"),
+                            arrayType = c("450k","EPIC")){
 
 
   arrayType <- match.arg(arrayType)
+  genome <- match.arg(genome)
 
-  switch(arrayType,
-         "450k" = {
-           CpGlocations_df = IlluminaHumanMethylation450kanno.ilmn12.hg19::Locations
-         },
-         "EPIC" = {
-           CpGlocations_df = IlluminaHumanMethylationEPICanno.ilm10b2.hg19::Locations
-         }
-  )
-
+  # Available manifest files are
+  # "EPIC.hg19.manifest"  "EPIC.hg38.manifest"
+  # "HM27.hg19.manifest"  "HM27.hg38.manifest"
+  # "HM450.hg19.manifest" "HM450.hg38.manifest"
+  manifest <- paste(ifelse(arrayType == "450k","HM450","EPIC"),
+                    genome, "manifest", sep = ".")
+  CpGlocations.gr <- sesameDataGet(manifest)
 
   ### Split the region name in chr and positions ###
-  split1 <- unlist(strsplit(regionName_char, ":"))
-  split2 <- unlist(strsplit(split1[2], "-"))
-  chr <- split1[1]
-  start <- split2[1]
-  end <- split2[2]
+  gr <- regionName_char %>%
+    as.data.frame %>%
+    separate(col = ".", into = c("seqnames","start","end")) %>%
+    makeGRangesFromDataFrame()
 
+  CpGlocations.gr <- subsetByOverlaps(CpGlocations.gr, gr)
 
-  ### Subset the location Data Frame  ###
-  # Remove S4 class DataFrame
-  CpGlocations_df <- as.data.frame(CpGlocations_df)
-  CpGlocations_df$cpg <- row.names(CpGlocations_df)
-  row.names(CpGlocations_df) <- NULL
-  chr_df <- CpGlocations_df[which(CpGlocations_df$chr == chr), ]
-  CpGs_df <- chr_df[which(chr_df$pos >= as.integer(start) &
-    chr_df$pos <= as.integer(end)), ]
-
-
-  OrderCpGsByLocation(CpGs_df$cpg, arrayType = arrayType, output = "vector")
-
+  OrderCpGsByLocation(names(CpGlocations.gr),
+                      genome = genome,
+                      arrayType = arrayType,
+                      output = "vector")
 }

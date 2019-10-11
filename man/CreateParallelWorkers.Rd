@@ -7,7 +7,7 @@
 CreateParallelWorkers(nCores, ...)
 }
 \arguments{
-\item{nCores}{The number of computing cores to amke available for coMethDMR
+\item{nCores}{The number of computing cores to make available for coMethDMR
 computation}
 
 \item{...}{Additional arguments passed to the cluster constructors.}
