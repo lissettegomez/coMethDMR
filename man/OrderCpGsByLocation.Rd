@@ -4,11 +4,13 @@
 \alias{OrderCpGsByLocation}
 \title{Order CpGs by genomic location}
 \usage{
-OrderCpGsByLocation(CpGs_char, arrayType = c("450k", "EPIC"),
-  output = c("vector", "dataframe"))
+OrderCpGsByLocation(CpGs_char, genome = c("hg19", "hg38"),
+  arrayType = c("450k", "EPIC"), output = c("vector", "dataframe"))
 }
 \arguments{
 \item{CpGs_char}{vector of CpGs}
+
+\item{genome}{Human genome of reference hg19 or hg38}
 
 \item{arrayType}{Type of array, 450k or EPIC}
 
@@ -23,6 +25,9 @@ Order CpGs by genomic location
 }
 \examples{
    CpGs_char <- c("cg04677227", "cg07146435", "cg11632906", "cg20214853")
-   OrderCpGsByLocation(CpGs_char, arrayType=c("EPIC"), output = "dataframe")
+   OrderCpGsByLocation(CpGs_char, genome = "hg38", arrayType=c("EPIC"), output = "dataframe")
+
+   CpGs_char <- c("cg04677227", "cg07146435", "cg11632906", "cg14817997")
+   OrderCpGsByLocation(CpGs_char, genome = "hg19", arrayType=c("450K"), output = "vector")
 
 }

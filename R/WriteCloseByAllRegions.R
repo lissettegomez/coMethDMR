@@ -4,6 +4,7 @@
 #'
 #' @param fileName Name of the RDS file where the output genomic regions will be saved.
 #' @param regions GRanges of input genomic regions
+#' @param genome Human genome of reference hg19 or hg38
 #' @param arrayType Type of array, can be "450k" or "EPIC"
 #' @param maxGap an integer, genomic locations within maxGap from each other
 #'    are placed into the same cluster
@@ -18,6 +19,8 @@
 #'
 #' @export
 #'
+#' @importFrom dplyr group_by filter
+#' @importFrom GenomicRanges findOverlaps
 #' @examples
 #'
 #' data(regions)
@@ -30,52 +33,45 @@
 WriteCloseByAllRegions <- function(
   fileName,
   regions,
+  genome = c("hg19","hg38"),
   arrayType = c("450k","EPIC"),
   maxGap = 200,
   minCpGs = 3,
   ...
-  ){
+){
 
   if(maxGap == 200 & minCpGs == 3){
 
     warning(
       paste("A file of close by CpGs for maxGap = 200 and minCpGs = 3
             for genic and intergenic regions already exist at /inst/extdata/")
-      )
+    )
 
   } else {
 
     arrayType <- match.arg(arrayType)
+    genome <- match.arg(genome)
 
-    switch(
-      arrayType,
-      "450" = {
-        loc_df <- as.data.frame(IlluminaHumanMethylation450kanno.ilmn12.hg19::Locations)
-      },
-      "EPIC" = {
-        loc_df <- as.data.frame(IlluminaHumanMethylationEPICanno.ilm10b2.hg19::Locations)
-      }
-    )
+    # Available manifest files are
+    # "EPIC.hg19.manifest"  "EPIC.hg38.manifest"
+    # "HM27.hg19.manifest"  "HM27.hg38.manifest"
+    # "HM450.hg19.manifest" "HM450.hg38.manifest"
+    manifest <- paste(ifelse(arrayType == "450k","HM450","EPIC"),
+                      genome, "manifest", sep = ".")
+    CpGlocations.gr <- sesameDataGet(manifest)
 
     ### Convert input from GRanges to list of vectors of CpGs ###
-    regions_df <- as.data.frame(regions)
-    regions_ls <- split(regions_df, seq(nrow(regions_df)))
-
-    regionCpGs_ls <- lapply(
-      regions_ls,
-      function(x)
-        rownames(loc_df[which(loc_df$chr %in% as.character(x[ ,"seqnames"])
-                              & loc_df$pos >= x [, "start"]
-                              & loc_df$pos <= x[ , "end"]),])
-    )
-
-    ### Extract regions with three or more CpGs ###
-    region3CpGs_ls <- regionCpGs_ls [lapply(regionCpGs_ls, length) >= minCpGs]
+    hits <- findOverlaps(regions,CpGlocations.gr) %>% as.data.frame
+    hits <- hits %>%
+      group_by(queryHits) %>%
+      filter(n() >= 3)
+    hits$probes <- names(CpGlocations.gr)[hits$subjectHits]
+    region3CpGs_ls <- split(hits$probes, hits$queryHits)
 
     ### Find close by clusters in all the regions ###
     ### 45.92571 secs for 1000 regions
     closeByRegions_ls <- lapply(
-      region3CpGs_ls, CloseBySingleRegion, arrayType, maxGap, minCpGs
+      region3CpGs_ls, CloseBySingleRegion, genome, arrayType, maxGap, minCpGs
     )
 
     ### Remove 'NULL' elements of the list ###
@@ -86,6 +82,7 @@ WriteCloseByAllRegions <- function(
     closeByRegionsOrderedDF_ls <- lapply(
       closeByRegionsNoNull_ls,
       FUN = OrderCpGsByLocation,
+      genome,
       arrayType,
       output = "dataframe"
     )

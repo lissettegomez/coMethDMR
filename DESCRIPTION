@@ -15,9 +15,7 @@ Description: coMethDMR identifies genomic regions associated with continuous
   using a random coefficient mixed effects model, which models both variations
   between CpG sites within the region and differential methylation simultaneously. 
 Depends:
-  R (>= 3.5.0),
-  IlluminaHumanMethylation450kanno.ilmn12.hg19,
-  IlluminaHumanMethylationEPICanno.ilm10b2.hg19
+  R (>= 3.5.0)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -29,10 +27,16 @@ Imports:
   IRanges,
   lmerTest,
   stats,
-  utils
+  utils,
+  sesameData,
+  dplyr,
+  tidyr
 Suggests: 
   knitr,
-  testthat
+  testthat,
+  IlluminaHumanMethylation450kanno.ilmn12.hg19,
+  IlluminaHumanMethylationEPICanno.ilm10b2.hg19
+
 biocViews:
     DNAMethylation,
     Epigenetics,
