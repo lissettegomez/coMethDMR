@@ -4,11 +4,13 @@
 \alias{CloseBySingleRegion}
 \title{Extract clusters of CpGs located closely in a genomic region.}
 \usage{
-CloseBySingleRegion(CpGs_char, arrayType = c("450k", "EPIC"),
-  maxGap = 200, minCpGs = 3)
+CloseBySingleRegion(CpGs_char, genome = c("hg19", "hg38"),
+  arrayType = c("450k", "EPIC"), maxGap = 200, minCpGs = 3)
 }
 \arguments{
 \item{CpGs_char}{a list of CpG IDs}
+
+\item{genome}{Human genome of reference hg19 or hg38}
 
 \item{arrayType}{Type of array, 450k or EPIC}
 
@@ -40,7 +42,7 @@ Note that this function depends only on CpG locations, and not on
    )
 
    cluster_ls <- CloseBySingleRegion(
-     CpGs_char, arrayType = "450k", maxGap = 100, minCpGs = 3
+     CpGs_char, genome = "hg19", arrayType = "450k", maxGap = 100, minCpGs = 3
    )
 
 }
