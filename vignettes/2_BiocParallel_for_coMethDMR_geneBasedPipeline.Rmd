@@ -168,7 +168,7 @@ First, we read in clusters of CpGs located closely on the array, in genic and in
 closeByGene_ls <- readRDS(
   system.file(
     "extdata",
-    "450k_Gene_3_200.RDS",
+    "450k_Gene_3_200.rds",
     package = 'coMethDMR',
     mustWork = TRUE
   )
@@ -177,7 +177,7 @@ closeByGene_ls <- readRDS(
 closeByInterGene_ls <- readRDS(
   system.file(
     "extdata",
-    "450k_InterGene_3_200.RDS",
+    "450k_InterGene_3_200.rds",
     package = 'coMethDMR',
     mustWork = TRUE
   )
@@ -254,7 +254,7 @@ So the following scripts replace those in Section 4.
 closeByGene_ls <- readRDS(
   system.file(
     "extdata",
-    "EPIC_Gene_3_200.RDS",
+    "EPIC_Gene_3_200.rds",
     package = 'coMethDMR',
     mustWork = TRUE
   )
@@ -263,7 +263,7 @@ closeByGene_ls <- readRDS(
 closeByInterGene_ls <- readRDS(
   system.file(
     "extdata",
-    "EPIC_InterGene_3_200.RDS",
+    "EPIC_InterGene_3_200.rds",
     package = 'coMethDMR',
     mustWork = TRUE
   )

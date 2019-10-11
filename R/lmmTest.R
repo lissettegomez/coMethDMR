@@ -106,11 +106,11 @@ lmmTest <- function(betaOne_df, pheno_df, contPheno_char, covariates_char,
     message(paste0("Analyzing region ", regionName, ". \n"))
   }
 
-  tryCatch({
-    f <- suppressMessages(
+  f <- tryCatch({
+    suppressMessages(
       lmer(as.formula(modelFormula_char), betaOnePheno_df)
     )
-  }, error = function(e){ NULL })
+  }, error = function(e){NULL})
 
 
   if(is.null(f)){
