@@ -34,8 +34,7 @@ OrderCpGsByLocation <- function(CpGs_char,
                  genome, "manifest", sep = ".")
   CpGlocations.gr <- sesameDataGet(manifest)
 
-  CpGs.gr <- CpGlocations.gr[as.character(CpGs_char),]
-  CpGs.gr <- sort(CpGs.gr)
+  CpGs.gr <- CpGlocations.gr[as.character(CpGs_char)] %>% sort
 
   ### Select and return output ###
   if (output == "dataframe") {
