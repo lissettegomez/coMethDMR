@@ -23,7 +23,7 @@ library(coMethDMR)
 
 ## Manual
 
-The reference manual for coMethDMR can be downloaded from /docs/coMethDMR_0.0.0.9001.pdf.
+The reference manual for coMethDMR can be downloaded from /docs/coMethDMR_0.0.0.9001.pdf. Two vignettes are available in the same directory: "1_Introduction_coMethDMR_10-9-2019.pdf" and "2_BiocParallel_for_coMethDMR_geneBasedPipeline.pdf"
 
 ## References
 Gomez L, Odom GJ, Young JI, Martin ER, Liu L, Chen X, Griswold AJ, Gao Z, Zhang L, Wang L (2019) coMethDMR: Accurate identification of co-methylated and differentially methylated regions in epigenome-wide association studies with continuous phenotypes. Nucleic Acids Research, gkz590, https://doi.org/10.1093/nar/gkz590
