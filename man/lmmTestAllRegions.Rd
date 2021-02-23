@@ -5,10 +5,20 @@
 \title{Fit mixed model to test association between a continuous phenotype and
 methylation values in a list of genomic regions}
 \usage{
-lmmTestAllRegions(betas, region_ls, pheno_df, contPheno_char,
-  covariates_char, modelType = c("randCoef", "simple"),
-  genome = c("hg19", "hg38"), arrayType = c("450k", "EPIC"),
-  outFile = NULL, outLogFile = NULL, nCores_int = 1L, ...)
+lmmTestAllRegions(
+  betas,
+  region_ls,
+  pheno_df,
+  contPheno_char,
+  covariates_char,
+  modelType = c("randCoef", "simple"),
+  genome = c("hg19", "hg38"),
+  arrayType = c("450k", "EPIC"),
+  outFile = NULL,
+  outLogFile = NULL,
+  nCores_int = 1L,
+  ...
+)
 }
 \arguments{
 \item{betas}{data frame or matrix of beta values for all genomic regions,

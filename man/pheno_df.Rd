@@ -4,8 +4,10 @@
 \name{pheno_df}
 \alias{pheno_df}
 \title{Example phenotype data file from Prefrontal Cortex (PFC) Methylation Data of Alzheimer's Disease subjects}
-\format{A data frame containing variables for Braak stage (stage), subject.id, Batch (slide), Sex,
-Sample, age of brain sample (age.brain)}
+\format{
+A data frame containing variables for Braak stage (stage), subject.id, Batch (slide), Sex,
+Sample, age of brain sample (age.brain)
+}
 \source{
 GEO accession: GSE59685
 }

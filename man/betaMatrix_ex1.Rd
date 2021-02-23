@@ -4,8 +4,10 @@
 \name{betaMatrix_ex1}
 \alias{betaMatrix_ex1}
 \title{Alzheimer's Prefrontal Cortex (PFC) Methylation Data}
-\format{A data frame containing beta values for 4 CpGs in one CpG islands for 110 subjects.
-Each column is a CpG, each row is a sample.}
+\format{
+A data frame containing beta values for 4 CpGs in one CpG islands for 110 subjects.
+Each column is a CpG, each row is a sample.
+}
 \source{
 GEO accession: GSE59685
 }

@@ -5,11 +5,20 @@
 \title{Extract contiguous co-methylated genomic regions from a list of
   pre-defined genomic regions}
 \usage{
-CoMethAllRegions(dnam, betaToM = FALSE, method = c("pearson",
-  "spearman"), rDropThresh_num = 0.4, minCpGs = 3,
-  arrayType = c("450k", "EPIC"), CpGs_ls, file = NULL,
-  returnAllCpGs = FALSE, output = c("CpGs", "dataframe"),
-  nCores_int = 1L, ...)
+CoMethAllRegions(
+  dnam,
+  betaToM = FALSE,
+  method = c("pearson", "spearman"),
+  rDropThresh_num = 0.4,
+  minCpGs = 3,
+  arrayType = c("450k", "EPIC"),
+  CpGs_ls,
+  file = NULL,
+  returnAllCpGs = FALSE,
+  output = c("CpGs", "dataframe"),
+  nCores_int = 1L,
+  ...
+)
 }
 \arguments{
 \item{dnam}{matrix (or data frame) of beta values, with row names = CpG IDs,

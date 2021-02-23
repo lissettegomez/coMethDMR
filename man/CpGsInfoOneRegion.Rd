@@ -4,8 +4,14 @@
 \alias{CpGsInfoOneRegion}
 \title{Test associations of individual CpGs in a genomic region with a continuous phenotype}
 \usage{
-CpGsInfoOneRegion(regionName_char, betas_df, pheno_df, contPheno_char,
-  covariates_char, arrayType = c("450k", "EPIC"))
+CpGsInfoOneRegion(
+  regionName_char,
+  betas_df,
+  pheno_df,
+  contPheno_char,
+  covariates_char,
+  arrayType = c("450k", "EPIC")
+)
 }
 \arguments{
 \item{regionName_char}{character string of location information for a genomic region, specified in

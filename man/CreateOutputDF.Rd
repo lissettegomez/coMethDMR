@@ -4,8 +4,12 @@
 \alias{CreateOutputDF}
 \title{Create Output Dataframe}
 \usage{
-CreateOutputDF(keepCpGs_df, keepContiguousCpGs_df, CpGsOrdered_df,
-  returnAllCpGs = FALSE)
+CreateOutputDF(
+  keepCpGs_df,
+  keepContiguousCpGs_df,
+  CpGsOrdered_df,
+  returnAllCpGs = FALSE
+)
 }
 \arguments{
 \item{keepCpGs_df}{a data frame with CpG = CpG name,

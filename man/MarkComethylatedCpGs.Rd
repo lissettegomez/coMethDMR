@@ -4,8 +4,12 @@
 \alias{MarkComethylatedCpGs}
 \title{Mark CpGs in contiguous and co-methylated region}
 \usage{
-MarkComethylatedCpGs(betaCluster_mat, betaToM = TRUE,
-  rDropThresh_num = 0.4, method = c("pearson", "spearman"))
+MarkComethylatedCpGs(
+  betaCluster_mat,
+  betaToM = TRUE,
+  rDropThresh_num = 0.4,
+  method = c("pearson", "spearman")
+)
 }
 \arguments{
 \item{betaCluster_mat}{matrix of beta values, with rownames = sample ids,

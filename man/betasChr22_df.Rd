@@ -4,8 +4,10 @@
 \name{betasChr22_df}
 \alias{betasChr22_df}
 \title{Prefrontal Cortex (PFC) Methylation Data from Alzheimer's Disease subjects}
-\format{A data frame containing beta values for 8552 CpGs in
-  Chr22 for a subset of 20 subjects.}
+\format{
+A data frame containing beta values for 8552 CpGs in
+  Chr22 for a subset of 20 subjects.
+}
 \source{
 GEO accession: GSE59685
 }

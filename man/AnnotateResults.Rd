@@ -4,8 +4,7 @@
 \alias{AnnotateResults}
 \title{Annotate \code{coMethDMR} Pipeline Results}
 \usage{
-AnnotateResults(lmmRes_df, arrayType = c("450k", "EPIC"),
-  nCores_int = 1L, ...)
+AnnotateResults(lmmRes_df, arrayType = c("450k", "EPIC"), nCores_int = 1L, ...)
 }
 \arguments{
 \item{lmmRes_df}{A data frame returned by \code{\link{lmmTestAllRegions}}.
