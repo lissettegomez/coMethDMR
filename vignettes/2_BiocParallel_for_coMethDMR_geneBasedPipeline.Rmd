@@ -3,16 +3,16 @@ title: "Genome-wide methylation analysis using coMethDMR via parallel computing"
 author: "Gabriel J. Odom, Lissette Gomez,  Tiago Chedraoui Silva, Lanyu Zhang and Lily Wang"
 date: "10/9/2019"
 output:
-  word_document:
-    toc: yes
-  pdf_document:
-    toc: yes
-    toc_depth: '2'
   html_document:
     number_sections: yes
     toc: yes
     toc_depth: 2
     toc_float: false
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
+  word_document:
+    toc: yes
 vignette: >
   %\VignetteIndexEntry{"Genome-wide methylation analysis using coMethDMR via parallel computing"}
   %\VignetteEncoding{UTF-8}    
@@ -20,7 +20,7 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, error=TRUE)
 ```
 
 # Introduction
@@ -76,7 +76,7 @@ closeByGeneAll_ls[1]
 
 Next, for demonstration, we select regions on chromosome 22. 
 ```{r}
-indx <- grep ("chr22", names(closeByGeneAll_ls))
+indx <- grep("chr22", names(closeByGeneAll_ls))
 
 closeByGene_ls <- closeByGeneAll_ls[indx]
 length(closeByGene_ls)
@@ -111,8 +111,8 @@ This step took about 37 seconds when computing in serial, and about 82 seconds w
 The cluster computing with the **BiocParallel** package involves simply changing the default value of one argument: `nCores_int`. This argument enables you to perform parallel computing when you set the number of cores to an integer value greater than 1. *If you do not know how many cores your machine has, use the `detectCores()` function from the `parallel` package. Note that, if you have many applications open on your computer, you should not use all of the cores available.*
 
 Once we know how many cores we have available, we execute the `CoMethAllRegions()` function using each worker in the cluster, to find co-methylated clusters in the genic regions.  This step took about 99 seconds over 6 cores.
-```{r BiocParallel_Gene, message=FALSE}
-# a1 <- Sys.time()
+```{r BiocParallel_Gene, message=FALSE, error = TRUE}
+#a1 <- Sys.time()
 
 coMeth_ls <- CoMethAllRegions(
   dnam = resid_df,
@@ -132,7 +132,7 @@ The object `coMeth_ls` is a list, with each item containing the list of CpGs wit
 
 ## Testing the co-methylated regions
 Next we test these co-methylated regions against continuous phenotype `stage`, adjusting for covariates `age` and `sex`, by  executing the `lmmTestAllRegions()` function.  
-```{r singleRegionType_lmmTest, warning=FALSE, results='hide', message = FALSE}
+```{r singleRegionType_lmmTest, warning=FALSE, results='hide', message = FALSE, error = TRUE}
 # a2 <- Sys.time()
 
 res_df <- lmmTestAllRegions(
@@ -190,7 +190,7 @@ closeBy_ls <- c(closeByGene_ls, closeByInterGene_ls)
 For demonstration purposes, we will select regions on Chromosome 22 only.
 ```{r}
 # select regions on chrom 22 for demonstration
-indx <- grep ("chr22", names(closeBy_ls))
+indx <- grep("chr22", names(closeBy_ls))
 
 closeByChr22_ls <- closeBy_ls[indx]
 length(closeByChr22_ls)

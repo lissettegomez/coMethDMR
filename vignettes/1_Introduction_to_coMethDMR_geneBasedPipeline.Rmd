@@ -3,17 +3,18 @@ title: Introduction to coMethDMR
 author: "Lissette Gomez, Gabriel Odom,  Tiago Chedraoui Silva, Lanyu Zhang, Lily Wang"
 date: "October 9, 2019"
 output:
-  pdf_document: default
-  html_document: default
   word_document: default
+  html_document: default
+  pdf_document: default
 vignette: >
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{"Introduction to coMethDMR"}
   %\VignetteEncoding{UTF-8}      
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
+
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, error = TRUE)
 ```
 
 `coMethDMR` is an R package that identifies genomic regions that are both co-methylated and differentially methylated in Illumina array datasets. Instead of testing all CpGs within a genomic region, `coMethDMR` carries out an additional step that selects co-methylated sub-regions first without using any outcome information. Next, `coMethDMR` tests association between methylation within the sub-region and continuous phenotype using a random coefficient mixed effects model, which models both variations between CpG sites within the region and differential methylation simultaneously. 
@@ -27,7 +28,7 @@ The latest version can be installed by
 
 ```{r eval=FALSE}
 library(devtools)
-install_github ("lissettegomez/coMethDMR")
+install_github("lissettegomez/coMethDMR")
 ```
 
 After installation, the `coMethDMR` package can be loaded into R using:
@@ -43,7 +44,7 @@ The input of `coMethDMR` are methylation beta values. We assume quality control 
 ```{r}
 
 data(betasChr22_df)
-betasChr22_df [1:5, 1:5]
+betasChr22_df[1:5, 1:5]
 ```
 
 The corresponding phenotype dataset included variables `stage` (Braak AD stage), `subject.id`, `slide` (batch effect), `Sex`, `Sample` and `age.brain` (age of the brain donor). Please note the phenotype file needs to have a variable called "Sample" that will be used by coMethDMR to link to the methylation dataset. 
@@ -63,7 +64,7 @@ For the first step, we use the following commands:
 
 ```{r}
 CpGisland_ls <- readRDS(
-  system.file (
+  system.file(
     "extdata",
     "CpGislandsChr22_ex.RDS",
     package = 'coMethDMR',
@@ -76,9 +77,10 @@ Here, `CpGisland_ls` is a list of 20 items, with each item of the list including
 
 Next, we identify co-methylated regions based on Mvalues.  
 ```{r}
-coMeth_ls <- CoMethAllRegions (
+coMeth_ls <- CoMethAllRegions(
   dnam = betasChr22_df,
   betaToM = TRUE, #converts to mvalues
+  method = "pearson",
   CpGs_ls = CpGisland_ls,
   arrayType = "450k",
   returnAllCpGs = FALSE, 
@@ -93,20 +95,20 @@ coMeth_ls
 If we want to look at co-methylation within the first co-methylated region: 
 
 ```{r message=FALSE}
-WriteCorrPlot <- function (beta_mat){
+WriteCorrPlot <- function(beta_mat){
 
-  require (corrplot)
-  require (coMethDMR)
+  require(corrplot)
+  require(coMethDMR)
 
-  CpGs_char <- row.names (beta_mat)
+  CpGs_char <- row.names(beta_mat)
 
   CpGsOrd_df <- OrderCpGsByLocation(
-    CpGs_char, arrayType=c("450k"), output = "dataframe"
+    CpGs_char, arrayType = c("450k"), output = "dataframe"
   )
 
-  betaOrdered_mat <- t(beta_mat [CpGsOrd_df$cpg ,])
+  betaOrdered_mat <- t(beta_mat[CpGsOrd_df$cpg ,])
 
-  corr <- cor (
+  corr <- cor(
     betaOrdered_mat, method = "spearman", use = "pairwise.complete.obs"
   )
 
@@ -116,10 +118,10 @@ WriteCorrPlot <- function (beta_mat){
 # subsetting beta values to include only co-methylated probes
 betas_df <- subset(
   betasChr22_df, 
-  row.names(betasChr22_df) %in% coMeth_ls [[1]]
+  row.names(betasChr22_df) %in% coMeth_ls[[1]]
 )
 
-WriteCorrPlot (betas_df)
+WriteCorrPlot(betas_df)
 ```
 
 Next, we test these co-methylated regions against `stage` using a random coefficient model (more details in section 2.3 below).  
@@ -176,6 +178,7 @@ outCpGs_df
 These CpGs mapped to intergenic regions, so there are no gene names associated with the probes. For genic regions such as `chr22:19709548-19709755`, we would have results such as the following: 
 
 ```{r}
+
 CpGsInfoOneRegion(
   regionName_char = "chr22:19709548-19709755",
   betas_df = betasChr22_df,
@@ -199,7 +202,7 @@ The pre-computed genomic regions can be accessed using the following commands. F
 
 ```{r}
 gene_ls <- readRDS(
-  system.file (
+  system.file(
     "extdata",
     "450k_Gene_3_200.RDS",
     package = 'coMethDMR',
@@ -236,7 +239,7 @@ Again, for illustration, we use CpG islands. For example, if we are interested i
 
 ```{r}
 Cgi_ls <- readRDS(
-  system.file (
+  system.file(
     "extdata",
     "CpGislandsChr22_ex.RDS",
     package = 'coMethDMR',
@@ -244,9 +247,10 @@ Cgi_ls <- readRDS(
     )
 )
 
-coMeth_ls <- CoMethAllRegions (
+coMeth_ls <- CoMethAllRegions(
   dnam = resid_df,
   betaToM = FALSE,
+  method = "pearson",
   CpGs_ls = Cgi_ls[1],
   arrayType = "450k",
   returnAllCpGs = FALSE,
@@ -262,7 +266,7 @@ The results indicate there is no co-methylated sub-region within the first genom
 Next we look at a region (13th region in `Cgi_ls`) where there is a co-methylated sub-region: 
 
 ```{r}
-coMeth_ls <- CoMethAllRegions (
+coMeth_ls <- CoMethAllRegions(
   dnam = resid_df,
   betaToM = FALSE,
   CpGs_ls = Cgi_ls[13],
@@ -279,7 +283,7 @@ coMeth_ls
 If we want to see the detailed output of the coMethDMR algorithm, that is, how the co-methylated region was obtained, we can specify `output = "dataframe"`: 
 
 ```{r}
-coMethData_df <- CoMethAllRegions (
+coMethData_df <- CoMethAllRegions(
   dnam = resid_df,
   betaToM = FALSE,
   CpGs_ls = Cgi_ls[13],
@@ -366,7 +370,7 @@ gene3_200
 
 
 # co-methlyated region within the gene
-coMeth_ls <- CoMethAllRegions (
+coMeth_ls <- CoMethAllRegions(
         dnam = betasChr22_df,
         betaToM = TRUE,
         method = "pearson",
