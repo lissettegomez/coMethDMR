@@ -17,7 +17,8 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE, error = TRUE)
 ```
 
-`coMethDMR` is an R package that identifies genomic regions that are both co-methylated and differentially methylated in Illumina array datasets. Instead of testing all CpGs within a genomic region, `coMethDMR` carries out an additional step that selects co-methylated sub-regions first without using any outcome information. Next, `coMethDMR` tests association between methylation within the sub-region and continuous phenotype using a random coefficient mixed effects model, which models both variations between CpG sites within the region and differential methylation simultaneously. 
+`coMethDMR` is an R package that identifies genomic regions that are both co-methylated and deferentially
+methylated in Illumina array datasets. Instead of testing all CpGs within a genomic region, `coMethDMR` carries out an additional step that selects co-methylated sub-regions first without using any outcome information. Next, `coMethDMR` tests association between methylation within the sub-region and continuous phenotype using a random coefficient mixed effects model, which models both variations between CpG sites within the region and differential methylation simultaneously. 
 
 
 # 1. Quick start
@@ -34,6 +35,19 @@ install_github("lissettegomez/coMethDMR")
 After installation, the `coMethDMR` package can be loaded into R using:
 ```{r message=FALSE}
 library(coMethDMR)
+```
+
+If you are running the `coMethDMR` package for the first time, you will  also need to install the `sesameData` package. This will just take a few minutes and it will allow you to download complementary data necessary to run `coMethDMR` package otherwise you won't be able to go forward. 
+```{r eval=FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("sesameData")
+```
+
+After installation, the `sesameData` package can be loaded into R using:
+```{r message=FALSE}
+library(sesameData)
 ```
 
 ## 1.2 Datasets
@@ -175,10 +189,14 @@ outCpGs_df
 
 ```
 
-These CpGs mapped to intergenic regions, so there are no gene names associated with the probes. For genic regions such as `chr22:19709548-19709755`, we would have results such as the following: 
+These CpGs mapped to intergenic regions, so there are no gene names associated with the probes. For genic regions such as `chr22:19709548-19709755`, we would have results such as the following:
+
+```{r message = FALSE}
+library("GenoGAM")
+```
+
 
 ```{r}
-
 CpGsInfoOneRegion(
   regionName_char = "chr22:19709548-19709755",
   betas_df = betasChr22_df,
