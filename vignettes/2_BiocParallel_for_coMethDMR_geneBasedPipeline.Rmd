@@ -3,11 +3,6 @@ title: "Genome-wide methylation analysis using coMethDMR via parallel computing"
 author: "Gabriel J. Odom, Lissette Gomez,  Tiago Chedraoui Silva, Lanyu Zhang and Lily Wang"
 date: "10/9/2019"
 output:
-  word_document:
-    toc: yes
-  pdf_document:
-    toc: yes
-    toc_depth: '2'
   html_document:
     number_sections: yes
     toc: yes
