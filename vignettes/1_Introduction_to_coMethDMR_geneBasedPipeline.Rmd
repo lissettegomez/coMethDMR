@@ -3,14 +3,11 @@ title: "Introduction to coMethDMR"
 author: "Lissette Gomez, Gabriel Odom,  Tiago Chedraoui Silva, Lanyu Zhang, Lily Wang"
 date: "October 9, 2019"
 output:
-  word_document:
-    toc: yes
-    toc_depth: '2'
   html_document:
     number_sections: yes
     toc: yes
     toc_depth: 2
-    toc_float: no
+    toc_float: false
 vignette: |
   %\VignetteIndexEntry{"Introduction to coMethDMR"} %\VignetteEncoding{UTF-8}       %\VignetteEngine{knitr::rmarkdown}
 ---
