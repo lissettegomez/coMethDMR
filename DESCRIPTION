@@ -30,7 +30,8 @@ Imports:
   utils,
   sesameData,
   dplyr,
-  tidyr
+  tidyr,
+  methods
 Suggests: 
   knitr,
   rmarkdown,
