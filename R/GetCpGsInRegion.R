@@ -9,7 +9,7 @@
 #' @export
 #'
 #' @importFrom tidyr separate %>%
-#' @importFrom GenomicRanges makeGRangesFromDataFrame
+#' @importFrom GenomicRanges makeGRangesFromDataFrame subsetByOverlaps
 #'
 #' @examples
 #'    GetCpGsInRegion(
@@ -17,9 +17,11 @@
 #'      genome = "hg19",
 #'      arrayType = "450k"
 #'    )
-GetCpGsInRegion <- function(regionName_char,
-                            genome = c("hg19","hg38"),
-                            arrayType = c("450k","EPIC")){
+GetCpGsInRegion <- function(
+  regionName_char,
+  genome = c("hg19","hg38"),
+  arrayType = c("450k","EPIC")
+){
 
 
   arrayType <- match.arg(arrayType)
@@ -29,8 +31,11 @@ GetCpGsInRegion <- function(regionName_char,
   # "EPIC.hg19.manifest"  "EPIC.hg38.manifest"
   # "HM27.hg19.manifest"  "HM27.hg38.manifest"
   # "HM450.hg19.manifest" "HM450.hg38.manifest"
-  manifest <- paste(ifelse(arrayType == "450k","HM450","EPIC"),
-                    genome, "manifest", sep = ".")
+  manifest <- paste(
+    ifelse(arrayType == "450k","HM450","EPIC"),
+    genome, "manifest",
+    sep = "."
+  )
   CpGlocations.gr <- sesameDataGet(manifest)
 
   ### Split the region name in chr and positions ###
@@ -41,8 +46,10 @@ GetCpGsInRegion <- function(regionName_char,
 
   CpGlocations.gr <- subsetByOverlaps(CpGlocations.gr, gr)
 
-  OrderCpGsByLocation(names(CpGlocations.gr),
-                      genome = genome,
-                      arrayType = arrayType,
-                      output = "vector")
+  OrderCpGsByLocation(
+    names(CpGlocations.gr),
+    genome = genome,
+    arrayType = arrayType,
+    output = "vector"
+  )
 }
