@@ -260,7 +260,7 @@ Within each genomic region, coMethDMR identifies contiguous and co-methylated Cp
 
 Again, for illustration, we use CpG islands. For example, if we are interested in identifying co-methylated sub-region within the first genomic region in `Cgi_ls`:  
 
-```{r CoMethAllRegions}
+```{r CoMethAllRegions_2}
 Cgi_ls <- readRDS(
   system.file(
     "extdata",
@@ -288,7 +288,7 @@ The results indicate there is no co-methylated sub-region within the first genom
 
 Next we look at a region (13th region in `Cgi_ls`) where there is a co-methylated sub-region: 
 
-```{r CoMethAllRegions_2}
+```{r CoMethAllRegions_3}
 coMeth_ls <- CoMethAllRegions(
   dnam = resid_df,
   betaToM = FALSE,
@@ -305,7 +305,7 @@ coMeth_ls
 
 If we want to see the detailed output of the coMethDMR algorithm, that is, how the co-methylated region was obtained, we can specify `output = "dataframe"`: 
 
-```{r CoMethAllRegions_3}
+```{r CoMethAllRegions_4}
 coMethData_df <- CoMethAllRegions(
   dnam = resid_df,
   betaToM = FALSE,
