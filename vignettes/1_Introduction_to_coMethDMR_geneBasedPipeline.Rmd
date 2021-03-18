@@ -1,15 +1,21 @@
 ---
 title: "Introduction to coMethDMR"
 author: "Lissette Gomez, Gabriel Odom,  Tiago Chedraoui Silva, Lanyu Zhang, Lily Wang"
-date: "October 9, 2019"
-output:
-  html_document:
-    number_sections: yes
-    toc: yes
-    toc_depth: 2
-    toc_float: false
-vignette: |
-  %\VignetteIndexEntry{"Introduction to coMethDMR"} %\VignetteEncoding{UTF-8}       %\VignetteEngine{knitr::rmarkdown}
+date: "March 2021"
+output: 
+    BiocStyle::html_document:
+    toc_float: true
+    toc: true
+    df_print: paged
+    code_download: false
+    toc_depth: 3
+bibliography: bibliography.bib    
+editor_options:
+  chunk_output_type: inline    
+vignette: >
+    %\VignetteIndexEntry{"Introduction to coMethDMR"} 
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
 ---
 
 
@@ -56,7 +62,6 @@ The input of `coMethDMR` are methylation beta values. We assume quality control 
 
 
 ```{r}
-
 data(betasChr22_df)
 betasChr22_df[1:5, 1:5]
 ```
@@ -90,7 +95,7 @@ CpGisland_ls <- readRDS(
 Here, `CpGisland_ls` is a list of 20 items, with each item of the list including a group of CpG probe IDs located closely within a particular CpG island region. Section 2.1 discusses how to import additional types of genomic regions. 
 
 Next, we identify co-methylated regions based on Mvalues.  
-```{r}
+```{r CoMethAllRegions}
 coMeth_ls <- CoMethAllRegions(
   dnam = betasChr22_df,
   betaToM = TRUE, #converts to mvalues
@@ -98,7 +103,8 @@ coMeth_ls <- CoMethAllRegions(
   CpGs_ls = CpGisland_ls,
   arrayType = "450k",
   returnAllCpGs = FALSE, 
-  output = "CpGs"
+  output = "CpGs",
+  nCores_int = 1
 )
 
 coMeth_ls
@@ -142,7 +148,7 @@ Next, we test these co-methylated regions against `stage` using a random coeffic
 
 Some messages are generated during mixed models fitting, which are saved to the file specified by `outLogFile`. The interpretations of these messages can be found in the FAQs at the end of this document (see Section 3, item (1) and (2)).  
 
-```{r}
+```{r lmmTestAllRegions}
 
 out_df <- lmmTestAllRegions(
    betas = betasChr22_df,
@@ -365,12 +371,12 @@ Finally, we demonstrate coMethDMR analysis for a particular gene, for example th
 ```{r message = FALSE}
 
 geneList <- readRDS(
-        system.file(
-          "extdata",
-          "450k_CpGstoGene_min3CpGs.RDS",
-          package = 'coMethDMR',
-          mustWork = TRUE
-        )
+  system.file(
+    "extdata",
+    "450k_CpGstoGene_min3CpGs.RDS",
+    package = 'coMethDMR',
+    mustWork = TRUE
+  )
 )
 
 # list probes for this gene
@@ -379,7 +385,7 @@ geneList$ARFGAP3
 
 # list probes located closely on this gene
 gene3_200 <- CloseBySingleRegion(
-        CpGs_char = geneList$ARFGAP3, arrayType = "450k", maxGap = 200, minCpGs = 3
+  CpGs_char = geneList$ARFGAP3, arrayType = "450k", maxGap = 200, minCpGs = 3
 )
 CpGsOrdered_df <- lapply(gene3_200, OrderCpGsByLocation, arrayType="450k", output = "dataframe")
 names(gene3_200) <- lapply(CpGsOrdered_df, NameRegion)
@@ -389,28 +395,28 @@ gene3_200
 
 # co-methlyated region within the gene
 coMeth_ls <- CoMethAllRegions(
-        dnam = betasChr22_df,
-        betaToM = TRUE,
-        method = "pearson",
-        CpGs_ls = gene3_200,
-        arrayType = "450k",
-        returnAllCpGs = FALSE,
-        output = "CpGs"
+  dnam = betasChr22_df,
+  betaToM = TRUE,
+  method = "pearson",
+  CpGs_ls = gene3_200,
+  arrayType = "450k",
+  returnAllCpGs = FALSE,
+  output = "CpGs"
 )
 
 coMeth_ls 
 
 # test the co-methylated regions within the gene
 results <- lmmTestAllRegions(
-        betas = betasChr22_df,
-        region_ls = coMeth_ls,
-        pheno_df,
-        contPheno_char = "stage",
-        covariates_char = "age.brain",
-        modelType = "randCoef",
-        arrayType = "450k",
-        # generates a log file in the current directory
-        outLogFile = paste0("lmmLog_", Sys.Date(), ".txt")
+  betas = betasChr22_df,
+  region_ls = coMeth_ls,
+  pheno_df,
+  contPheno_char = "stage",
+  covariates_char = "age.brain",
+  modelType = "randCoef",
+  arrayType = "450k",
+  # generates a log file in the current directory
+  outLogFile = paste0("lmmLog_", Sys.Date(), ".txt")
 )
 
 # add annotation
