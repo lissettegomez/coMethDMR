@@ -4,12 +4,14 @@
 #' @param regionName_char character string with location information for one region in
 #'    this format: "chrxx:xxxxxx-xxxxxx"
 #' @param arrayType Type of array, 450k or EPIC
+#' @param genome human genome of reference hg19 (default) or hg38
 #'
 #' @return vector of CpG probe IDs mapped to the genomic region
 #' @export
 #'
 #' @importFrom tidyr separate %>%
-#' @importFrom GenomicRanges makeGRangesFromDataFrame subsetByOverlaps
+#' @importFrom GenomicRanges makeGRangesFromDataFrame
+#' @importFrom IRanges subsetByOverlaps
 #'
 #' @examples
 #'    GetCpGsInRegion(

@@ -62,11 +62,9 @@
 #' @export
 #'
 #' @importFrom BiocParallel bplapply
-#' @importFrom stats as.formula
-#' @importFrom stats coef
-#' @importFrom stats reshape
-#' @importFrom stats p.adjust
+#' @importFrom stats coef lm as.formula reshape p.adjust
 #' @importFrom utils write.csv
+#' @importFrom methods is
 #'
 #' @examples
 #'    data(betasChr22_df)
@@ -106,15 +104,18 @@
 #'
 #'
 
-lmmTestAllRegions <- function(betas, region_ls, pheno_df,
-                              contPheno_char, covariates_char,
-                              modelType = c("randCoef", "simple"),
-                              genome = c("hg19","hg38"),
-                              arrayType = c("450k","EPIC"),
-                              outFile = NULL,
-                              outLogFile = NULL,
-                              nCores_int = 1L,
-                              ...){
+lmmTestAllRegions <- function(
+  betas,
+  region_ls,
+  pheno_df,
+  contPheno_char, covariates_char,
+  modelType = c("randCoef", "simple"),
+  genome = c("hg19","hg38"),
+  arrayType = c("450k","EPIC"),
+  outFile = NULL,
+  outLogFile = NULL,
+  nCores_int = 1L,
+  ...){
   # browser()
 
   warnLvl <- options()$warn

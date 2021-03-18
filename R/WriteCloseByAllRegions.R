@@ -63,8 +63,8 @@ WriteCloseByAllRegions <- function(
     ### Convert input from GRanges to list of vectors of CpGs ###
     hits <- findOverlaps(regions,CpGlocations.gr) %>% as.data.frame
     hits <- hits %>%
-      group_by(queryHits) %>%
-      filter(n() >= 3)
+      dplyr::group_by(.data$queryHits) %>%
+      dplyr::filter(n() >= 3)
     hits$probes <- names(CpGlocations.gr)[hits$subjectHits]
     region3CpGs_ls <- split(hits$probes, hits$queryHits)
 
