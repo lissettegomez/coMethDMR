@@ -34,8 +34,10 @@ methylated in Illumina array datasets. Instead of testing all CpGs within a geno
 The latest version can be installed by
 
 ```{r eval=FALSE}
-library(devtools)
-install_github("lissettegomez/coMethDMR")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("TransBioInfoLab/MethReg")
 ```
 
 After installation, the `coMethDMR` package can be loaded into R using:
@@ -43,11 +45,9 @@ After installation, the `coMethDMR` package can be loaded into R using:
 library(coMethDMR)
 ```
 
-If you are running the `coMethDMR` package for the first time, you will  also need to install the `sesameData` package. This will just take a few minutes and it will allow you to download complementary data necessary to run `coMethDMR` package otherwise you won't be able to go forward. 
+If you are running the `coMethDMR` package for the first time, you will  also need to install the `sesameData` package. 
+This will just take a few minutes and it will allow you to download complementary data necessary to run `coMethDMR` package otherwise you won't be able to go forward. 
 ```{r eval=FALSE}
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-
 BiocManager::install("sesameData")
 ```
 
@@ -148,7 +148,7 @@ Next, we test these co-methylated regions against `stage` using a random coeffic
 
 Some messages are generated during mixed models fitting, which are saved to the file specified by `outLogFile`. The interpretations of these messages can be found in the FAQs at the end of this document (see Section 3, item (1) and (2)).  
 
-```{r lmmTestAllRegions}
+```{r lmmTestAllRegions_1}
 
 out_df <- lmmTestAllRegions(
    betas = betasChr22_df,
@@ -170,7 +170,7 @@ Here `out_df` is a data frame of genomic regions, with corresponding p-values an
 
 We can annotate these results by adding corresponding genes and probes mapped to the genomic regions. 
 
-```{r message = FALSE}
+```{r AnnotateResults, message = FALSE}
 
 outAnno_df <- AnnotateResults(
   lmmRes_df = out_df,
@@ -182,7 +182,7 @@ outAnno_df
 ```
 
 To further examine the significant regions, we can also extract individual CpG p-values within these significant regions. For example, for the most significant region `chr22:18268062-18268249`, 
-```{r}
+```{r CpGsInfoOneRegion}
 outCpGs_df <- CpGsInfoOneRegion(
  regionName_char = "chr22:18268062-18268249",
  betas_df = betasChr22_df,
@@ -202,7 +202,7 @@ library("GenoGAM")
 ```
 
 
-```{r}
+```{r CpGsInfoOneRegion_2}
 CpGsInfoOneRegion(
   regionName_char = "chr22:19709548-19709755",
   betas_df = betasChr22_df,
@@ -246,7 +246,7 @@ Before identifying co-methylated clusters, we recommend removing uninteresting t
 For example, the following script computes residuals from linear model 
 `Mvalues ~ age.brain + sex + slide`
 
-```{r}
+```{r GetResiduals}
 resid_df <- GetResiduals(
   dnam = betasChr22_df,
   betaToM = TRUE, #converts to Mvalues for fitting linear model 
@@ -261,7 +261,7 @@ Within each genomic region, coMethDMR identifies contiguous and co-methylated Cp
 
 Again, for illustration, we use CpG islands. For example, if we are interested in identifying co-methylated sub-region within the first genomic region in `Cgi_ls`:  
 
-```{r}
+```{r CoMethAllRegions}
 Cgi_ls <- readRDS(
   system.file(
     "extdata",
@@ -289,7 +289,7 @@ The results indicate there is no co-methylated sub-region within the first genom
 
 Next we look at a region (13th region in `Cgi_ls`) where there is a co-methylated sub-region: 
 
-```{r}
+```{r CoMethAllRegions_2}
 coMeth_ls <- CoMethAllRegions(
   dnam = resid_df,
   betaToM = FALSE,
@@ -306,7 +306,7 @@ coMeth_ls
 
 If we want to see the detailed output of the coMethDMR algorithm, that is, how the co-methylated region was obtained, we can specify `output = "dataframe"`: 
 
-```{r}
+```{r CoMethAllRegions_3}
 coMethData_df <- CoMethAllRegions(
   dnam = resid_df,
   betaToM = FALSE,
@@ -338,7 +338,7 @@ The simple linear mixed model is
 `methylation M value ~ contPheno_char + covariates_char + (1|Sample)`
 
 To test one genomic region against the continuous phenotype `stage`, adjusting for `age.brain`: 
-```{r message = FALSE}
+```{r lmmTestAllRegions_2, message = FALSE}
 lmmTestAllRegions(
   betas = betasChr22_df,
   region_ls = coMeth_ls[1],
@@ -352,7 +352,7 @@ lmmTestAllRegions(
 
 If we don't want to adjust for any covariate effect, we can set `covariates_char` to `NULL`: 
 
-```{r message = FALSE}
+```{r lmmTestAllRegions_3, message = FALSE}
 lmmTestAllRegions(
   betas = betasChr22_df,
   region_ls = coMeth_ls[1],
