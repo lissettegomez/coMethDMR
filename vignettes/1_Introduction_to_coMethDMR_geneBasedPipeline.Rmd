@@ -9,7 +9,6 @@ output:
     df_print: paged
     code_download: false
     toc_depth: 3
-bibliography: bibliography.bib    
 editor_options:
   chunk_output_type: inline    
 vignette: >
