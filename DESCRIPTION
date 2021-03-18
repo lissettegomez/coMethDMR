@@ -33,6 +33,8 @@ Imports:
   tidyr
 Suggests: 
   knitr,
+  rmarkdown,
+  BiocStyle,
   testthat,
   IlluminaHumanMethylation450kanno.ilmn12.hg19,
   IlluminaHumanMethylationEPICanno.ilm10b2.hg19

@@ -1,21 +1,21 @@
 ---
 title: "Genome-wide methylation analysis using coMethDMR via parallel computing"
-author: "Gabriel J. Odom, Lissette Gomez,  Tiago Chedraoui Silva, Lanyu Zhang and Lily Wang"
+author: Gabriel J. Odom, Lissette Gomez,  Tiago Chedraoui Silva, Lanyu Zhang and Lily
+  Wang
 date: "March 2021"
-output: 
-    BiocStyle::html_document:
-    toc_float: true
-    toc: true
+output:
+  html_document:
     df_print: paged
-    code_download: false
-    toc_depth: 3
+  toc_float: yes
+  toc: yes
+  df_print: paged
+  code_download: no
+  toc_depth: 3
+  BiocStyle::html_document: null
 editor_options:
-  chunk_output_type: inline    
-vignette: >
-    %\VignetteIndexEntry{"Introduction to coMethDMR"} 
-    %\VignetteEngine{knitr::rmarkdown}
-    %\VignetteEncoding{UTF-8}
-
+  chunk_output_type: inline
+vignette: |
+  %\VignetteIndexEntry{"Introduction to coMethDMR"}  %\VignetteEngine{knitr::rmarkdown} %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
