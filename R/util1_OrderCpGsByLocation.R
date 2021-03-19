@@ -13,9 +13,14 @@
 #'
 #' @examples
 #'    CpGs_char <- c("cg04677227", "cg07146435", "cg11632906", "cg20214853")
-#'    OrderCpGsByLocation(CpGs_char, genome = "hg38", arrayType=c("EPIC"), output = "dataframe")
+#'    OrderCpGsByLocation(
+#'      CpGs_char,
+#'      genome = "hg38",
+#'      arrayType = "EPIC",
+#'      output = "dataframe"
+#'    )
 #'
-#'    CpGs_char <- c("cg04677227", "cg07146435", "cg11632906", "cg14817997")
+#'    CpGs_char <- c("cg04677227", "cg07146435", "cg11632906", "cg20214853")
 #'    OrderCpGsByLocation(
 #'      CpGs_char,
 #'      genome = "hg19",

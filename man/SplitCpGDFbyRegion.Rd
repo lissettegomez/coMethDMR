@@ -33,7 +33,12 @@ Split a dataframe of CpGs and comethylated subregions to a list
    data(betaMatrix_ex4)
    CpGs_df <- MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex4)
    CpGsSubregions_df <- FindComethylatedRegions(CpGs_df)
-   SplitCpGDFbyRegion(CpGsSubregions_df, "450k")
+
+   SplitCpGDFbyRegion(
+     CpGsSubregions_df,
+     genome = "hg19",
+     arrayType = "450k"
+   )
 
 }
 \keyword{internal}
