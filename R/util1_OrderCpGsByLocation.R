@@ -28,10 +28,12 @@
 #'      output = "vector"
 #'    )
 #'
-OrderCpGsByLocation <- function(CpGs_char,
-                                 genome = c("hg19","hg38"),
-                                 arrayType = c("450k","EPIC"),
-                                 output = c("vector", "dataframe")){
+OrderCpGsByLocation <- function(
+  CpGs_char,
+  genome = c("hg19","hg38"),
+  arrayType = c("450k","EPIC"),
+  output = c("vector", "dataframe")
+){
 
   arrayType <- match.arg(arrayType)
   genome <- match.arg(genome)
@@ -40,8 +42,12 @@ OrderCpGsByLocation <- function(CpGs_char,
   # "EPIC.hg19.manifest"  "EPIC.hg38.manifest"
   # "HM27.hg19.manifest"  "HM27.hg38.manifest"
   # "HM450.hg19.manifest" "HM450.hg38.manifest"
-  manifest <- paste(ifelse(arrayType == "450k","HM450","EPIC"),
-                 genome, "manifest", sep = ".")
+  manifest <- paste(
+    ifelse(arrayType == "450k","HM450","EPIC"),
+    genome, "manifest",
+    sep = "."
+  )
+
   CpGlocations.gr <- sesameDataGet(manifest)
 
   CpGs.gr <- CpGlocations.gr[as.character(CpGs_char)] %>% sort
