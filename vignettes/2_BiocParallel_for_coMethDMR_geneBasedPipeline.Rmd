@@ -1,7 +1,7 @@
 ---
 title: "Genome-wide methylation analysis using coMethDMR via parallel computing"
-author: Gabriel J. Odom, Lissette Gomez,  Tiago Chedraoui Silva, Lanyu Zhang and Lily
-  Wang
+author: "Gabriel J. Odom, Lissette Gomez, Tiago Chedraoui Silva, Lanyu Zhang and Lily
+  Wang"
 date: "March 2021"
 output: 
     BiocStyle::html_document:

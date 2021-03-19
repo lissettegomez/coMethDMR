@@ -23,19 +23,22 @@ RoxygenNote: 7.1.1
 Imports:
   BiocParallel,
   bumphunter,
+  dplyr,
   GenomicRanges,
   IRanges,
   lmerTest,
-  stats,
-  utils,
+  methods,
+  rlang,
   sesameData,
-  dplyr,
+  stats,
   tidyr,
-  methods
+  utils
 Suggests: 
+  BiocStyle,
+  corrplot,
+  GenoGAM,
   knitr,
   rmarkdown,
-  BiocStyle,
   testthat,
   IlluminaHumanMethylation450kanno.ilmn12.hg19,
   IlluminaHumanMethylationEPICanno.ilm10b2.hg19

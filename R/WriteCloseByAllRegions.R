@@ -19,7 +19,8 @@
 #'
 #' @export
 #'
-#' @importFrom dplyr group_by filter
+#' @importFrom dplyr group_by filter n
+#' @importFrom rlang .data
 #' @importFrom GenomicRanges findOverlaps
 #' @examples
 #'

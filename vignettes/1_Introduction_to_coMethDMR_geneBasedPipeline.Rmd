@@ -1,6 +1,6 @@
 ---
 title: "Introduction to coMethDMR"
-author: "Lissette Gomez, Gabriel Odom,  Tiago Chedraoui Silva, Lanyu Zhang, Lily Wang"
+author: "Lissette Gomez, Gabriel Odom, Tiago Chedraoui Silva, Lanyu Zhang, and Lily Wang"
 date: "March 2021"
 output: 
     BiocStyle::html_document:
