@@ -26,10 +26,12 @@
 #'
 #' data(regions)
 #'
-#' WriteCloseByAllRegions(
-#'    regions = regions, arrayType = "EPIC", maxGap = 50,
-#'    minCpGs = 3, fileName = "closeByRegions.rds"
-#' )
+#' dontrun{
+#'   WriteCloseByAllRegions(
+#'     regions = regions, arrayType = "EPIC", maxGap = 50,
+#'     minCpGs = 3, fileName = "closeByRegions.rds"
+#'   )
+#' }
 #'
 WriteCloseByAllRegions <- function(
   fileName,

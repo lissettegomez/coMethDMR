@@ -97,9 +97,9 @@
 #'      contPheno_char = "stage",
 #'      covariates_char = "age.brain",
 #'      modelType = "randCoef",
-#'      arrayType = "450k",
+#'      arrayType = "450k"
 #'      # generates a log file in the current directory
-#'      outLogFile = paste0("lmmLog_", Sys.Date(), ".txt")
+#'      # outLogFile = paste0("lmmLog_", Sys.Date(), ".txt")
 #'    )
 #'
 #'
