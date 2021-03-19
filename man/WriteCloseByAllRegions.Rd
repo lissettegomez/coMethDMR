@@ -45,7 +45,7 @@ For \code{maxGap} = 200 and \code{minCpGs} = 3, we already calculated
 
 data(regions)
 
-dontrun{
+\dontrun{
   WriteCloseByAllRegions(
     regions = regions, arrayType = "EPIC", maxGap = 50,
     minCpGs = 3, fileName = "closeByRegions.rds"
