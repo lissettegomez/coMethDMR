@@ -43,7 +43,13 @@ For \code{maxGap} = 200 and \code{minCpGs} = 3, we already calculated
 }
 \examples{
 
-data(regions)
+regions <- GRanges(
+  seqnames = c("chr4","chr6","chr16","chr16","chr22","chr19"),
+  ranges = c(
+    "174202697-174203520","28226203-28227482","89572934-89574634",
+    "67232460-67234167","38244199-38245362","39402823-39403373"
+  )
+)
 
 \dontrun{
   WriteCloseByAllRegions(
