@@ -244,6 +244,18 @@ Before identifying co-methylated clusters, we recommend removing uninteresting t
 For example, the following script computes residuals from linear model 
 `Mvalues ~ age.brain + sex + slide`
 
+```{r reduce_data, include = FALSE}
+Cgi_ls <- readRDS(
+  system.file(
+    "extdata",
+    "CpGislandsChr22_ex.RDS",
+    package = 'coMethDMR',
+    mustWork = TRUE
+    )
+)
+betasChr22_df <- betasChr22_df[rownames(betasChr22_df) %in% unlist(Cgi_ls)[1:20],]
+```
+
 ```{r GetResiduals}
 resid_df <- GetResiduals(
   dnam = betasChr22_df,
@@ -285,13 +297,13 @@ coMeth_ls
 
 The results indicate there is no co-methylated sub-region within the first genomic region. 
 
-Next we look at a region (13th region in `Cgi_ls`) where there is a co-methylated sub-region: 
+Next we look at a region (5th region in `Cgi_ls`) where there is a co-methylated sub-region: 
 
 ```{r CoMethAllRegions_3}
 coMeth_ls <- CoMethAllRegions(
   dnam = resid_df,
   betaToM = FALSE,
-  CpGs_ls = Cgi_ls[13],
+  CpGs_ls = Cgi_ls[5],
   arrayType = "450k",
   returnAllCpGs = FALSE, 
   output = "CpGs"
@@ -308,7 +320,7 @@ If we want to see the detailed output of the coMethDMR algorithm, that is, how t
 coMethData_df <- CoMethAllRegions(
   dnam = resid_df,
   betaToM = FALSE,
-  CpGs_ls = Cgi_ls[13],
+  CpGs_ls = Cgi_ls[5],
   arrayType = "450k",
   returnAllCpGs = FALSE, 
   output = "dataframe"
@@ -364,7 +376,7 @@ lmmTestAllRegions(
 
 ## 2.4 Analyzing a specific gene
 
-Finally, we demonstrate coMethDMR analysis for a particular gene, for example the `ARFGAP3` gene. 
+Finally, we demonstrate `coMethDMR` analysis for a particular gene, for example the `ARFGAP3` gene. 
 
 ```{r message = FALSE}
 
