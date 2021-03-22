@@ -378,7 +378,7 @@ lmmTestAllRegions(
 
 Finally, we demonstrate `coMethDMR` analysis for a particular gene, for example the `ARFGAP3` gene. 
 
-```{R}
+```{R, include = FALSE}
 data(betasChr22_df)
 ```
 
