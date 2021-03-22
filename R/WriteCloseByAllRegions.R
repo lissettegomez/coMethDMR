@@ -24,7 +24,7 @@
 #' @importFrom GenomicRanges findOverlaps
 #' @examples
 #'
-#' regions <- GRanges(
+#' regions <- GenomicRanges::GRanges(
 #'   seqnames = c("chr4","chr6","chr16","chr16","chr22","chr19"),
 #'   ranges = c(
 #'     "174202697-174203520","28226203-28227482","89572934-89574634",
