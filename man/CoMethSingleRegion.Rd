@@ -26,12 +26,12 @@ as well as additional CpGs.}
 
 \item{betaToM}{indicates if converting methylation beta values mvalues}
 
-\item{rDropThresh_num}{thershold for min correlation between a cpg with sum
+\item{rDropThresh_num}{threshold for min correlation between a cpg with sum
 of the rest of the CpGs}
 
 \item{method}{method for computing correlation, can be  "pearson" or "spearman"}
 
-\item{minCpGs}{mininum number of CpGs to be considered a "region".
+\item{minCpGs}{minimum number of CpGs to be considered a "region".
 Only regions with more than \code{minCpGs} will be returned.}
 
 \item{genome}{Human genome of reference hg19 or hg38}

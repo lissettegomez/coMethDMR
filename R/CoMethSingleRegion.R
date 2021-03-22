@@ -7,10 +7,10 @@
 #'    as well as additional CpGs.
 #' @param betaToM indicates if converting methylation beta values mvalues
 #' @param method method for computing correlation, can be  "pearson" or "spearman"
-#' @param rDropThresh_num thershold for min correlation between a cpg with sum
+#' @param rDropThresh_num threshold for min correlation between a cpg with sum
 #'    of the rest of the CpGs
 #'
-#' @param minCpGs mininum number of CpGs to be considered a "region".
+#' @param minCpGs minimum number of CpGs to be considered a "region".
 #'    Only regions with more than \code{minCpGs} will be returned.
 #'
 #' @param genome Human genome of reference hg19 or hg38

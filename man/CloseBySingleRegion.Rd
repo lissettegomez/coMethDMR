@@ -37,7 +37,7 @@ Note that this function depends only on CpG locations, and not on
    any methylation data. The algorithm is based on the
    \code{\link[bumphunter]{clusterMaker}} function in the \code{bumphunter}
    R package. Each cluster is essentially a group of CpG locations such that
-   two consecutive locations in the clsuter are separated by less than
+   two consecutive locations in the cluster are separated by less than
    \code{maxGap}.
 }
 \examples{

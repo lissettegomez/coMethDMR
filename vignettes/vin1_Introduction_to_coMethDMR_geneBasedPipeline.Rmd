@@ -22,7 +22,7 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE, error = TRUE)
 ```
 
-`coMethDMR` is an R package that identifies genomic regions that are both co-methylated and deferentially
+`coMethDMR` is an R package that identifies genomic regions that are both co-methylated and differentially
 methylated in Illumina array datasets. Instead of testing all CpGs within a genomic region, `coMethDMR` carries out an additional step that selects co-methylated sub-regions first without using any outcome information. Next, `coMethDMR` tests association between methylation within the sub-region and continuous phenotype using a random coefficient mixed effects model, which models both variations between CpG sites within the region and differential methylation simultaneously. 
 
 

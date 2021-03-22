@@ -4,7 +4,7 @@
 #'    keep = indicator for co-methylated CpG,
 #'    r_drop = correlation between the CpG with rest of the CpGs
 #' @param keepContiguousCpGs_df a data frame with ProbeID = CpG name,
-#'    Subregion = cotiguous comethylated subregion number
+#'    Subregion = contiguous comethylated subregion number
 #' @param CpGsOrdered_df a data frame of CpG location with
 #'    chr = chromosome number, pos = genomic position, cpg = CpG name
 #' @param returnAllCpGs indicates if outputting all the CpGs in the region
@@ -16,7 +16,7 @@
 #'    MAPINFO = genomic position,
 #'    r_drop = correlation between the CpG with rest of the CpGs,
 #'    keep = indicator for co-methylated CpG,
-#'    keep_contiguous = cotiguous comethylated subregion number
+#'    keep_contiguous = contiguous comethylated subregion number
 #'
 #' @keywords internal
 #'

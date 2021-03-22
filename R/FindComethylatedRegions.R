@@ -6,7 +6,7 @@
 #'
 #'  \code{CpG, keep, ind, r_drop}. See details in documentation for \code{MarkComethylatedCpGs}.
 #'
-#' @param minCpGs_int an integer, indicates minimum nubmer of CpGs for output genomic regions
+#' @param minCpGs_int an integer, indicates minimum number of CpGs for output genomic regions
 #'
 #' @return A data frame with variables \code{ProbeID} and \code{Subregion} (index for each output
 #' contiguous comethylated regions)

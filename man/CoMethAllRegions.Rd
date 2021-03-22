@@ -30,10 +30,10 @@ values.}
 \item{method}{method for computing correlation,
 can be "spearman" or "pearson"}
 
-\item{rDropThresh_num}{thershold for min correlation between a cpg with sum
+\item{rDropThresh_num}{threshold for min correlation between a cpg with sum
 of the rest of the CpGs}
 
-\item{minCpGs}{mininum number of CpGs to be considered a "region".
+\item{minCpGs}{minimum number of CpGs to be considered a "region".
 Only regions with more than \code{minCpGs} will be returned.}
 
 \item{arrayType}{Type of array, can be "450k" or "EPIC"}
@@ -46,7 +46,7 @@ located closely to each other on the genome). This file can be generated
 by the \code{\link{WriteCloseByAllRegions}} function.}
 
 \item{returnAllCpGs}{When there is not a contiguous comethylated region in
-the inputing pre-defined region, \code{returnAllCpGs = 1} indicates
+the inputting pre-defined region, \code{returnAllCpGs = 1} indicates
 outputting all the CpGs in the input regions, while
 \code{returnAllCpGs = 0} indicates not returning any CpG.}
 
