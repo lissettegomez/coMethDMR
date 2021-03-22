@@ -378,6 +378,10 @@ lmmTestAllRegions(
 
 Finally, we demonstrate `coMethDMR` analysis for a particular gene, for example the `ARFGAP3` gene. 
 
+```{R}
+data(betasChr22_df)
+```
+
 ```{r message = FALSE}
 
 geneList <- readRDS(
@@ -397,7 +401,7 @@ geneList$ARFGAP3
 gene3_200 <- CloseBySingleRegion(
   CpGs_char = geneList$ARFGAP3, arrayType = "450k", maxGap = 200, minCpGs = 3
 )
-CpGsOrdered_df <- lapply(gene3_200, OrderCpGsByLocation, arrayType="450k", output = "dataframe")
+CpGsOrdered_df <- lapply(gene3_200, OrderCpGsByLocation, arrayType = "450k", output = "dataframe")
 names(gene3_200) <- lapply(CpGsOrdered_df, NameRegion)
 
 gene3_200
