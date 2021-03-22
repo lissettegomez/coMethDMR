@@ -12,7 +12,7 @@
 #' @param ... Dots for internal arguments. Currently unused.
 #'
 #' @return a file with the genomic regions containing CpGs located closely within each
-#'  inputing pre-defined genomic region
+#'  inputting pre-defined genomic region
 #'
 #' @details For \code{maxGap} = 200 and \code{minCpGs} = 3, we already calculated
 #'    the clusters of CpGs. They are saved in folder \code{/inst/extdata/}.

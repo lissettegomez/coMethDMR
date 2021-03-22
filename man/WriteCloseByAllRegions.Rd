@@ -32,7 +32,7 @@ are placed into the same cluster}
 }
 \value{
 a file with the genomic regions containing CpGs located closely within each
- inputing pre-defined genomic region
+ inputting pre-defined genomic region
 }
 \description{
 Extract clusters of CpG probes located closely
