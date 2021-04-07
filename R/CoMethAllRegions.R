@@ -138,6 +138,7 @@ CoMethAllRegions <- function(dnam,
   } else {
 
     out_ContigRegions <- lapply(coMethCpGsAllREgions_ls, `[[`, 1)
+    # Avoid sapply(); use vapply()
     out_ContigRegions[sapply(out_ContigRegions, is.null)] <- NULL
     names(out_ContigRegions) <- unlist(lapply(out_ContigRegions, `[[`, 1, 1))
 

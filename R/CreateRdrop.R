@@ -31,7 +31,7 @@ CreateRdrop <- function(data, method = c("pearson", "spearman")){
 
   method <- match.arg(method)
   col_data <- colnames(data)
-
+  # Avoid sapply(); use vapply()
   out_num <- sapply(seq_along(col_data), function(column){
 
     ## remove site i and then compute row mean
