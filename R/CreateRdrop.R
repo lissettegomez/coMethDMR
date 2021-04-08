@@ -28,22 +28,27 @@
 #'
 #'
 CreateRdrop <- function(data, method = c("pearson", "spearman")){
+  # browser()
 
   method <- match.arg(method)
   col_data <- colnames(data)
-  # Avoid sapply(); use vapply()
-  out_num <- sapply(seq_along(col_data), function(column){
 
-    ## remove site i and then compute row mean
-    data_no_i <- data[, -column]
-    data_i <- data[, column]
+  out_num <- vapply(
+    X = seq_along(col_data),
+    FUN = function(column){
 
-    data_no_i_mean <- rowMeans(data_no_i)
+      ## remove site i and then compute row mean
+      data_no_i <- data[, -column, drop = FALSE]
+      data_i <- data[, column]
 
-    ## Correlate dat_i and dat_no_i_mean
-    cor(data_i, data_no_i_mean, method = method)
+      data_no_i_mean <- rowMeans(data_no_i)
 
-  })
+      ## Correlate dat_i and dat_no_i_mean
+      cor(data_i, data_no_i_mean, method = method)
+
+    },
+    FUN.VALUE = numeric(1)
+  )
 
   data.frame(
     CpG = col_data,
