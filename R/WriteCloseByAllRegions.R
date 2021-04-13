@@ -31,8 +31,8 @@
 #'     "67232460-67234167","38244199-38245362","39402823-39403373"
 #'   )
 #' )
-#' # Use donttest{} instead of dontrun{}
-#' \dontrun{
+#'
+#' \donttest{
 #'   WriteCloseByAllRegions(
 #'     regions = regions, arrayType = "EPIC", maxGap = 50,
 #'     minCpGs = 3, fileName = "closeByRegions.rds"

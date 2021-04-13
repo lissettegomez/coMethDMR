@@ -1,12 +1,15 @@
 This version we started developing two years ago. Since then we made the documentation better.
 
-Find bellow the main changes:
+Find below the main changes:
 
 # coMethDMR 1.0
 
 ## Major Changes
+Bolstered documentation across all package help / manual files
 
 ## Bug Fixes
+
+
 
 # coMethDMR 0.0.0.9001
 

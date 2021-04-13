@@ -51,7 +51,7 @@ regions <- GenomicRanges::GRanges(
   )
 )
 
-\dontrun{
+\donttest{
   WriteCloseByAllRegions(
     regions = regions, arrayType = "EPIC", maxGap = 50,
     minCpGs = 3, fileName = "closeByRegions.rds"
