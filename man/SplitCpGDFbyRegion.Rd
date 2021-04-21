@@ -4,11 +4,17 @@
 \alias{SplitCpGDFbyRegion}
 \title{Split CpG dataframe by Subregion}
 \usage{
-SplitCpGDFbyRegion(CpGsSubregions_df, arrayType = c("450k", "EPIC"),
-  returnAllCpGs = TRUE)
+SplitCpGDFbyRegion(
+  CpGsSubregions_df,
+  genome = c("hg19", "hg38"),
+  arrayType = c("450k", "EPIC"),
+  returnAllCpGs = TRUE
+)
 }
 \arguments{
 \item{CpGsSubregions_df}{data frame with CpG and subregion number}
+
+\item{genome}{Human genome of reference hg19 or hg38}
 
 \item{arrayType}{Type of array, 450k or EPIC}
 
@@ -27,7 +33,12 @@ Split a dataframe of CpGs and comethylated subregions to a list
    data(betaMatrix_ex4)
    CpGs_df <- MarkComethylatedCpGs(betaCluster_mat = betaMatrix_ex4)
    CpGsSubregions_df <- FindComethylatedRegions(CpGs_df)
-   SplitCpGDFbyRegion(CpGsSubregions_df, "450k")
+
+   SplitCpGDFbyRegion(
+     CpGsSubregions_df,
+     genome = "hg19",
+     arrayType = "450k"
+   )
 
 }
 \keyword{internal}

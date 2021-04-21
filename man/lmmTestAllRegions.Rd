@@ -5,10 +5,20 @@
 \title{Fit mixed model to test association between a continuous phenotype and
 methylation values in a list of genomic regions}
 \usage{
-lmmTestAllRegions(betas, region_ls, pheno_df, contPheno_char,
-  covariates_char, modelType = c("randCoef", "simple"),
-  arrayType = c("450k", "EPIC"), outFile = NULL, outLogFile = NULL,
-  nCores_int = 1L, ...)
+lmmTestAllRegions(
+  betas,
+  region_ls,
+  pheno_df,
+  contPheno_char,
+  covariates_char,
+  modelType = c("randCoef", "simple"),
+  genome = c("hg19", "hg38"),
+  arrayType = c("450k", "EPIC"),
+  outFile = NULL,
+  outLogFile = NULL,
+  nCores_int = 1L,
+  ...
+)
 }
 \arguments{
 \item{betas}{data frame or matrix of beta values for all genomic regions,
@@ -30,6 +40,8 @@ region}
 
 \item{modelType}{type of mixed model, can be \code{randCoef} for random
 coefficient mixed model, or \code{simple} for simple linear mixed model.}
+
+\item{genome}{Human genome of reference hg19 or hg38}
 
 \item{arrayType}{Type of array, can be "450k" or "EPIC"}
 
@@ -113,9 +125,9 @@ This function implements a mixed model to test association between
      contPheno_char = "stage",
      covariates_char = "age.brain",
      modelType = "randCoef",
-     arrayType = "450k",
+     arrayType = "450k"
      # generates a log file in the current directory
-     outLogFile = paste0("lmmLog_", Sys.Date(), ".txt")
+     # outLogFile = paste0("lmmLog_", Sys.Date(), ".txt")
    )
 
 

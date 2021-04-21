@@ -5,9 +5,17 @@
 \title{Wrapper function to find contiguous and comethyalted sub-regions within a
   pre-defined genomic region}
 \usage{
-CoMethSingleRegion(CpGs_char, dnam, betaToM = TRUE,
-  rDropThresh_num = 0.4, method = c("pearson", "spearman"),
-  minCpGs = 3, arrayType = c("450k", "EPIC"), returnAllCpGs = FALSE)
+CoMethSingleRegion(
+  CpGs_char,
+  dnam,
+  betaToM = TRUE,
+  rDropThresh_num = 0.4,
+  method = c("pearson", "spearman"),
+  minCpGs = 3,
+  genome = c("hg19", "hg38"),
+  arrayType = c("450k", "EPIC"),
+  returnAllCpGs = FALSE
+)
 }
 \arguments{
 \item{CpGs_char}{vector of CpGs in the inputting pre-defined genomic region.}
@@ -18,13 +26,15 @@ as well as additional CpGs.}
 
 \item{betaToM}{indicates if converting methylation beta values mvalues}
 
-\item{rDropThresh_num}{thershold for min correlation between a cpg with sum
+\item{rDropThresh_num}{threshold for min correlation between a cpg with sum
 of the rest of the CpGs}
 
 \item{method}{method for computing correlation, can be  "pearson" or "spearman"}
 
-\item{minCpGs}{mininum number of CpGs to be considered a "region".
+\item{minCpGs}{minimum number of CpGs to be considered a "region".
 Only regions with more than \code{minCpGs} will be returned.}
+
+\item{genome}{Human genome of reference hg19 or hg38}
 
 \item{arrayType}{Type of array, can be "450k" or "EPIC"}
 

@@ -1,7 +1,7 @@
 Package: coMethDMR
 Title: Accurate identification of co-methylated and differentially methylated
   regions in epigenome-wide association studies
-Version: 0.0.0.9001
+Version: 0.99.1
 Authors@R: c(
   person("Lissette", "Gomez", email = "lxg255@miami.edu", role = c("aut", "cre")),
   person("Gabriel", "Odom", email = "gabriel.odom@med.miami.edu", role = c("aut")),
@@ -15,24 +15,33 @@ Description: coMethDMR identifies genomic regions associated with continuous
   using a random coefficient mixed effects model, which models both variations
   between CpG sites within the region and differential methylation simultaneously. 
 Depends:
-  R (>= 3.5.0),
-  IlluminaHumanMethylation450kanno.ilmn12.hg19,
-  IlluminaHumanMethylationEPICanno.ilm10b2.hg19
+  R (>= 4.0.0)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 Imports:
   BiocParallel,
   bumphunter,
+  dplyr,
   GenomicRanges,
   IRanges,
   lmerTest,
+  methods,
+  rlang,
+  sesameData,
   stats,
+  tidyr,
   utils
 Suggests: 
+  BiocStyle,
+  corrplot,
+  GenoGAM,
   knitr,
-  testthat
+  rmarkdown,
+  testthat,
+  IlluminaHumanMethylation450kanno.ilmn12.hg19,
+  IlluminaHumanMethylationEPICanno.ilm10b2.hg19
 biocViews:
     DNAMethylation,
     Epigenetics,

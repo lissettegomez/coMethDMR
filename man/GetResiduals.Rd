@@ -4,8 +4,14 @@
 \alias{GetResiduals}
 \title{Get Residuals}
 \usage{
-GetResiduals(dnam, betaToM = TRUE, pheno_df, covariates_char,
-  nCores_int = 1L, ...)
+GetResiduals(
+  dnam,
+  betaToM = TRUE,
+  pheno_df,
+  covariates_char,
+  nCores_int = 1L,
+  ...
+)
 }
 \arguments{
 \item{dnam}{data frame or matrix of methylation values,

@@ -11,7 +11,7 @@ FindComethylatedRegions(CpGs_df, minCpGs_int = 3)
 
  \code{CpG, keep, ind, r_drop}. See details in documentation for \code{MarkComethylatedCpGs}.}
 
-\item{minCpGs_int}{an integer, indicates minimum nubmer of CpGs for output genomic regions}
+\item{minCpGs_int}{an integer, indicates minimum number of CpGs for output genomic regions}
 }
 \value{
 A data frame with variables \code{ProbeID} and \code{Subregion} (index for each output

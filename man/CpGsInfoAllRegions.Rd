@@ -4,8 +4,14 @@
 \alias{CpGsInfoAllRegions}
 \title{Test associations of individual CpGs in multiple genomic regions with a continuous phenotype}
 \usage{
-CpGsInfoAllRegions(AllRegionNames_char, betas_df, pheno_df, contPheno_char,
-  covariates_char, arrayType = c("450k", "EPIC"))
+CpGsInfoAllRegions(
+  AllRegionNames_char,
+  betas_df,
+  pheno_df,
+  contPheno_char,
+  covariates_char,
+  arrayType = c("450k", "EPIC")
+)
 }
 \arguments{
 \item{AllRegionNames_char}{vector of character strings with location info for all the genomic regions.

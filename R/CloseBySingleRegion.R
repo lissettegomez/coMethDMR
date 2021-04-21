@@ -1,6 +1,7 @@
 #' Extract clusters of CpGs located closely in a genomic region.
 #'
 #' @param CpGs_char a list of CpG IDs
+#' @param genome Human genome of reference hg19 or hg38
 #' @param arrayType Type of array, 450k or EPIC
 #' @param maxGap an integer, genomic locations within maxGap from each other
 #'    are placed into the same cluster
@@ -14,7 +15,7 @@
 #'    any methylation data. The algorithm is based on the
 #'    \code{\link[bumphunter]{clusterMaker}} function in the \code{bumphunter}
 #'    R package. Each cluster is essentially a group of CpG locations such that
-#'    two consecutive locations in the clsuter are separated by less than
+#'    two consecutive locations in the cluster are separated by less than
 #'    \code{maxGap}.
 #'
 #' @importFrom bumphunter clusterMaker
@@ -28,14 +29,17 @@
 #'    )
 #'
 #'    cluster_ls <- CloseBySingleRegion(
-#'      CpGs_char, arrayType = "450k", maxGap = 100, minCpGs = 3
+#'      CpGs_char, genome = "hg19", arrayType = "450k", maxGap = 100, minCpGs = 3
 #'    )
 #'
 CloseBySingleRegion <- function(CpGs_char,
+                                genome = c("hg19","hg38"),
                                 arrayType = c("450k","EPIC"),
-                                maxGap = 200, minCpGs = 3){
+                                maxGap = 200,
+                                minCpGs = 3){
+
   CpGsOrdered_df <- OrderCpGsByLocation(
-    CpGs_char, arrayType, output = "dataframe"
+    CpGs_char, genome, arrayType, output = "dataframe"
   )
 
   ### Find close by clusters ###

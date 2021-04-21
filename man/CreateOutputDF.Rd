@@ -4,8 +4,12 @@
 \alias{CreateOutputDF}
 \title{Create Output Dataframe}
 \usage{
-CreateOutputDF(keepCpGs_df, keepContiguousCpGs_df, CpGsOrdered_df,
-  returnAllCpGs = FALSE)
+CreateOutputDF(
+  keepCpGs_df,
+  keepContiguousCpGs_df,
+  CpGsOrdered_df,
+  returnAllCpGs = FALSE
+)
 }
 \arguments{
 \item{keepCpGs_df}{a data frame with CpG = CpG name,
@@ -13,7 +17,7 @@ keep = indicator for co-methylated CpG,
 r_drop = correlation between the CpG with rest of the CpGs}
 
 \item{keepContiguousCpGs_df}{a data frame with ProbeID = CpG name,
-Subregion = cotiguous comethylated subregion number}
+Subregion = contiguous comethylated subregion number}
 
 \item{CpGsOrdered_df}{a data frame of CpG location with
 chr = chromosome number, pos = genomic position, cpg = CpG name}
@@ -28,7 +32,7 @@ a data frame with CpG = CpG name,
    MAPINFO = genomic position,
    r_drop = correlation between the CpG with rest of the CpGs,
    keep = indicator for co-methylated CpG,
-   keep_contiguous = cotiguous comethylated subregion number
+   keep_contiguous = contiguous comethylated subregion number
 }
 \description{
 Create Output Dataframe

@@ -4,8 +4,7 @@
 \alias{AnnotateResults}
 \title{Annotate \code{coMethDMR} Pipeline Results}
 \usage{
-AnnotateResults(lmmRes_df, arrayType = c("450k", "EPIC"),
-  nCores_int = 1L, ...)
+AnnotateResults(lmmRes_df, arrayType = c("450k", "EPIC"), nCores_int = 1L, ...)
 }
 \arguments{
 \item{lmmRes_df}{A data frame returned by \code{\link{lmmTestAllRegions}}.
@@ -40,7 +39,8 @@ A data frame with
 }
 \description{
 Given a data frame with regions in the genome, add gene symbols,
-  UCSC reference gene accession, and IDs of probes in the region.
+  UCSC reference gene accession, UCSC reference gene group and
+  relation to CpG island.
 }
 \details{
 The region types include \code{"NSHORE"}, \code{"NSHELF"},

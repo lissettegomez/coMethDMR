@@ -26,6 +26,7 @@
 #'
 #' @importFrom stats na.exclude
 #' @importFrom stats residuals
+#' @importFrom methods is
 #'
 #' @examples
 #'    data(betasChr22_df)

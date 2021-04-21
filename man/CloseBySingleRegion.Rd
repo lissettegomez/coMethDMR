@@ -4,11 +4,18 @@
 \alias{CloseBySingleRegion}
 \title{Extract clusters of CpGs located closely in a genomic region.}
 \usage{
-CloseBySingleRegion(CpGs_char, arrayType = c("450k", "EPIC"),
-  maxGap = 200, minCpGs = 3)
+CloseBySingleRegion(
+  CpGs_char,
+  genome = c("hg19", "hg38"),
+  arrayType = c("450k", "EPIC"),
+  maxGap = 200,
+  minCpGs = 3
+)
 }
 \arguments{
 \item{CpGs_char}{a list of CpG IDs}
+
+\item{genome}{Human genome of reference hg19 or hg38}
 
 \item{arrayType}{Type of array, 450k or EPIC}
 
@@ -30,7 +37,7 @@ Note that this function depends only on CpG locations, and not on
    any methylation data. The algorithm is based on the
    \code{\link[bumphunter]{clusterMaker}} function in the \code{bumphunter}
    R package. Each cluster is essentially a group of CpG locations such that
-   two consecutive locations in the clsuter are separated by less than
+   two consecutive locations in the cluster are separated by less than
    \code{maxGap}.
 }
 \examples{
@@ -40,7 +47,7 @@ Note that this function depends only on CpG locations, and not on
    )
 
    cluster_ls <- CloseBySingleRegion(
-     CpGs_char, arrayType = "450k", maxGap = 100, minCpGs = 3
+     CpGs_char, genome = "hg19", arrayType = "450k", maxGap = 100, minCpGs = 3
    )
 
 }

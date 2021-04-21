@@ -17,6 +17,7 @@
 #' @param covariates_char character vector for names of the covariate variables
 #' @param modelType type of mixed model, can be \code{randCoef} for random
 #'    coefficient mixed model, or \code{simple} for simple linear mixed model.
+#' @param genome Human genome of reference hg19 or hg38
 #' @param arrayType Type of array, can be "450k" or "EPIC"
 #' @param outFile output .csv file with the results for the mixed model analysis
 #' @param outLogFile log file for mixed models analysis messages
@@ -61,11 +62,9 @@
 #' @export
 #'
 #' @importFrom BiocParallel bplapply
-#' @importFrom stats as.formula
-#' @importFrom stats coef
-#' @importFrom stats reshape
-#' @importFrom stats p.adjust
+#' @importFrom stats coef lm as.formula reshape p.adjust
 #' @importFrom utils write.csv
+#' @importFrom methods is
 #'
 #' @examples
 #'    data(betasChr22_df)
@@ -98,21 +97,25 @@
 #'      contPheno_char = "stage",
 #'      covariates_char = "age.brain",
 #'      modelType = "randCoef",
-#'      arrayType = "450k",
+#'      arrayType = "450k"
 #'      # generates a log file in the current directory
-#'      outLogFile = paste0("lmmLog_", Sys.Date(), ".txt")
+#'      # outLogFile = paste0("lmmLog_", Sys.Date(), ".txt")
 #'    )
 #'
 #'
 
-lmmTestAllRegions <- function(betas, region_ls, pheno_df,
-                              contPheno_char, covariates_char,
-                              modelType = c("randCoef", "simple"),
-                              arrayType = c("450k","EPIC"),
-                              outFile = NULL,
-                              outLogFile = NULL,
-                              nCores_int = 1L,
-                              ...){
+lmmTestAllRegions <- function(
+  betas,
+  region_ls,
+  pheno_df,
+  contPheno_char, covariates_char,
+  modelType = c("randCoef", "simple"),
+  genome = c("hg19","hg38"),
+  arrayType = c("450k","EPIC"),
+  outFile = NULL,
+  outLogFile = NULL,
+  nCores_int = 1L,
+  ...){
   # browser()
 
   warnLvl <- options()$warn
@@ -121,6 +124,7 @@ lmmTestAllRegions <- function(betas, region_ls, pheno_df,
   ###  Setup  ###
   modelType <- match.arg(modelType)
   arrayType <- match.arg(arrayType)
+  genome <- match.arg(genome)
 
   if (is(betas, "matrix")){
     beta_df <- as.data.frame(betas)
@@ -167,6 +171,7 @@ lmmTestAllRegions <- function(betas, region_ls, pheno_df,
     contPheno_char,
     covariates_char,
     modelType,
+    genome,
     arrayType,
     outLogFile
   )

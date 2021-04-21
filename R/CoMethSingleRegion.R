@@ -7,13 +7,16 @@
 #'    as well as additional CpGs.
 #' @param betaToM indicates if converting methylation beta values mvalues
 #' @param method method for computing correlation, can be  "pearson" or "spearman"
-#' @param rDropThresh_num thershold for min correlation between a cpg with sum
+#' @param rDropThresh_num threshold for min correlation between a cpg with sum
 #'    of the rest of the CpGs
 #'
-#' @param minCpGs mininum number of CpGs to be considered a "region".
+#' @param minCpGs minimum number of CpGs to be considered a "region".
 #'    Only regions with more than \code{minCpGs} will be returned.
+#'
+#' @param genome Human genome of reference hg19 or hg38
+#'
 #' @param arrayType Type of array, can be "450k" or "EPIC"
-
+#'
 #' @param returnAllCpGs When there is not a contiguous comethylated region in
 #'    the inputing pre-defined region, \code{returnAllCpGs = 1} indicates
 #'    outputting all the CpGs in the input region, while \code{returnAllCpGs = 0}
@@ -64,15 +67,17 @@ CoMethSingleRegion <- function(CpGs_char,
                                rDropThresh_num = 0.4,
                                method = c("pearson", "spearman"),
                                minCpGs = 3,
+                               genome = c("hg19","hg38"),
                                arrayType = c("450k","EPIC"),
                                returnAllCpGs = FALSE){
 
   arrayType <- match.arg(arrayType)
+  genome <- match.arg(genome)
   method <- match.arg(method)
 
   ### Order CpGs by genomic location ###
   CpGsOrdered_df <- OrderCpGsByLocation(
-    CpGs_char, arrayType, output = "dataframe"
+    CpGs_char, genome, arrayType, output = "dataframe"
   )
 
   ### Extract beta matrix for the input CpGs ###
@@ -101,7 +106,7 @@ CoMethSingleRegion <- function(CpGs_char,
 
       ### Split CpG dataframe by Subregion ###
       keepContiguousCpGs_ls <- SplitCpGDFbyRegion(
-        keepContiguousCpGs_df, arrayType, returnAllCpGs
+        keepContiguousCpGs_df, genome, arrayType, returnAllCpGs
       )
 
       ### Create Output Data Frame  ###

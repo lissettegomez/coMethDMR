@@ -4,11 +4,17 @@
 \alias{GetCpGsInRegion}
 \title{Extract probe IDs for CpGs located in a genomic region}
 \usage{
-GetCpGsInRegion(regionName_char, arrayType = c("450k", "EPIC"))
+GetCpGsInRegion(
+  regionName_char,
+  genome = c("hg19", "hg38"),
+  arrayType = c("450k", "EPIC")
+)
 }
 \arguments{
 \item{regionName_char}{character string with location information for one region in
 this format: "chrxx:xxxxxx-xxxxxx"}
+
+\item{genome}{human genome of reference hg19 (default) or hg38}
 
 \item{arrayType}{Type of array, 450k or EPIC}
 }
@@ -21,6 +27,7 @@ Extract probe IDs for CpGs located in a genomic region
 \examples{
    GetCpGsInRegion(
      regionName_char = "chr22:18267969-18268249",
+     genome = "hg19",
      arrayType = "450k"
    )
 }
